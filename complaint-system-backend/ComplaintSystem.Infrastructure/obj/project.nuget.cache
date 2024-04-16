@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "dgSpecHash": "nxDqxND1xOMc/Ce5S1w13VWzlxgfbylkr4yZ0+NYJbPdMAEf+lLA2vXbaO+rZt4b3df7IAkBIVewtRF9C3wzVQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Bebe_x\\source\\repos\\AATU.ComplaintSystem\\complaint-system-backend\\ComplaintSystem.Infrastructure\\ComplaintSystem.Infrastructure.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Bebe_x\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Bebe_x\\.nuget\\packages\\microsoft.extensions.options\\8.0.2\\microsoft.extensions.options.8.0.2.nupkg.sha512",
+    "C:\\Users\\Bebe_x\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\Bebe_x\\.nuget\\packages\\microsoft.identitymodel.abstractions\\7.5.1\\microsoft.identitymodel.abstractions.7.5.1.nupkg.sha512",
+    "C:\\Users\\Bebe_x\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\7.5.1\\microsoft.identitymodel.jsonwebtokens.7.5.1.nupkg.sha512",
+    "C:\\Users\\Bebe_x\\.nuget\\packages\\microsoft.identitymodel.logging\\7.5.1\\microsoft.identitymodel.logging.7.5.1.nupkg.sha512",
+    "C:\\Users\\Bebe_x\\.nuget\\packages\\microsoft.identitymodel.tokens\\7.5.1\\microsoft.identitymodel.tokens.7.5.1.nupkg.sha512",
+    "C:\\Users\\Bebe_x\\.nuget\\packages\\system.identitymodel.tokens.jwt\\7.5.1\\system.identitymodel.tokens.jwt.7.5.1.nupkg.sha512"
+  ],
+  "logs": []
+}

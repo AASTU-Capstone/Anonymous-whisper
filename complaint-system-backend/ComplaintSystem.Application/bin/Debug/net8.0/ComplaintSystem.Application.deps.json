@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "ComplaintSystem.Application/1.0.0": {
+        "dependencies": {
+          "ComplaintSystem.Domain": "1.0.0"
+        },
+        "runtime": {
+          "ComplaintSystem.Application.dll": {}
+        }
+      },
+      "ComplaintSystem.Domain/1.0.0": {
+        "runtime": {
+          "ComplaintSystem.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ComplaintSystem.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ComplaintSystem.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,12 @@
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\bin\Debug\net8.0\ComplaintSystem.Domain.deps.json
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\bin\Debug\net8.0\ComplaintSystem.Domain.dll
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\bin\Debug\net8.0\ComplaintSystem.Domain.pdb
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\ComplaintSystem.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\ComplaintSystem.Domain.AssemblyInfoInputs.cache
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\ComplaintSystem.Domain.AssemblyInfo.cs
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\ComplaintSystem.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\ComplaintSystem.Domain.sourcelink.json
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\ComplaintSystem.Domain.dll
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\refint\ComplaintSystem.Domain.dll
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\ComplaintSystem.Domain.pdb
+C:\Users\Bebe_x\source\repos\AATU.ComplaintSystem\complaint-system-backend\ComplaintSystem.Domain\obj\Debug\net8.0\ref\ComplaintSystem.Domain.dll
