@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Application.Persistence.Contracts.Auth;
+namespace  ComplaintSystem.Application.Persistence.Contracts.Auth;
 
 public interface IPasswordService
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using ComplaintSystem.Application.Persistence.Contracts.Auth;
+using  ComplaintSystem.Application.Persistence.Contracts.Auth;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Infrastructure.Authentication;
+namespace  ComplaintSystem.Infrastructure.Authentication;
 public class JwtTokenValidation : IJwtTokenValidation
 {
     public readonly Jwtsettings _jwtsettings;

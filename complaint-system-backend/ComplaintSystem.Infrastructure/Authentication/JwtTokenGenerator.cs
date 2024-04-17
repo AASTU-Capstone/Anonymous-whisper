@@ -1,6 +1,6 @@
-﻿using ComplaintSystem.Application.Persistence.Contracts.Auth;
-using ComplaintSystem.Application.Persistence.Contracts.Common;
-using ComplaintSystem.Domain.Entities;
+﻿using  ComplaintSystem.Application.Persistence.Contracts.Auth;
+using  ComplaintSystem.Application.Persistence.Contracts.Common;
+using  ComplaintSystem.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Infrastructure.Authentication;
+namespace  ComplaintSystem.Infrastructure.Authentication;
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     public readonly IDateTimeProvider _dateTimeProvider;

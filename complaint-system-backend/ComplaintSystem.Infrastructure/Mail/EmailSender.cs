@@ -1,12 +1,12 @@
-﻿using ComplaintSystem.Infrastructure;
-using ComplaintSystem.Domain.Entities;
+﻿using  ComplaintSystem.Infrastructure;
+using  ComplaintSystem.Domain.Entities;
 using System.Net;
 using System.Net.Mail;
-using ComplaintSystem.Application.Responses;
-using ComplaintSystem.Application.Persistence.Contracts.Common;
+using  ComplaintSystem.Application.Responses;
+using  ComplaintSystem.Application.Persistence.Contracts.Common;
 
 
-namespace ComplaintSystem.Infrastructure.Mail;
+namespace  ComplaintSystem.Infrastructure.Mail;
 
 public class EmailSender : IEmailSender
 {

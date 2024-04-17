@@ -1,0 +1,12 @@
+Contest_central.API/bin
+Contest_central.API/obj
+Contest_central.Application/bin
+Contest_central.Application/obj
+Contest_central.Domain/bin
+Contest_central.Domain/obj
+Contest_central.Infrastructure/bin
+Contest_central.Infrastructure/obj
+Contest_central.Persistence/bin
+Contest_central.Persistence/obj
+.vs
+Profile.http

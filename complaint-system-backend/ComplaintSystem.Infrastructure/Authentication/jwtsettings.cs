@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Infrastructure.Authentication;
+namespace  ComplaintSystem.Infrastructure.Authentication;
 public class Jwtsettings
 {
     public const string SectionName = "jwtsettings";

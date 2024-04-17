@@ -1,4 +1,4 @@
-﻿using ComplaintSystem.Application.Persistence;
+﻿using  ComplaintSystem.Application.Persistence.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -6,12 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Persistence.Repositories;
+namespace  ComplaintSystem.Persistence.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    private readonly CompliantSystemAppDbContext _context;
-    public GenericRepository(CompliantSystemAppDbContext sparkTankAppDbContext)
+    private readonly  ComplaintSystemAppDbContext _context;
+    public GenericRepository( ComplaintSystemAppDbContext sparkTankAppDbContext)
     {
         _context = sparkTankAppDbContext;
     }
