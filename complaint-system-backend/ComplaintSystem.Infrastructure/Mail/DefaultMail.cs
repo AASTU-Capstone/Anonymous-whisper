@@ -1,4 +1,4 @@
-﻿namespace ComplaintSystem.Infrastructure;
+﻿namespace  ComplaintSystem.Infrastructure;
 
 public class DefaultMail
 {

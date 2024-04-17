@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CompliantSystem.Domain.Entities.Common;
+namespace  ComplaintSystem.Domain.Entities.Common;
 public class BaseEntity
 {
     public Guid Id { get; set; }

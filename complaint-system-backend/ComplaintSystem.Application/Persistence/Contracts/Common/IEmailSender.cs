@@ -1,12 +1,12 @@
-﻿using ComplaintSystem.Application.Responses;
-using ComplaintSystem.Domain.Entities;
+﻿using  ComplaintSystem.Application.Responses;
+using  ComplaintSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Application.Persistence.Contracts.Common;
+namespace  ComplaintSystem.Application.Persistence.Contracts.Common;
 
 public interface IEmailSender
 {
