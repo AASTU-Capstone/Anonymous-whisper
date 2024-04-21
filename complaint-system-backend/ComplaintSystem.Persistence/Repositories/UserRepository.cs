@@ -1,25 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using  ComplaintSystem.Application.Persistence.Contracts;
-using  ComplaintSystem.Domain.Entities;
+using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Domain.Entities;
 
-namespace  ComplaintSystem.Persistence.Repositories
+namespace ComplaintSystem.Persistence.Repositories
 {
     public class UserRepository : GenericRepository<UserEntity>, IUserRepository
     {
-        private readonly  ComplaintSystemAppDbContext _sparkTankAppDbContext;
-        
-        public UserRepository( ComplaintSystemAppDbContext sparkTankAppDbContext) : base(sparkTankAppDbContext)
+        private readonly ComplaintSystemAppDbContext _complaintSystemAppDbContext;
+
+        public UserRepository(ComplaintSystemAppDbContext complaintSystemAppDbContext) : base(complaintSystemAppDbContext)
         {
-            _sparkTankAppDbContext = sparkTankAppDbContext;
+            _complaintSystemAppDbContext = complaintSystemAppDbContext;
         }
 
         public async Task<UserEntity> GetByEmail(string email)
         {
-            var user = await _sparkTankAppDbContext.Users.SingleOrDefaultAsync(x => x.Email == email);
+            var user = await _complaintSystemAppDbContext.Users.SingleOrDefaultAsync(x => x.Email == email);
             if (user == null)
             {
                 return null;

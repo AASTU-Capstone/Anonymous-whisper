@@ -1,11 +1,6 @@
-﻿using  ComplaintSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ComplaintSystem.Domain.Entities;
 
-namespace  ComplaintSystem.Application.Persistence.Contracts;
+namespace ComplaintSystem.Application.Persistence.Contracts;
 public interface IOtpRepository : IGenericRepository<OTPEntity>
 {
     Task<OTPEntity> VerifyOtpCode(string otpCode, Guid userId);

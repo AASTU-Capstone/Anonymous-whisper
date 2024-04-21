@@ -1,19 +1,14 @@
-﻿using  ComplaintSystem.Application.Persistence.Contracts;
+﻿using ComplaintSystem.Application.Persistence.Contracts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace  ComplaintSystem.Persistence.Repositories;
+namespace ComplaintSystem.Persistence.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    private readonly  ComplaintSystemAppDbContext _context;
-    public GenericRepository( ComplaintSystemAppDbContext sparkTankAppDbContext)
+    private readonly ComplaintSystemAppDbContext _context;
+    public GenericRepository(ComplaintSystemAppDbContext complaintSystemAppDbContext)
     {
-        _context = sparkTankAppDbContext;
+        _context = complaintSystemAppDbContext;
     }
     public async Task<T> Add(T entity)
     {
