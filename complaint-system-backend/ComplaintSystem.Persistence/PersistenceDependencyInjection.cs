@@ -16,6 +16,7 @@ public static class PersistenceDependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IOtpRepository, OtpRepository>();
         services.AddScoped<IComplaintRepository, ComplaintRepository>();
+        services.AddScoped<IComplaintLogRepository, ComplaintLogRepository>();
         services.AddScoped<IManagerRepository, ManagerRepository>();
         services.AddScoped<IAdminRepository, AdminRepository>();
         services.AddScoped<ISubordinateRepository, SubordinateRepository>();

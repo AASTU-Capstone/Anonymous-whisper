@@ -19,4 +19,9 @@
     <ProjectReference Include="..\ComplaintSystem.Domain\ComplaintSystem.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\ComplaintLogs\Handlers\Queries\" />
+    <Folder Include="Features\ComplaintLogs\Requests\Queries\" />
+  </ItemGroup>
+
 </Project>

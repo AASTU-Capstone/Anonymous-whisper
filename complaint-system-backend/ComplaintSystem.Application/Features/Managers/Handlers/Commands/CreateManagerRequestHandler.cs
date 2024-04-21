@@ -40,6 +40,7 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
             {
 
                 var manager = _mapper.Map<Manager>(request.CreateManagerDto);
+                manager.AdminId = request.AdminId;
                 await _managerRepository.Add(manager);
 
                 response.StatusCode = 201;

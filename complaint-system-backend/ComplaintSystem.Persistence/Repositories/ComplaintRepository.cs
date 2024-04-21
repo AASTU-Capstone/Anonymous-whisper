@@ -1,5 +1,6 @@
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComplaintSystem.Persistence.Repositories
 {
@@ -10,6 +11,12 @@ namespace ComplaintSystem.Persistence.Repositories
         public ComplaintRepository(ComplaintSystemAppDbContext complaintSystemAppDbContext) : base(complaintSystemAppDbContext)
         {
             _complaintSystemAppDbContext = complaintSystemAppDbContext;
+        }
+
+        public async Task<List<Complaint>> GetAcceptedComplaints()
+        {
+            var complaints = await _complaintSystemAppDbContext.Complaints.Where(c => c.Status.ToLower() == "accepted").ToListAsync();
+            return complaints;
         }
     }
 }

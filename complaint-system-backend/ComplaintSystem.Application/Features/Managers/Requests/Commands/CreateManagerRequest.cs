@@ -11,5 +11,6 @@ namespace ComplaintSystem.Application.Features.Managers.Requests.Commands
     public class CreateManagerRequest : IRequest<BaseResponseClass>
     {
         public CreateManagerDto CreateManagerDto { get; set; }
+        public Guid AdminId { get; set; }
     }
 }

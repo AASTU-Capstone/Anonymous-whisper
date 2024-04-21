@@ -9,8 +9,9 @@ namespace ComplaintSystem.Application.DTOs.ComplaintLogDto
     {
         public string? Title { get; set; }
         public string? Report { get; set; }
-        public string? Status { get; set; }
         public string? Priority { get; set; }
+        public Guid AdminId { get; set; }
+        public Guid ManagerId { get; set; }
         public Guid ComplaintId { get; set; }
     }
 }
