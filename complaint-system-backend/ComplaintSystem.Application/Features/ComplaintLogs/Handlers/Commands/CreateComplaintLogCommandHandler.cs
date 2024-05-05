@@ -41,6 +41,7 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
             {
                 var complaintLog = _mapper.Map<ComplaintLog>(request.ComplaintLogDto);
                 complaintLog.Status = "pending";
+                complaintLog.AdminId = request.AdminId;
                 await _complaintLogRepository.Add(complaintLog);
                 response = new BaseResponseClass
                 {

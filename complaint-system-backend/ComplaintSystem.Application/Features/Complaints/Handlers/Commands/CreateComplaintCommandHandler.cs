@@ -60,23 +60,32 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 List<string> documents = new List<string>();
                 List<string> audios = new List<string>();
                 List<string> tags = new List<string>();
-
-                foreach(var image in request.CreateComplaintDto.ImageEvidence)
+                if (request.CreateComplaintDto.ImageEvidence!= null)
                 {
-                    string currImage = await _cloudinaryService.UploadImageAsync(image);
-                    tags.AddRange(await _imaggaService.Tagger(currImage));
-                    imageEvidences.Add(currImage);
+                    foreach (var image in request.CreateComplaintDto.ImageEvidence)
+                    {
+                        string currImage = await _cloudinaryService.UploadImageAsync(image);
+                        tags.AddRange(await _imaggaService.Tagger(currImage));
+                        imageEvidences.Add(currImage);
+                    }
                 }
-
-                foreach(var doc in request.CreateComplaintDto.Documents)
+                
+                if(request.CreateComplaintDto.Documents!= null)
                 {
-                    documents.Add(await _cloudinaryService.UploadImageAsync(doc));
+                    foreach (var doc in request.CreateComplaintDto.Documents)
+                    {
+                        documents.Add(await _cloudinaryService.UploadImageAsync(doc));
+                    }
                 }
-
-                foreach (var audio in request.CreateComplaintDto.SoundTrack)
+                
+                if(request.CreateComplaintDto.SoundTrack!= null)
                 {
-                    audios.Add(await _cloudinaryService.UploadImageAsync(audio));
+                    foreach (var audio in request.CreateComplaintDto.SoundTrack)
+                    {
+                        audios.Add(await _cloudinaryService.UploadImageAsync(audio));
+                    }
                 }
+               
 
                 CreateComplaintDto createComplaintDto = new CreateComplaintDto
                 {
