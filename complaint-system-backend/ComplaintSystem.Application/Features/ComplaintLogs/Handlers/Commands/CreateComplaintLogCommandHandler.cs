@@ -40,7 +40,7 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
             if (validated.IsValid)
             {
                 var complaintLog = _mapper.Map<ComplaintLog>(request.ComplaintLogDto);
-                complaintLog.Status = "accepted";
+                complaintLog.Status = "pending";
                 await _complaintLogRepository.Add(complaintLog);
                 response = new BaseResponseClass
                 {

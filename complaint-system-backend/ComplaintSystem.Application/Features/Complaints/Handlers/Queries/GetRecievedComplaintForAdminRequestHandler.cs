@@ -1,4 +1,6 @@
-﻿using ComplaintSystem.Application.Features.Complaints.Requests.Queries;
+﻿using AutoMapper;
+using ComplaintSystem.Application.DTOs.ComplaintDto;
+using ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Responses;
 using MediatR;
@@ -10,21 +12,25 @@ using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
 
-public class GetAcceptedComplaintForAdminRequestHandler : IRequestHandler<GetAcceptedComplaintForAdminRequest, BaseResponseClass>
+public class GetRecievedComplaintForAdminRequestHandler : IRequestHandler<GetRecievedComplaintForAdminRequest, BaseResponseClass>
 {
     private readonly IComplaintRepository _complaintRepository;
-    public GetAcceptedComplaintForAdminRequestHandler(IComplaintRepository complaintRepository)
+    private readonly IMapper _mapper;
+    public GetRecievedComplaintForAdminRequestHandler(IComplaintRepository complaintRepository, IMapper mapper)
     {
         _complaintRepository = complaintRepository;
+        _mapper = mapper;
     }
-    public async Task<BaseResponseClass> Handle(GetAcceptedComplaintForAdminRequest request, CancellationToken cancellationToken)
+    public async Task<BaseResponseClass> Handle(GetRecievedComplaintForAdminRequest request, CancellationToken cancellationToken)
     {
         var acceptedComplaints = await _complaintRepository.GetAcceptedComplaints();
+        var getAcceptedComplaints = _mapper.Map<GetComplaintsDto>(acceptedComplaints);
+
         BaseResponseClass response = new BaseResponseClass
         {
             StatusCode = 200,
             Success = true,
-            Data = acceptedComplaints,
+            Data = getAcceptedComplaints,
             Message = "Complaints Fetched Successfully"
         };
 

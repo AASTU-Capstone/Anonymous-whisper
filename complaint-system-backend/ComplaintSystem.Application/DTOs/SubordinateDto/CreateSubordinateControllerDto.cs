@@ -8,6 +8,6 @@ namespace ComplaintSystem.Application.DTOs.SubordinateDto;
 
 public class CreateSubordinateControllerDto
 {
-    public string? Name { get; set; }
-    public int MitigatedCount { get; set; }
+    public string Name { get; set; }
+    public string Email {  get; set; } 
 }

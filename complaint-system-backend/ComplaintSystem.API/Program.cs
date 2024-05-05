@@ -2,6 +2,9 @@ using  ComplaintSystem.Application;
 using  ComplaintSystem.Persistence;
 using  ComplaintSystem.Infrastructure;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +18,21 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureApplicationServices();
 builder.Services.ConfigurePersitenceServices(builder.Configuration);
 builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
+
+// initialize firebase service
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromJson(Environment.GetEnvironmentVariable("FIREBASE_CONFIG"))
+});
+
+//add policies for authorization
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("User", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "user"));
+});
+
 
 
 //Date now works with this for east african time

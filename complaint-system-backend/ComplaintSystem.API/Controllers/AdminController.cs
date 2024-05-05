@@ -1,6 +1,7 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
 using ComplaintSystem.Application.DTOs.ManagerDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
+using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
 using ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Features.Managers.Requests.Queries;
@@ -38,12 +39,22 @@ namespace ComplaintSystem.API.Controllers
         }
 
         [HttpGet]
-        [Route("GetAcceptedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints()
+        [Route("GetRecievedComplaints")]
+        public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints()
         {
-            var request = new GetAcceptedComplaintForAdminRequest { };
+            var request = new GetRecievedComplaintForAdminRequest { };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
+        }
+        [HttpGet]
+        [Route("GetComplaintLogs")]
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogs()
+        {
+            var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
+            var request = new GetComplaintLogsForAdminRequest { AdminId = adminId };
+            var response = await _mediator.Send(request);
+            return StatusCode(response.StatusCode, response);
+
         }
 
         [HttpPost]

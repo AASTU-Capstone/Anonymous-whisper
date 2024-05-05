@@ -54,11 +54,11 @@ namespace   ComplaintSystem.Application.Features.User.Handler.Commands
                 // hash password
                 var hashedPassword = _passwordService.HashPassword(request.User.Password);
                 request.User.Password = hashedPassword;
-                request.User.User_Type = request.User.User_Type.ToLower();
                 
 
                 // add user to database
                 var User = _mapper.Map<UserEntity>(request.User);
+                User.User_Type = "user";
                 await _UserRepository.Add(User);
 
                 // create otp and send email to user with otp
