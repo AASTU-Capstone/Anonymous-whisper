@@ -3,6 +3,7 @@ using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
 using ComplaintSystem.Application.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Policy ="Subordinate")]
     [ApiController]
     public class SubordinateController : ControllerBase
     {

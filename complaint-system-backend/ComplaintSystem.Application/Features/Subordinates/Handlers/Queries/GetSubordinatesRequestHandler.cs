@@ -29,7 +29,7 @@ public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequ
         if (manager != null)
         {
             var subordinates = await _subordinateRepository.GetSubordinatesForManager(request.ManagerId);
-            var getSubordinates = _mapper.Map<GetSubordinateDto>(subordinates);
+            var getSubordinates = _mapper.Map<List<GetSubordinateDto>>(subordinates);
             response = new BaseResponseClass
             {
                 StatusCode = 200,

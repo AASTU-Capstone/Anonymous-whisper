@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ComplaintSystem.Application.DTOs.ComplaintDto;
-using ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
+using ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Responses;
 using MediatR;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Application.Features.Complaints.Requests.Queries;
+namespace ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
 
 public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAcceptedComplaintsRequest, BaseResponseClass>
 {
@@ -41,7 +41,7 @@ public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAc
         else
         {
             var complaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status);
-            var getComplaints = _mapper.Map<GetComplaintsDto>(complaints);
+            var getComplaints = _mapper.Map<List<GetComplaintsDto>>(complaints);
 
             response = new BaseResponseClass
             {

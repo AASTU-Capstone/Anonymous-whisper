@@ -42,7 +42,7 @@ public class GetRejectedComplaintsRequestHandler : IRequestHandler<GetRejectedCo
         else
         {
             var resolvedComplaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status);
-            var complaints = _mapper.Map<GetComplaintsDto>(resolvedComplaints);
+            var complaints = _mapper.Map<List<GetComplaintsDto>>(resolvedComplaints);
 
             response = new BaseResponseClass
             {

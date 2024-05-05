@@ -16,8 +16,8 @@ using System.Security.Claims;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Policy = "Admin")]
     [ApiController]
-    [Authorize(Policy = "admin")]
     public class AdminController : ControllerBase
     {
         private readonly IMediator _mediator;

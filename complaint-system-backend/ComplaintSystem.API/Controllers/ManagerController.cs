@@ -7,6 +7,7 @@ using ComplaintSystem.Application.Features.Subordinates.Requests.Commands;
 using ComplaintSystem.Application.Features.Subordinates.Requests.Queries;
 using ComplaintSystem.Application.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -14,6 +15,7 @@ using System.Security.Claims;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Policy ="Manager")]
     [ApiController]
     //policy
     public class ManagerController : ControllerBase

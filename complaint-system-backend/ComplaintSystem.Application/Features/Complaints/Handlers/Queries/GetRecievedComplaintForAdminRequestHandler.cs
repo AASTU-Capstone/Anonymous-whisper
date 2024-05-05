@@ -24,7 +24,7 @@ public class GetRecievedComplaintForAdminRequestHandler : IRequestHandler<GetRec
     public async Task<BaseResponseClass> Handle(GetRecievedComplaintForAdminRequest request, CancellationToken cancellationToken)
     {
         var acceptedComplaints = await _complaintRepository.GetAcceptedComplaints();
-        var getAcceptedComplaints = _mapper.Map<GetComplaintsDto>(acceptedComplaints);
+        var getAcceptedComplaints = _mapper.Map<List<GetComplaintsDto>>(acceptedComplaints);
 
         BaseResponseClass response = new BaseResponseClass
         {
