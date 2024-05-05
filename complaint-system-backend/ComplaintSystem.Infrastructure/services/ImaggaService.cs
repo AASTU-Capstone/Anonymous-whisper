@@ -22,7 +22,7 @@ namespace ComplaintSystem.Infrastructure.services
             // Define the base URL of the API endpoint
             string baseUrl = "https://api.aiornot.com/v1";
 
-            string aiOrNotToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFmYjJmYjU0LWI5OTQtNDRmMC1hMjc5LWY3NTc3ZGZhZjI3ZSIsInVzZXJfaWQiOiIxZmIyZmI1NC1iOTk0LTQ0ZjAtYTI3OS1mNzU3N2RmYWYyN2UiLCJhdWQiOiJhY2Nlc3MiLCJleHAiOjAuMH0.QNU9gPJnhI03gu_QmYsFOUykv36cS-62H-uqdmDfNjA";
+            string aiOrNotToken = Environment.GetEnvironmentVariable("AiOrNot_Token");
             var requestJSon = new AIorNotImageRequest
             {
                 image = image
@@ -59,8 +59,8 @@ namespace ComplaintSystem.Infrastructure.services
 
         public async Task<List<string>> Tagger(string image)
         {
-            string apiSecret = "8b8b073665bfb14233d3e550ee830976";
-            string apiKey = "acc_bfaa40315d96f00";
+            string apiSecret = Environment.GetEnvironmentVariable("Immaga_API_Secret");
+            string apiKey = Environment.GetEnvironmentVariable("Immaga_API_Key");
             string baseURL = "https://api.imagga.com/v2";
             string basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", apiKey, apiSecret)));
             string imageUrl = "C:\\Users\\Bebe_x\\Pictures\\Saved Pictures\\images.jpg";
