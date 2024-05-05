@@ -18,4 +18,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:$TAG
 WORKDIR /App
 
 COPY --from=build-env /App/out .
-ENTRYPOINT ["dotnet", "  ComplaintSystem.API.dll"]
+ENTRYPOINT ["dotnet", "ComplaintSystem.API.dll"]

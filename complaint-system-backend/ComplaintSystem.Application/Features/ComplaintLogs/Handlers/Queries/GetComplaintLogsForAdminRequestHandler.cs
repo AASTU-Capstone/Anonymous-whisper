@@ -33,7 +33,7 @@ public class GetComplaintLogsForAdminRequestHandler : IRequestHandler<GetComplai
         if(admin != null)
         {
             var complaintsLog = await _complaintLogRepository.GetForAdmin(request.AdminId);
-            var getComplaintLogs = _mapper.Map<GetComplaintLogsDto>(complaintsLog);
+            var getComplaintLogs = _mapper.Map<List<GetComplaintLogsDto>>(complaintsLog);
             response = new BaseResponseClass
             {
                 Success = true,

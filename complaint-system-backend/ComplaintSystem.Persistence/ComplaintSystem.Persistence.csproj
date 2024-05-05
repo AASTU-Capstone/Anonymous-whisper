@@ -16,4 +16,8 @@
     <ProjectReference Include="..\ComplaintSystem.Application\ComplaintSystem.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

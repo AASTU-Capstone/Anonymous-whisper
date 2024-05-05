@@ -1,5 +1,4 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintDto;
-using ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
 using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
 using ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 using ComplaintSystem.Application.Responses;
@@ -11,8 +10,8 @@ using System.Security.Claims;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Policy ="user")]
     [ApiController]
-    [Authorize(policy:"User")]
     public class ComplaintController : ControllerBase
     {
         private readonly IHttpContextAccessor _contextAccessor;

@@ -19,6 +19,10 @@ builder.Services.ConfigureApplicationServices();
 builder.Services.ConfigurePersitenceServices(builder.Configuration);
 builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
 
+// Add Environment Variables
+builder.Configuration.AddEnvironmentVariables();
+DotNetEnv.Env.Load("../.env");
+
 // initialize firebase service
 
 FirebaseApp.Create(new AppOptions()
@@ -26,21 +30,41 @@ FirebaseApp.Create(new AppOptions()
     Credential = GoogleCredential.FromJson(Environment.GetEnvironmentVariable("FIREBASE_CONFIG"))
 });
 
+// set cors policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "frontend",
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                      });
+});
+
 //add policies for authorization
+
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("User", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "user"));
 });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "admin"));
+});
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Manager", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "manager"));
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Subordinate", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "subordinate"));
+});
 
 
 //Date now works with this for east african time
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
-// Add Environment Variables
-builder.Configuration.AddEnvironmentVariables();
-DotNetEnv.Env.Load("../.env");
 
 var app = builder.Build();
 
@@ -50,12 +74,11 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI();
 //}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
+app.UseCors("frontend");
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.MapControllers();
 

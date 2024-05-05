@@ -29,7 +29,7 @@ public class GetComplaintLogsForSubordinateRequestHandler : IRequestHandler<GetC
         if(subordinate != null)
         {
             var complaintLogs = await _complaintLogRepository.GetForSubordinate(request.SubordinateId);
-            var getComplaintLogs = _mapper.Map<GetComplaintLogsDto>(complaintLogs);
+            var getComplaintLogs = _mapper.Map<List<GetComplaintLogsDto>>(complaintLogs);
 
             response = new BaseResponseClass
             {
