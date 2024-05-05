@@ -71,7 +71,8 @@ namespace ComplaintSystem.API.Controllers
         [Route("AssignManagers")]
         public async Task<ActionResult<BaseResponseClass>> AssignManager(CreateComplaintLogDto createComplaintLogDto)
         {
-            var command = new CreateComplaintLogCommand { ComplaintLogDto = createComplaintLogDto };
+            var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
+            var command = new CreateComplaintLogCommand { ComplaintLogDto = createComplaintLogDto, AdminId = adminId };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }
