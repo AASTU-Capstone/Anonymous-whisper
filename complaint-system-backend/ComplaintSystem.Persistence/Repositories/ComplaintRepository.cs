@@ -15,7 +15,13 @@ namespace ComplaintSystem.Persistence.Repositories
 
         public async Task<List<Complaint>> GetAcceptedComplaints()
         {
-            var complaints = await _complaintSystemAppDbContext.Complaints.Where(c => c.Status.ToLower() == "accepted").ToListAsync();
+            var complaints = await _complaintSystemAppDbContext.Complaints.Where(c => c.Status.ToLower() == "recieved").ToListAsync();
+            return complaints;
+        }
+
+        public async Task<List<Complaint>> GetUserComplaints(Guid UserId, string status)
+        {
+            var complaints = await _complaintSystemAppDbContext.Complaints.Where(c=>c.UserEntityId == UserId && c.Status.ToLower() == status.ToLower() ).ToListAsync();
             return complaints;
         }
     }

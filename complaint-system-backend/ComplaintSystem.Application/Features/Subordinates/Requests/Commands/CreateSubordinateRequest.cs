@@ -6,11 +6,9 @@ using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.Responses;
 using MediatR;
 
-namespace ComplaintSystem.Application.Features.Subordinates.Requests.Commands
+namespace ComplaintSystem.Application.Features.Subordinates.Requests.Commands;
+public class CreateSubordinateRequest : IRequest<BaseResponseClass>
 {
-    public class CreateSubordinateRequest : IRequest<BaseResponseClass>
-    {
-        public CreateSubordinateDto CreateSubordinateDto { get; set; }
+    public CreateSubordinateDto CreateSubordinateDto { get; set; }
 
-    }
 }

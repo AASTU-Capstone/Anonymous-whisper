@@ -15,17 +15,19 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
     public class CreateManagerRequestHandler : IRequestHandler<CreateManagerRequest, BaseResponseClass>
     {
         private readonly IManagerRepository _managerRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public CreateManagerRequestHandler(IManagerRepository managerRepository, IMapper mapper)
+        public CreateManagerRequestHandler(IManagerRepository managerRepository, IMapper mapper, IUserRepository userRepository)
         {
             _managerRepository = managerRepository;
             _mapper = mapper;
+            _userRepository = userRepository;
         }
 
         public async Task<BaseResponseClass> Handle(CreateManagerRequest request, CancellationToken cancellationToken)
         {
-            var Validator = new CreateManagerDtoValidator();
+            var Validator = new CreateManagerDtoValidator(_userRepository);
             var validationResult = await Validator.ValidateAsync(request.CreateManagerDto, cancellationToken);
             var response = new BaseResponseClass();
 
@@ -38,9 +40,13 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
 
             else
             {
+                var user = await _userRepository.GetByEmail(request.CreateManagerDto.Email);
+                user.User_Type = "manager";
+                await _userRepository.Update(user);
 
                 var manager = _mapper.Map<Manager>(request.CreateManagerDto);
                 manager.AdminId = request.AdminId;
+                manager.UserEntityId = user.Id;
                 await _managerRepository.Add(manager);
 
                 response.StatusCode = 201;

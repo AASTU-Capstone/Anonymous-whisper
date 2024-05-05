@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.DTOs.ManagerDto;
 
-public class GetMaangerDto
+public class GetManagerDto
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

@@ -7,7 +7,8 @@ namespace ComplaintSystem.Application.DTOs.SubordinateDto
 {
     public class CreateSubordinateDto
     {
-        public string? Name { get; set; }
+        public string Name { get; set; }
+        public string Email {  get; set; }
         public int MitigatedCount { get; set; }
         public Guid ManagerId { get; set; }
     }

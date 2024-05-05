@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ComplaintSystem.Application.Persistence.Contracts;
 using FluentValidation;
 
 namespace ComplaintSystem.Application.DTOs.ComplaintDto.Validators
 {
-    public class CreateComplaintDtoValidator : AbstractValidator<CreateComplaintDto>
+    public class CreateComplaintDtoValidator : AbstractValidator<CreateComplaintControllerDto>
     {
         public CreateComplaintDtoValidator()
         {
@@ -19,9 +20,15 @@ namespace ComplaintSystem.Application.DTOs.ComplaintDto.Validators
             RuleFor(x => x.Category)
                 .NotEmpty()
                 .WithMessage("Category is required");
-            RuleFor(x => x.Tag)
-                .NotEmpty()
-                .WithMessage("Tag is required");
+            /*RuleFor(x => x.ImageEvidence).MustAsync( (images, token) =>
+            {
+                // handle the api to check if its a valid image
+                foreach(var image in images)
+                {
+                    return true;
+                }
+                return true;
+            }).WithMessage("{PropertyName} is not valid");*/
         }
 
     }

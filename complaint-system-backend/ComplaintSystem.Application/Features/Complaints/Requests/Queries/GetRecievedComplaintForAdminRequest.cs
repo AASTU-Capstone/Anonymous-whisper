@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 
-public class GetAcceptedComplaintForAdminRequest : IRequest<BaseResponseClass>
+public class GetRecievedComplaintForAdminRequest : IRequest<BaseResponseClass>
 {
 
 }

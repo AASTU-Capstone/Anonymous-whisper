@@ -5,5 +5,6 @@ namespace ComplaintSystem.Application.Persistence.Contracts
     public interface IComplaintRepository : IGenericRepository<Complaint>
     {
         public Task<List<Complaint>> GetAcceptedComplaints();
+        public Task<List<Complaint>> GetUserComplaints(Guid UserId, string Status);
     }
 }

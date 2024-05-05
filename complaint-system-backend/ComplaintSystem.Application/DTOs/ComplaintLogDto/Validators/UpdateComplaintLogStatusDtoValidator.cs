@@ -10,9 +10,14 @@ namespace ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 public class UpdateComplaintLogStatusDtoValidator:AbstractValidator<UpdateComplaintLogStatusDto>
 {
     private readonly IComplaintLogRepository _complaintLogRepository;
+    /*
+     complaint: recieved, accepted, rejected
+
+     complaintLog: resolved Admin Processing   manager pending,Started subordinate progressing
+     */
     private bool IsStatusType(string statusType)
     {
-        var statusTypes = new List<string> { "accepted", "resolved" };
+        var statusTypes = new List<string> { "pending", "resolved", "progressing", "overviewing", "Processing" };
         var match = statusTypes.Where(type => statusType.ToLower() == type);
         return match.Any();
     }

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ComplaintSystem.Application.Persistence.Contracts.APIs;
 
 namespace  ComplaintSystem.Infrastructure;  
 public static class InfrastructureDependencyInjection
@@ -48,6 +49,7 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<IJwtTokenValidation, JwtTokenValidation>();
         services.AddSingleton<IOpenAiServices, OpenAiService>();
         services.AddSingleton<IPdfReaderService, PdfReaderService>();
+        services.AddSingleton<IImaggaService, ImaggaService>();
 
         services.Configure<CloudinarySetting>(configuration.GetSection(CloudinarySetting.SectionName));
         services.AddTransient<ICloudinaryService, CloudinaryService>();

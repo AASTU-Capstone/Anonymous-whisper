@@ -9,5 +9,5 @@ namespace  ComplaintSystem.Application.Persistence.Contracts.Auth;
 
 public interface IJwtTokenGenerator
 {
-    string GenerateToken(UserEntity user);
+    string GenerateToken(UserEntity user, bool firebaseAuth);
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ComplaintSystem.Application.DTOs.ManagerDto;
 using ComplaintSystem.Application.Features.Managers.Requests.Queries;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Responses;
@@ -25,9 +26,11 @@ public class GetManagersRequestHandler : IRequestHandler<GetManagersRequest, Bas
     {
         var type1Managers = await _managerRepository.GetMananger(request.AdminId, "premitigation");
         var type2Managers = await _managerRepository.GetMananger(request.AdminId, "postmitigation");
+        var type1ManagerDto = _mapper.Map<GetManagerDto>(type1Managers);
+        var type2ManagerDto = _mapper.Map<GetManagerDto>(type2Managers);
         BaseResponseClass response = new BaseResponseClass
         {
-            Data = (type1Managers, type2Managers),
+            Data = (type1ManagerDto, type2ManagerDto),
             StatusCode = 200,
             Success = true,
             Message = "Managers Fetched Successfully"

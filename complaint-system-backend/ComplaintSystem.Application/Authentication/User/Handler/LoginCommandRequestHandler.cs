@@ -54,7 +54,7 @@ namespace  ComplaintSystem.Application.Authentication.User.Handler
                 response.Success = true;
                 response.Message = "User logged in successfully";
                 response.StatusCode = 200;
-                token = _jwtTokenGenerator.GenerateToken(user);
+                token = _jwtTokenGenerator.GenerateToken(user, false);
                 flag = true;
             }
    

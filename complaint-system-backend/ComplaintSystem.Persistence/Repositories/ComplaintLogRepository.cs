@@ -1,5 +1,6 @@
 ﻿using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,24 @@ namespace ComplaintSystem.Persistence.Repositories
         public ComplaintLogRepository(ComplaintSystemAppDbContext complaintSystemAppDbContext): base(complaintSystemAppDbContext)
         {
             _complaintSystemAppDbContext = complaintSystemAppDbContext;
+        }
+
+        public async Task<List<ComplaintLog>> GetForAdmin(Guid AdminId)
+        {
+            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.AdminId == AdminId).ToListAsync();
+            return complaints;
+        }
+
+        public async Task<List<ComplaintLog>> GetForManager(Guid ManagerId)
+        {
+            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log=> log.ManagerId == ManagerId).ToListAsync();
+            return complaints;
+        }
+
+        public async Task<List<ComplaintLog>> GetForSubordinate(Guid SubordinateId)
+        {
+            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.SubordinateId == SubordinateId).ToListAsync();
+            return complaints;
         }
     }
 }

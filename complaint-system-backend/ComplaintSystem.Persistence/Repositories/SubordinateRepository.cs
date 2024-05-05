@@ -1,5 +1,6 @@
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComplaintSystem.Persistence.Repositories
 {
@@ -9,6 +10,12 @@ namespace ComplaintSystem.Persistence.Repositories
         public SubordinateRepository(ComplaintSystemAppDbContext complaintSystemAppDbContext) : base(complaintSystemAppDbContext)
         {
             _complaintSystemAppDbContext = complaintSystemAppDbContext;
+        }
+
+        public async Task<List<Subordinate>> GetSubordinatesForManager(Guid ManagerId)
+        {
+            var subordinates = await _complaintSystemAppDbContext.Subordinates.Where(sub => sub.ManagerId == ManagerId).ToListAsync();
+            return subordinates;
         }
     }
 }

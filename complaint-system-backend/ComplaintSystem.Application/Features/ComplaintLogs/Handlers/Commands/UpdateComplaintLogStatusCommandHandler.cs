@@ -14,9 +14,11 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands;
 public class UpdateComplaintLogStatusCommandHandler : IRequestHandler<UpdateComplaintLogStatusCommand, BaseResponseClass>
 {
     private readonly IComplaintLogRepository _complaintLogRepository;
-    public UpdateComplaintLogStatusCommandHandler(IComplaintLogRepository complaintLogRepository)
+    private readonly ISubordinateRepository _subordinateRepository;
+    public UpdateComplaintLogStatusCommandHandler(IComplaintLogRepository complaintLogRepository, ISubordinateRepository subordinateRepository)
     {
         _complaintLogRepository = complaintLogRepository;
+        _subordinateRepository = subordinateRepository;
         
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusCommand request, CancellationToken cancellationToken)
@@ -30,6 +32,14 @@ public class UpdateComplaintLogStatusCommandHandler : IRequestHandler<UpdateComp
             var complaintlog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
             complaintlog.Status = request.ComplaintLogStatus.Status;
             await _complaintLogRepository.Update(complaintlog);
+
+            //update the mititaged count for the subordinate
+            var subordinate = await _subordinateRepository.GetAsync(complaintlog.SubordinateId);
+            if(subordinate != null)
+            {
+                subordinate.MitigatedCount += 1;
+                await _subordinateRepository.Update(subordinate);
+            }
 
             response = new BaseResponseClass
             {

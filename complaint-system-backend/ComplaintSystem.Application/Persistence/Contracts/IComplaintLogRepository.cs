@@ -8,5 +8,7 @@ using System.Threading.Tasks;
 namespace ComplaintSystem.Application.Persistence.Contracts;
 public interface IComplaintLogRepository : IGenericRepository<ComplaintLog>
 {
-
+    public Task<List<ComplaintLog>> GetForManager(Guid ManagerId);
+    public Task<List<ComplaintLog>> GetForAdmin(Guid AdminId);
+    public Task<List<ComplaintLog>> GetForSubordinate(Guid SubordinateId);
 }

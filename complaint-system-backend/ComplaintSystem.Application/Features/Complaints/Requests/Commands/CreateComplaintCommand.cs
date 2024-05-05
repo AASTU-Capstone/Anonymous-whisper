@@ -4,9 +4,9 @@ using MediatR;
 
 namespace ComplaintSystem.Application.Features.Complaints.Requests.Commands
 {
-    public class CreateComplaintRequest : IRequest<BaseResponseClass>
+    public class CreateComplaintCommand : IRequest<BaseResponseClass>
     {
-        public CreateComplaintDto CreateComplaintDto { get; set; }
-
+        public CreateComplaintControllerDto CreateComplaintDto { get; set; }
+        public Guid UserId { get; set; }
     }
 }

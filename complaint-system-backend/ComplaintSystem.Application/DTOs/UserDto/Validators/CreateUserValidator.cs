@@ -36,10 +36,10 @@ namespace  ComplaintSystem.Application.DTOs.UserDto.Validators
             .Matches("[0-9]").WithMessage("Password must contain at least one number.")
             .Matches("[!@#$%^&*]").WithMessage("Password must contain at least one special character.");
 
-            RuleFor(x => x.User_Type).NotEmpty().WithMessage("{PropertyName} is required").Must((u, token) =>
+            /*RuleFor(x => x.User_Type).NotEmpty().WithMessage("{PropertyName} is required").Must((u, token) =>
             {
                 return IsType(u.User_Type.ToLower());
-            }).WithMessage("{PropertyName} must be startup or investor");
+            }).WithMessage("{PropertyName} must be startup or investor");*/
         }
     }
 }

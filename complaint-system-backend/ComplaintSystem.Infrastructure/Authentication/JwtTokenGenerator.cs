@@ -20,7 +20,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _jwtsettings = jwtsettings.Value;
         
     }
-    public string GenerateToken(UserEntity user)
+    public string GenerateToken(UserEntity user, bool firebaseAuth)
     {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(
@@ -30,6 +30,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("firebaseAuth", firebaseAuth.ToString()),
             new Claim(JwtRegisteredClaimNames.Typ, user.User_Type),
             new Claim("userid", user.Id.ToString()),
             new Claim("useremail", user.Email)

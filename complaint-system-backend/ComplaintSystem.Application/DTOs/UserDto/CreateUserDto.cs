@@ -10,6 +10,5 @@ namespace  ComplaintSystem.Application.DTOs.UserDto
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public string User_Type { get; set; }
     }
 }

@@ -1,0 +1,95 @@
+﻿using ComplaintSystem.Application.DTOs.RESTAPIDto;
+using ComplaintSystem.Application.Persistence.Contracts.APIs;
+using ComplaintSystem.Infrastructure.services.Common;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using RestSharp.Authenticators;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ComplaintSystem.Infrastructure.services
+{
+    public class ImaggaService : IImaggaService
+    {
+        public async Task<AIdto> Check(IFormFile image)
+        {
+            // Define the base URL of the API endpoint
+            string baseUrl = "https://api.aiornot.com/v1";
+
+            string aiOrNotToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFmYjJmYjU0LWI5OTQtNDRmMC1hMjc5LWY3NTc3ZGZhZjI3ZSIsInVzZXJfaWQiOiIxZmIyZmI1NC1iOTk0LTQ0ZjAtYTI3OS1mNzU3N2RmYWYyN2UiLCJhdWQiOiJhY2Nlc3MiLCJleHAiOjAuMH0.QNU9gPJnhI03gu_QmYsFOUykv36cS-62H-uqdmDfNjA";
+            var requestJSon = new AIorNotImageRequest
+            {
+                image = image
+            };
+
+            // Create a RestClient instance with the base URL
+            var client = new RestClient(baseUrl);
+
+            // Create a new RestRequest with the resource path and method
+            var request = new RestRequest("/reports/image", Method.Post);
+
+            // Add the email and password as parameters to the request
+            request.AddJsonBody(requestJSon);
+
+            //add header 
+            request.AddHeader("Authorization", "Bearer "+aiOrNotToken);
+            Console.WriteLine("here  working");
+            // Execute the request asynchronously
+            var response = await client.ExecuteAsync(request);
+            AIdto idto;
+            Console.WriteLine(response.Content);
+            if (response.IsSuccessStatusCode)
+            {
+                idto = JsonConvert.DeserializeObject<AIdto>(response.Content);
+            }
+            else
+            {
+                idto = new AIdto();
+            }
+            return idto;
+            
+
+        }
+
+        public async Task<List<string>> Tagger(string image)
+        {
+            string apiSecret = "8b8b073665bfb14233d3e550ee830976";
+            string apiKey = "acc_bfaa40315d96f00";
+            string baseURL = "https://api.imagga.com/v2";
+            string basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", apiKey, apiSecret)));
+            string imageUrl = "C:\\Users\\Bebe_x\\Pictures\\Saved Pictures\\images.jpg";
+            //RestClient client = new RestClient(baseURL);
+
+            var client = new RestClient("https://api.imagga.com/v2/");
+
+            var request = new RestRequest("tags",Method.Post);
+
+            request.AddFile("image", imageUrl);
+            request.AddHeader("Authorization", String.Format("Basic {0}", basicAuthValue));
+
+            RestResponse response = await client.ExecuteAsync(request);
+            
+            List<string> imageTags = new List<string>();
+            if (response.IsSuccessStatusCode)
+            {
+                TaggerDto jsonResponse = JsonConvert.DeserializeObject<TaggerDto>(response.Content)!;
+                foreach (var tags in jsonResponse.result.tags)
+                {
+                    if (tags.confidence >= 40)
+                    {
+                        imageTags.Add(tags.tag.en);
+                       
+                    }
+                }
+            }
+           
+            return imageTags;
+        }
+    }
+}
