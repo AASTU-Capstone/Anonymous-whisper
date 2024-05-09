@@ -8,7 +8,6 @@ namespace ComplaintSystem.Application.DTOs.ComplaintLogDto
     public class CreateComplaintLogDto
     {
         public string? Title { get; set; }
-        public string? Report { get; set; }
         public string? Priority { get; set; }
         public Guid ManagerId { get; set; }
         public Guid ComplaintId { get; set; }

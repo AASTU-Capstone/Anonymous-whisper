@@ -1,7 +1,9 @@
-﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
+﻿using ComplaintSystem.Application.DTOs.ComplaintDto;
+using ComplaintSystem.Application.DTOs.ComplaintLogDto;
 using ComplaintSystem.Application.DTOs.ManagerDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
+using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
 using ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Features.Managers.Requests.Queries;
@@ -76,6 +78,16 @@ namespace ComplaintSystem.API.Controllers
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpPatch]
+        [Route("UpdateComplaintStatus")]
+        public async Task<ActionResult<BaseResponseClass>> UpdateComplaintStatus(UpdateComplaintDto updateComplainDto)
+        {
+            var command  = new UpdateComplaintStatusCommand { UpdateComplainDto = updateComplainDto };
+            var response = await _mediator.Send(command);
+            return StatusCode(response.StatusCode, response);
+        }
+
         [HttpPatch]
         [Route("UpdateReportStatus")]
         public async Task<ActionResult<BaseResponseClass>> UpdateReportStatus(UpdateComplaintLogStatusDto updateComplaintLogStatusDto)

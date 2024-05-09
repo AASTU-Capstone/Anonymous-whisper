@@ -23,7 +23,6 @@ public class CreateComplaintLogDtoValidator : AbstractValidator<CreateComplaintL
         _managerRepository = managerRepository;
         _complaintRepository = complaintRepository;
         RuleFor(c => c.Title).NotEmpty().NotNull().WithMessage("{PropertyName} can not be empty").MaximumLength(233).WithMessage("{PropertyName} can not exceed 233 characters");
-        RuleFor(c => c.Report).NotEmpty().NotNull().WithMessage("{PropertyName} can not be empty");
         RuleFor(c => c.Priority).NotEmpty().NotNull().WithMessage("{PropertyName} can not be empty").Must((log, token) =>
         {
             if (log.Priority == null)

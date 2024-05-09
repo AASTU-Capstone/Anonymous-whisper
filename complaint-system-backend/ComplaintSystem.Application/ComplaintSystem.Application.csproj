@@ -21,4 +21,9 @@
     <ProjectReference Include="..\ComplaintSystem.Domain\ComplaintSystem.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\ChatBots\Handlers\Commands\" />
+    <Folder Include="Features\ChatBots\Requests\Commands\" />
+  </ItemGroup>
+
 </Project>

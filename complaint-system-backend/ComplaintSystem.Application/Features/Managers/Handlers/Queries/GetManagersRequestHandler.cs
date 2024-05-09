@@ -30,7 +30,7 @@ public class GetManagersRequestHandler : IRequestHandler<GetManagersRequest, Bas
         var type2ManagerDto = _mapper.Map<GetManagerDto>(type2Managers);
         BaseResponseClass response = new BaseResponseClass
         {
-            Data = (type1ManagerDto, type2ManagerDto),
+            Data = new Dictionary<string, object> { { "type1",type1ManagerDto}, {"type2",type2ManagerDto } },
             StatusCode = 200,
             Success = true,
             Message = "Managers Fetched Successfully"

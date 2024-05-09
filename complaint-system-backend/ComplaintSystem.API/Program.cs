@@ -24,11 +24,14 @@ builder.Configuration.AddEnvironmentVariables();
 DotNetEnv.Env.Load("../.env");
 
 // initialize firebase service
-
-FirebaseApp.Create(new AppOptions()
+if(FirebaseApp.DefaultInstance == null)
 {
-    Credential = GoogleCredential.FromJson(Environment.GetEnvironmentVariable("FIREBASE_CONFIG"))
-});
+    FirebaseApp.Create(new AppOptions()
+    {
+        Credential = GoogleCredential.FromJson(Environment.GetEnvironmentVariable("FIREBASE_CONFIG"))
+    });
+}
+
 
 // set cors policy
 builder.Services.AddCors(options =>
