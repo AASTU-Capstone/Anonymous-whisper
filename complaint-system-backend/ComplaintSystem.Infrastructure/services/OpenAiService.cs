@@ -40,28 +40,18 @@ public class OpenAiService : IOpenAiServices
         var result = await chat.GetResponseFromChatbotAsync();
         return result.ToString();
     }
-    public async Task<string> SparkyByQuery(string text, string param, string query)
-    {
 
-        Dictionary<string, string> parameterDict = new Dictionary<string, string>
-        {
-            {"problem","consider the given text is a problem statement for a startup project" },
-            {"solution" , "consider the given text is a problem solution for a startup project"},
-            {"financial projection", "consider the given text is a financial projection for a startup project" },
-            {"buisness model", "consider the given text is a buisness model for a startup project" },
-            {"market analysis", "consider the given text is a market analysis for a startup project" },
-            {"competitor", "consider the given text is a detailed description of the competitors for a startup project" },
-            {"cost to build mvp", "consider the given text is a broken down explanation on the cost to build the MVP for a startup project" },
-            {"current cash flow", "consider the given text is a description of the current cash flow for a startup project" }
-        };
+    public async Task<string> MessageChat(string message)
+    {
         var api = new OpenAI_API.OpenAIAPI(Environment.GetEnvironmentVariable("OPENAI_KEY"));
         var chat = api.Chat.CreateConversation();
         chat.RequestParameters.Temperature = 0.4;
         chat.Model = OpenAI_API.Models.Model.ChatGPTTurbo;
-        chat.AppendUserInput(parameterDict[param]);
-        chat.AppendUserInput(query);
-        chat.AppendUserInput(text);
+        chat.AppendSystemMessage("Consider the message is from user using a chat bot of anti corruption commision management system where users enter thier specific case as a complaint. the system offers users to enter a complaint with the attributes including images, audios, documents and content explaining the case at hand. The system has actors including adminstrator, managers and subordinates to handle complaint cases submitted by the user of the system. return a message for the attached message below considering the management system mentioned before");
+        //chat.AppendExampleChatbotOutput
+        chat.AppendUserInput(message);
         var result = await chat.GetResponseFromChatbotAsync();
         return result.ToString();
+
     }
 }

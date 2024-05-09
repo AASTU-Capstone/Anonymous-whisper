@@ -10,4 +10,5 @@ public interface IOpenAiServices
 {
     public Task<string> ExtractPdfToJson(string texts);
     public Task<string> MakeitProffessional(string text);
+    public Task<string> MessageChat(string message);
 }

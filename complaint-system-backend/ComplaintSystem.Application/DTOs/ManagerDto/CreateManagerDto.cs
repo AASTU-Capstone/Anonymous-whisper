@@ -11,6 +11,5 @@ namespace ComplaintSystem.Application.DTOs.ManagerDto
         public string? Email { get; set; }
         public string? Password { get; set; }
         public string? Role { get; set; }
-        public Guid AdminId { get; set; }
     }
 }

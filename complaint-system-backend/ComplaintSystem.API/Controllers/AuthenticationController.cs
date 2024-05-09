@@ -44,6 +44,27 @@ namespace  ComplaintSystem.API.Controllers
             
             return StatusCode(authResult.StatusCode, response);
         }
+        [HttpPost]
+        [Route("FirebaseLogin")]
+        public async Task<IActionResult> FirebaseLogin(string fbToken, string userType)
+        {
+            var command = new FirebaseLoginCommand { fbToken = fbToken, userType = userType };
+            var authResponse = await _mediator.Send(command);
+            var response = new AuthenticationResponse();
+            response.Success = authResponse.Success;
+            response.Message = authResponse.Message;
+            response.IsVerified = authResponse.Verified;
+
+            if (authResponse.Success)
+            {
+                response.Id = authResponse.User.Id;
+                response.Email = authResponse.User.Email;
+                response.Token = authResponse.Token;
+            }
+
+            return StatusCode(authResponse.StatusCode, response);
+        }
+
         [HttpPost("forgotPassword")]
         public async Task<ActionResult<BaseResponseClass>> ForgetPassword([FromBody] ForgetPasswordDto forgetPasswordDto)
         {

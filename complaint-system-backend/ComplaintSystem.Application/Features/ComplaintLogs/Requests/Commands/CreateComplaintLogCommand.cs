@@ -11,4 +11,5 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 public class CreateComplaintLogCommand : IRequest<BaseResponseClass>
 {
     public CreateComplaintLogDto ComplaintLogDto { get; set; }
+    public Guid AdminId { get; set; }
 }
