@@ -22,7 +22,7 @@ public class UpdateListingsRequestHandler : IRequestHandler<UpdateListingsReques
     public async Task<BaseResponseClass> Handle(UpdateListingsRequest request, CancellationToken cancellationToken)
     {
         var listing = await _listingsRepository.GetAsync(request.UpdateListings.Id);
-        _mapper.Map(listing, request.UpdateListings);
+        _mapper.Map(request.UpdateListings,listing);
 
         await _listingsRepository.Update(listing);
         BaseResponseClass response = new BaseResponseClass
