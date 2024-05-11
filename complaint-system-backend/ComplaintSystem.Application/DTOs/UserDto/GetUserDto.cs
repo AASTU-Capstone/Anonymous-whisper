@@ -8,6 +8,6 @@ namespace  ComplaintSystem.Application.DTOs.UserDto
     public class GetUserDto
     {
         public string Email { get; set; }
-        public string User_Type { get; set; }
+        public string Name { get; set; }
     }
 }

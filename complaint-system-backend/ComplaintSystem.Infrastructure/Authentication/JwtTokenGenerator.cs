@@ -31,7 +31,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("firebaseAuth", firebaseAuth.ToString()),
-            new Claim(JwtRegisteredClaimNames.Typ, user.User_Type),
+            new Claim(JwtRegisteredClaimNames.Typ, user.Name),
             new Claim("userid", user.Id.ToString()),
             new Claim("useremail", user.Email)
         };

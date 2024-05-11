@@ -62,7 +62,7 @@ public class FirebaseLoginCommandHandler : IRequestHandler<FirebaseLoginCommand,
                         Password = "Pass@1234"
                     };
                     var newUser = _mapper.Map<UserEntity>(userEntity);
-                    newUser.User_Type = "user";
+                    newUser.Name = "user";
                     await _userRepository.Add(newUser);
                     user = newUser;
                 }

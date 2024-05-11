@@ -43,7 +43,7 @@ namespace ComplaintSystem.Application.DTOs.ManagerDto.Validators
                     return false;
                 }
                 var user = await _userRepository.GetByEmail(email);
-                return user != null  && user.User_Type != "manager";
+                return user != null  && user.Name != "manager";
             }).WithMessage("{PropertyName} must be valid");
         }
     }

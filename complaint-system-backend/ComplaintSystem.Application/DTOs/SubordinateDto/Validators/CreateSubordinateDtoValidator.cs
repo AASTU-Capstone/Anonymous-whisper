@@ -26,7 +26,7 @@ namespace ComplaintSystem.Application.DTOs.SubordinateDto.Validators
                 .MustAsync(async (email, token) =>
                 {
                     var user = await _userRepository.GetByEmail(email);
-                    return user != null && user.User_Type.ToLower() != "subordinate";
+                    return user != null && user.Name.ToLower() != "subordinate";
                 }).WithMessage("{PropertyName} is invalid");
 
         }

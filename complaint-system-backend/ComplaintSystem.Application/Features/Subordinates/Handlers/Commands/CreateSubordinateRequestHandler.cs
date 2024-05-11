@@ -44,7 +44,7 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 var subordinate = _mapper.Map<Subordinate>(request.CreateSubordinateDto);
                 await _subordinateRepository.Add(subordinate);
 
-                user.User_Type = "subordinate";
+                user.Name = "subordinate";
                 await _userRepository.Update(user);
 
                 response.StatusCode = 201;

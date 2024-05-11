@@ -6,6 +6,7 @@ using ComplaintSystem.Application.DTOs.ManagerDto;
 using ComplaintSystem.Application.DTOs.AdminDto;
 using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.DTOs.ComplaintDto;
+using ComplaintSystem.Application.DTOs.ListingsDto;
 
 
 namespace ComplaintSystem.Application.Profiles
@@ -40,6 +41,10 @@ namespace ComplaintSystem.Application.Profiles
             CreateMap<UpdateComplaintLogDto, ComplaintLog>().ReverseMap();
             CreateMap<GetComplaintLogsDto, ComplaintLog>().ReverseMap();
 
+            //Listings 
+            CreateMap<CreateListingsDto, ListingsEntity>().ReverseMap();
+            CreateMap<UpdateListingsDto, ListingsEntity>().ReverseMap();
+            CreateMap<GetListingsDto, ListingsEntity>().ReverseMap();
 
         }
     }

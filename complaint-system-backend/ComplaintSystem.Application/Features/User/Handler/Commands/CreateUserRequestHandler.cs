@@ -58,12 +58,12 @@ namespace   ComplaintSystem.Application.Features.User.Handler.Commands
 
                 // add user to database
                 var User = _mapper.Map<UserEntity>(request.User);
-                User.User_Type = "user";
+                User.Name = "user";
                 await _UserRepository.Add(User);
 
                 // create otp and send email to user with otp
-                var command = new CreateOtpRequest { UserEmail = User.Email };
-                var result = await _mediator.Send(command);
+                //var command = new CreateOtpRequest { UserEmail = User.Email };
+                //var result = await _mediator.Send(command);
        
                 response = new BaseResponseClass
                 {

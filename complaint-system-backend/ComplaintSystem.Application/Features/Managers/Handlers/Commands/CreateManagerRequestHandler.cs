@@ -41,7 +41,7 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
             else
             {
                 var user = await _userRepository.GetByEmail(request.CreateManagerDto.Email);
-                user.User_Type = "manager";
+                user.Name = "manager";
                 await _userRepository.Update(user);
 
                 var manager = _mapper.Map<Manager>(request.CreateManagerDto);
