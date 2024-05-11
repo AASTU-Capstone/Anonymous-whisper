@@ -1,4 +1,5 @@
-﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
+﻿using AutoMapper;
+using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Responses;
@@ -15,10 +16,12 @@ public class UpdateComplaintLogStatusForManagerRequestHandler : IRequestHandler<
 {
     private readonly IComplaintLogRepository _complaintLogRepository;
     private readonly IManagerRepository _managerRepository;
-    public UpdateComplaintLogStatusForManagerRequestHandler(IComplaintLogRepository complaintLogRepository, IManagerRepository managerRepository)
+    private readonly IMapper _mapper;
+    public UpdateComplaintLogStatusForManagerRequestHandler(IComplaintLogRepository complaintLogRepository, IManagerRepository managerRepository, IMapper mapper)
     {
         _complaintLogRepository = complaintLogRepository;
         _managerRepository = managerRepository;
+        _mapper = mapper;
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForManagerRequest request, CancellationToken cancellationToken)
     {
@@ -31,6 +34,9 @@ public class UpdateComplaintLogStatusForManagerRequestHandler : IRequestHandler<
             var manager = await _managerRepository.GetAsync(request.ManagerId);
             if (manager != null && manager.Id == complaint.ManagerId)
             {
+                _mapper.Map(complaint, request.ComplaintLogStatus);
+                await _complaintLogRepository.Update(complaint);
+
                 response = new BaseResponseClass
                 {
                     StatusCode = 204,
