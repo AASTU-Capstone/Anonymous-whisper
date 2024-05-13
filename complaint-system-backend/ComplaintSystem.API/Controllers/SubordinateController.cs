@@ -11,7 +11,7 @@ using System.Security.Claims;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Policy ="Subordinate")]
+    [Authorize(Policy = "Subordinate")]
     [ApiController]
     public class SubordinateController : ControllerBase
     {
@@ -49,6 +49,16 @@ namespace ComplaintSystem.API.Controllers
         {
             var subordinateId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("user_id"));
             var command = new UpdateComplaintLogDtoCommand { UpdateComplaintLogDto = updateComplaintLogDto, SubordinateId = subordinateId };
+            var response = await _mediator.Send(command);
+
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPatch]
+        [Route("UpdateComplaintLogStatus")]
+        public async Task<ActionResult<BaseResponseClass>> UpdateComplaintLogStatus(UpdateComplaintLogStatusDto updateComplaintLogStatusDto)
+        {
+            var command = new UpdateComplaintLogStatusCommand { ComplaintLogStatus = updateComplaintLogStatusDto };
             var response = await _mediator.Send(command);
 
             return StatusCode(response.StatusCode, response);

@@ -42,6 +42,24 @@ namespace ComplaintSystem.API.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpGet]
+        [Route("GetComplaintByID")]
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintById(Guid ComplaintId)
+        {
+            var request = new GetComplaintByIdRequest { ComplaintId = ComplaintId };
+            var response = await _mediator.Send(request);
+
+            return StatusCode(response.StatusCode, response);
+        }
+        [HttpGet]
+        [Route("SearchComplaints")]
+        public async Task<ActionResult<BaseResponseClass>> SearchComplaints(string keyword)
+        {
+            var request = new SearchComplaintRequest { Keyword = keyword };
+            var response = await _mediator.Send(request);
+            return StatusCode(response.StatusCode, response);
+        }
+
         [HttpPost]
         [Route("CreateComplaint")]
         public async Task<ActionResult<BaseResponseClass>> CreateComplaint([FromForm]CreateComplaintControllerDto createComplaintDto)
