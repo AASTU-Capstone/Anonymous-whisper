@@ -57,6 +57,18 @@ namespace ComplaintSystem.API.Controllers
 
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpGet]
+        [Route("SearchSubordinates")]
+        public async Task<ActionResult<BaseResponseClass>> SearchSubordinates(string Keyword)
+        {
+            var request = new SearchSubordinatesRequest { Keyword = Keyword };
+            var response = await _mediator.Send(request);
+
+            return StatusCode(response.StatusCode, response);
+        }
+
+
         [HttpPost]
         [Route("CreateSubordinate")]
         public async Task<ActionResult<BaseResponseClass>> CreateSubordinates(CreateSubordinateControllerDto createSubordinateControllerDto)

@@ -19,6 +19,15 @@ namespace ComplaintSystem.Persistence.Repositories
             return complaints;
         }
 
+        public async Task<List<Complaint>> GetMatchingComplaints(string Keyword)
+        {
+            var complaints = await _complaintSystemAppDbContext.Complaints.Where(complaint=>EF.Functions.ILike(complaint.Title, Keyword))
+                .Where(complaint=>complaint.Tag.Contains(Keyword.ToLower()))
+                .Where(complaint=>EF.Functions.ILike(complaint.Content, Keyword)).ToListAsync();
+
+            return complaints;
+        }
+
         public async Task<List<Complaint>> GetUserComplaints(Guid UserId, string status)
         {
             var complaints = await _complaintSystemAppDbContext.Complaints.Where(c=>c.UserEntityId == UserId && c.Status.ToLower() == status.ToLower() ).ToListAsync();

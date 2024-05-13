@@ -30,24 +30,41 @@ public class UpdateComplaintLogStatusCommandHandler : IRequestHandler<UpdateComp
         if (validated.IsValid)
         {
             var complaintlog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
-            complaintlog.Status = request.ComplaintLogStatus.Status;
-            await _complaintLogRepository.Update(complaintlog);
+            Guid statusChangerId = request.ComplaintLogStatus.StatusChangerId;
 
-            //update the mititaged count for the subordinate
-            var subordinate = await _subordinateRepository.GetAsync(complaintlog.SubordinateId);
-            if(subordinate != null)
+            if (complaintlog.AdminId == statusChangerId  || statusChangerId == complaintlog.ManagerId || complaintlog.SubordinateId  == statusChangerId)
             {
-                subordinate.MitigatedCount += 1;
-                await _subordinateRepository.Update(subordinate);
+                complaintlog.Status = request.ComplaintLogStatus.Status;
+                await _complaintLogRepository.Update(complaintlog);
+
+                //update the mititaged count for the subordinate
+                var subordinate = await _subordinateRepository.GetAsync(complaintlog.SubordinateId);
+                if (subordinate != null && request.ComplaintLogStatus.Status.ToLower() == "resolved")
+                {
+                    subordinate.MitigatedCount += 1;
+                    await _subordinateRepository.Update(subordinate);
+                }
+
+                response = new BaseResponseClass
+                {
+                    StatusCode = 204,
+                    Success = true,
+                    Message = "Status Updated Successfully",
+                    Id = complaintlog.Id,
+                };
+            }
+            else
+            {
+                response = new BaseResponseClass
+                {
+                    StatusCode = 400,
+                    Success = false,
+                    Error = ["Ownership does not exist"],
+                    Message = "Complaint Log Status Failed"
+                };
             }
 
-            response = new BaseResponseClass
-            {
-                StatusCode = 204,
-                Success = true,
-                Message = "Status Updated Successfully",
-                Id = complaintlog.Id,
-            };
+            
 
         }else
         {

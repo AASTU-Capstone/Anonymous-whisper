@@ -17,5 +17,11 @@ namespace ComplaintSystem.Persistence.Repositories
             var subordinates = await _complaintSystemAppDbContext.Subordinates.Where(sub => sub.ManagerId == ManagerId).ToListAsync();
             return subordinates;
         }
+
+        public async Task<List<Subordinate>> SearchSubordinates(string Keyword)
+        {
+            var subordinates = await _complaintSystemAppDbContext.Subordinates.Where(subordinate=>EF.Functions.ILike(subordinate.Name, Keyword)).ToListAsync();
+            return subordinates;
+        }
     }
 }

@@ -32,7 +32,8 @@ namespace ComplaintSystem.Application.Profiles
             //Complaint
             CreateMap<CreateComplaintDto, Complaint>().ReverseMap();
             CreateMap<GetComplaintsDto, Complaint>().ReverseMap();
-            CreateMap<UpdateComplaintDto,Complaint>().ReverseMap();
+            CreateMap<UpdateComplaintDto, Complaint>().ReverseMap();
+            CreateMap<GetComplaintDto, Complaint>().ReverseMap();
 
             //ComplaintLog
             CreateMap<CreateComplaintLogDto, ComplaintLog>().ReverseMap();
