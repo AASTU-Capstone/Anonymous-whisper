@@ -57,6 +57,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
             else
             {
                 List<string> imageEvidences = new List<string>();
+                List<string> videos = new List<string>();
                 List<string> documents = new List<string>();
                 List<string> audios = new List<string>();
                 List<string> tags = new List<string>();
@@ -68,6 +69,17 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                         tags.AddRange(await _imaggaService.Tagger(currImage));
                         imageEvidences.Add(currImage);
                     }
+                }
+
+                if(request.CreateComplaintDto.Videos!= null)
+                {
+                    foreach (var video in request.CreateComplaintDto.Videos)
+                    {
+                        string currVideo = await _cloudinaryService.UploadImageAsync(video);
+                        tags.AddRange(await _imaggaService.Tagger(currVideo));
+                        imageEvidences.Add(currVideo);
+                    }
+
                 }
                 
                 if(request.CreateComplaintDto.Documents!= null)

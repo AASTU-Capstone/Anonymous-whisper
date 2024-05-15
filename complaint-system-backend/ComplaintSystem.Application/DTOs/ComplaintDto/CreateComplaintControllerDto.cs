@@ -12,6 +12,7 @@ namespace ComplaintSystem.Application.DTOs.ComplaintDto
         public string? Content { get; set; }
         public List<IFormFile>? ImageEvidence { get; set; }
         public List<IFormFile>? SoundTrack { get; set; }
+        public List<IFormFile>? Videos { get; set; }
         public List<IFormFile>? Documents { get; set; }
         public string? Category { get; set; }
     }

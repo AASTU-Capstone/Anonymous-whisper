@@ -7,6 +7,7 @@ namespace ComplaintSystem.Domain.Entities
         public string Title { get; set; }
         public string Content { get; set; }
         public List<string>? ImageEvidences { get; set; }
+        public List<string>? Videos { get; set; }
         public List<string>? SoundTracks { get; set; }
         public List<string>? Documents { get; set; }
         public string Category { get; set; }
