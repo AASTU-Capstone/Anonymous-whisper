@@ -31,14 +31,15 @@ public class CloudinaryService : ICloudinaryService
             _cloudinarySettings.ApiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET")
         ));
 
-        var uploadParams = new ImageUploadParams()
+        var uploadParams = new AutoUploadParams()
         {
-            File = new FileDescription(imageFile.FileName, imageFile.OpenReadStream())
+            File = new FileDescription(imageFile.FileName, imageFile.OpenReadStream()),
             //Transformation = new Transformation().Height(500).Width(500).Crop("fill")
         };
-
         var uploadResult = await client.UploadAsync(uploadParams);
 
-        return await Task.FromResult(uploadResult.SecureUrl.AbsoluteUri);
+        var link = await Task.FromResult(uploadResult.SecureUrl.AbsoluteUri);
+
+        return link;
     }
 }
