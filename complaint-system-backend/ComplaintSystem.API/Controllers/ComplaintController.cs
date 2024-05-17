@@ -22,11 +22,11 @@ namespace ComplaintSystem.API.Controllers
             _mediator = mediator;
         }
         [HttpGet]
-        [Route("GetAcceptedComplaints")]
+        [Route("GetNonRejectedComplaints")]
         public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints()
         {
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
-            var request = new GetUserAcceptedComplaintsRequest { UserId = userId, Status = "Accepted" };
+            var request = new GetUserAcceptedComplaintsRequest { UserId = userId };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);

@@ -11,5 +11,4 @@ namespace ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 public class GetUserAcceptedComplaintsRequest : IRequest<BaseResponseClass>
 {
     public Guid UserId { get; set; }
-    public string Status { get; set; }
 }
