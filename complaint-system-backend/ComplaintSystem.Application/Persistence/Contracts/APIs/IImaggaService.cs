@@ -14,5 +14,6 @@ namespace ComplaintSystem.Application.Persistence.Contracts.APIs
     {
         public Task<List<string>> Tagger(string images);
         public Task<AIdto> Check(IFormFile image);
+        public Task<bool> AIGenerated(IFormFile image);
     }
 }

@@ -41,7 +41,7 @@ public class GetRejectedComplaintsRequestHandler : IRequestHandler<GetRejectedCo
         }
         else
         {
-            var resolvedComplaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status, request.PaginationDto);
+            var resolvedComplaints = await _complaintRepository.GetUserComplaintsByStatus(request.UserId, request.Status);
             var complaints = _mapper.Map<List<GetComplaintsDto>>(resolvedComplaints);
 
             response = new PaginatedResponseClass

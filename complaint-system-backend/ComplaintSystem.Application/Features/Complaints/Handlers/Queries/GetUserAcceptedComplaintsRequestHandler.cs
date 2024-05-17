@@ -40,7 +40,7 @@ public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAc
         }
         else
         {
-            var complaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status, request.PaginationDto);
+            var complaints = await _complaintRepository.GetUserComplaints(request.UserId, request.PaginationDto);
             var getComplaints = _mapper.Map<List<GetComplaintsDto>>(complaints);
 
             response = new PaginatedResponseClass
