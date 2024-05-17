@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
 
-public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAcceptedComplaintsRequest, BaseResponseClass>
+public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAcceptedComplaintsRequest, PaginatedResponseClass>
 {
     private readonly IMapper _mapper;
     private readonly IComplaintRepository _complaintRepository;
@@ -23,13 +23,13 @@ public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAc
         _mapper = mapper;
         _userRepository = userRepository;
     }
-    public async Task<BaseResponseClass> Handle(GetUserAcceptedComplaintsRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedResponseClass> Handle(GetUserAcceptedComplaintsRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetAsync(request.UserId);
-        BaseResponseClass response;
+        var user = await _userRepository.GetPaginatedAsync(request.PaginationDto.PageNumber, request.PaginationDto.PageSize);
+        PaginatedResponseClass response;
         if (user == null)
         {
-            response = new BaseResponseClass
+            response = new PaginatedResponseClass
             {
                 StatusCode = 404,
                 Success = false,
@@ -40,18 +40,19 @@ public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAc
         }
         else
         {
-            var complaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status);
+            var complaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status, request.PaginationDto);
             var getComplaints = _mapper.Map<List<GetComplaintsDto>>(complaints);
 
-            response = new BaseResponseClass
+            response = new PaginatedResponseClass
             {
                 Data = getComplaints,
                 StatusCode = 200,
                 Success = true,
-                Message = "Complaint Fetched Successfully"
+                Message = "Complaint Fetched Successfully",
+                TotalCount = complaints.Count(),
+                PageNumber = request.PaginationDto.PageNumber,
+                PageSize = request.PaginationDto.PageSize
             };
-
-
         }
 
         return response;

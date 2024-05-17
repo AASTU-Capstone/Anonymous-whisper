@@ -10,6 +10,7 @@ public interface IGenericRepository<T> where T : class
 {
     Task<IEnumerable<T>> GetAllAsync();
     Task<IEnumerable<T>> GetPaginatedAsync(int pageNumber, int pageSize);
+    Task<int> CountAsync();
     Task<T> GetAsync(Guid id);
     Task<bool> EntityExists(Guid id);
     Task<T> Add(T entity);

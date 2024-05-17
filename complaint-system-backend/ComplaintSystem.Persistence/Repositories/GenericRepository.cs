@@ -18,6 +18,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     }
 
+    public async Task<int> CountAsync()
+    {
+        return await _context.Set<T>().CountAsync();
+    }
+
     public async Task Delete(T entity)
     {
         _context.Remove(entity);
@@ -45,7 +50,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     public async Task<IEnumerable<T>> GetPaginatedAsync(int pageNumber, int pageSize)
     {
-        var items = await _context.Set<T>().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await _context.Set<T>()
+            .OrderByDescending(x => EF.Property<DateTime>(x, "CreatedAt"))
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+            
         return items;
     }
 

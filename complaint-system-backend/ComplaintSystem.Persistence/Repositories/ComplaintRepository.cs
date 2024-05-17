@@ -1,6 +1,7 @@
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using ComplaintSystem.Application.DTOs.PaginationDto;
 
 namespace ComplaintSystem.Persistence.Repositories
 {
@@ -28,9 +29,14 @@ namespace ComplaintSystem.Persistence.Repositories
             return complaints;
         }
 
-        public async Task<List<Complaint>> GetUserComplaints(Guid UserId, string status)
+        public async Task<List<Complaint>> GetUserComplaints(Guid UserId, string status, PaginationDto criteria)
         {
-            var complaints = await _complaintSystemAppDbContext.Complaints.Where(c=>c.UserEntityId == UserId && c.Status.ToLower() == status.ToLower() ).ToListAsync();
+            var complaints = await _complaintSystemAppDbContext.Complaints
+                .Where(c=>c.UserEntityId == UserId && c.Status.ToLower() == status.ToLower())
+                .Skip((criteria.PageNumber - 1) * criteria.PageSize)
+                .Take(criteria.PageSize)
+                .ToListAsync();
+                
             return complaints;
         }
     }

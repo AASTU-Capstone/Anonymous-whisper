@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
 
-public class GetRejectedComplaintsRequestHandler : IRequestHandler<GetRejectedComplaintsRequest, BaseResponseClass>
+public class GetRejectedComplaintsRequestHandler : IRequestHandler<GetRejectedComplaintsRequest, PaginatedResponseClass>
 {
     private readonly IComplaintRepository _complaintRepository;
     private readonly IUserRepository _userRepository;
@@ -24,14 +24,14 @@ public class GetRejectedComplaintsRequestHandler : IRequestHandler<GetRejectedCo
         _mapper = mapper;
 
     }
-    public async Task<BaseResponseClass> Handle(GetRejectedComplaintsRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedResponseClass> Handle(GetRejectedComplaintsRequest request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetAsync(request.UserId);
-        BaseResponseClass response;
+        PaginatedResponseClass response;
         
         if(user == null)
         {
-            response = new BaseResponseClass
+            response = new PaginatedResponseClass
             {
                 StatusCode = 404,
                 Success = false,
@@ -41,15 +41,18 @@ public class GetRejectedComplaintsRequestHandler : IRequestHandler<GetRejectedCo
         }
         else
         {
-            var resolvedComplaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status);
+            var resolvedComplaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status, request.PaginationDto);
             var complaints = _mapper.Map<List<GetComplaintsDto>>(resolvedComplaints);
 
-            response = new BaseResponseClass
+            response = new PaginatedResponseClass
             {
                 StatusCode = 200,
                 Success = true,
                 Data = complaints,
-                Message = "Complaint Fetched Successfully"
+                Message = "Complaint Fetched Successfully",
+                TotalCount = resolvedComplaints.Count(),
+                PageNumber = request.PaginationDto.PageNumber,
+                PageSize = request.PaginationDto.PageSize,
             };
         }
 
