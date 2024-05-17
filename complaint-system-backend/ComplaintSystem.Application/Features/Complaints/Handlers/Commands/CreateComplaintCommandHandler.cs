@@ -36,7 +36,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
 
         public async Task<BaseResponseClass> Handle(CreateComplaintCommand request, CancellationToken cancellationToken)
         {
-            var Validator = new CreateComplaintDtoValidator();
+            var Validator = new CreateComplaintDtoValidator(_imaggaService);
             var validationResult = await Validator.ValidateAsync(request.CreateComplaintDto, cancellationToken);
             var response = new BaseResponseClass();
             var user = await _userRepository.GetAsync(request.UserId);
@@ -65,9 +65,9 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 {
                     foreach (var image in request.CreateComplaintDto.ImageEvidence)
                     {
-                        string currImage = await _cloudinaryService.UploadImageAsync(image);
-                        tags.AddRange(await _imaggaService.Tagger(currImage));
-                        imageEvidences.Add(currImage);
+                        CloudinaryResponse currImage = await _cloudinaryService.UploadImageAsync(image);
+                        tags.AddRange(await _imaggaService.Tagger(currImage.Link));
+                        imageEvidences.Add(currImage.Link);
                     }
                 }
 
@@ -75,9 +75,9 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 {
                     foreach (var video in request.CreateComplaintDto.Videos)
                     {
-                        string currVideo = await _cloudinaryService.UploadImageAsync(video);
-                        tags.AddRange(await _imaggaService.Tagger(currVideo));
-                        imageEvidences.Add(currVideo);
+                        CloudinaryResponse currVideo = await _cloudinaryService.UploadImageAsync(video);
+                        tags.AddRange(await _imaggaService.Tagger(currVideo.Link));
+                        imageEvidences.Add(currVideo.Link);
                     }
 
                 }
@@ -86,7 +86,8 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 {
                     foreach (var doc in request.CreateComplaintDto.Documents)
                     {
-                        documents.Add(await _cloudinaryService.UploadImageAsync(doc));
+                        CloudinaryResponse currDoc = await _cloudinaryService.UploadImageAsync(doc);
+                        documents.Add(currDoc.Link);
                     }
                 }
                 
@@ -94,7 +95,8 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 {
                     foreach (var audio in request.CreateComplaintDto.SoundTrack)
                     {
-                        audios.Add(await _cloudinaryService.UploadImageAsync(audio));
+                        CloudinaryResponse currAudio = await _cloudinaryService.UploadImageAsync(audio);
+                        audios.Add(currAudio.Link);
                     }
                 }
                

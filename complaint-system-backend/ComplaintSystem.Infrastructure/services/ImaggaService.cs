@@ -1,5 +1,7 @@
-﻿using ComplaintSystem.Application.DTOs.RESTAPIDto;
+﻿using CloudinaryDotNet;
+using ComplaintSystem.Application.DTOs.RESTAPIDto;
 using ComplaintSystem.Application.Persistence.Contracts.APIs;
+using ComplaintSystem.Application.Persistence.Contracts.Cloudinary;
 using ComplaintSystem.Infrastructure.services.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +19,38 @@ namespace ComplaintSystem.Infrastructure.services
 {
     public class ImaggaService : IImaggaService
     {
-        public async Task<AIdto> Check(IFormFile image)
+        private readonly ICloudinaryService _cloudinaryService;
+        public ImaggaService(ICloudinaryService cloudinaryService)
+        {
+            _cloudinaryService = cloudinaryService;
+        }
+        public async Task<bool> AIGenerated(IFormFile image)
+        {
+            var file = await _cloudinaryService.UploadImageAsync(image);
+            var client = new RestClient("https://api.sightengine.com/1.0");
+            var request = new RestRequest("/check.json", Method.Get);
+            // Add query parameters
+            request.AddParameter("url", file.Link);
+            request.AddParameter("models", "genai");
+            request.AddParameter("api_user", Environment.GetEnvironmentVariable("SIGHT_ENGINE_API_USER"));
+            request.AddParameter("api_secret", Environment.GetEnvironmentVariable("SIGHT_ENGINE_API_SECRET"));
+            RestResponse response = await client.ExecuteAsync(request);
+            bool flag = true;
+            if (response.IsSuccessStatusCode)
+            {
+                SightEngineResponse sightEngineResponse = JsonConvert.DeserializeObject<SightEngineResponse>(response.Content);
+                if (sightEngineResponse != null && sightEngineResponse.type.ai_generated >= 0.5) {
+                    flag = false;
+                }
+            }
+            Console.WriteLine(file.Link);
+            await _cloudinaryService.DeleteFile(file.PublicId);
+
+            return flag;
+
+        }
+
+            public async Task<AIdto> Check(IFormFile image)
         {
             // Define the base URL of the API endpoint
             string baseUrl = "https://api.aiornot.com/v1";

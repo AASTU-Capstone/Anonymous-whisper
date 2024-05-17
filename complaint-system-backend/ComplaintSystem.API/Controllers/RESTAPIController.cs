@@ -16,9 +16,9 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpPost]
         [Route("Categorize")]
-        public async Task<IActionResult> Categorize()
+        public async Task<IActionResult> Categorize(IFormFile formFile)
         {
-            var result = await _imaggaService.Tagger("");
+            var result = await _imaggaService.AIGenerated(formFile);
             return Ok( result);
         }
     }
