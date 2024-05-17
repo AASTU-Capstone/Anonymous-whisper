@@ -20,7 +20,7 @@ namespace ComplaintSystem.Persistence.Repositories
 
         public async Task<List<Subordinate>> SearchSubordinates(string Keyword)
         {
-            var subordinates = await _complaintSystemAppDbContext.Subordinates.Where(subordinate=>EF.Functions.ILike(subordinate.Name, Keyword)).ToListAsync();
+            var subordinates = await _complaintSystemAppDbContext.Subordinates.Where(subordinate=>EF.Functions.ILike(subordinate.Name, "%"+Keyword+"%")).ToListAsync();
             return subordinates;
         }
     }
