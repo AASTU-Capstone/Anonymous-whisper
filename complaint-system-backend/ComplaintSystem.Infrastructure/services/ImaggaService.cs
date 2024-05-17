@@ -96,14 +96,13 @@ namespace ComplaintSystem.Infrastructure.services
             string apiKey = Environment.GetEnvironmentVariable("Immaga_API_Key");
             string baseURL = "https://api.imagga.com/v2";
             string basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", apiKey, apiSecret)));
-            string imageUrl = "C:\\Users\\Bebe_x\\Pictures\\Saved Pictures\\images.jpg";
             //RestClient client = new RestClient(baseURL);
 
             var client = new RestClient("https://api.imagga.com/v2/");
 
             var request = new RestRequest("tags",Method.Post);
 
-            request.AddFile("image", imageUrl);
+            request.AddFile("image", image);
             request.AddHeader("Authorization", String.Format("Basic {0}", basicAuthValue));
 
             RestResponse response = await client.ExecuteAsync(request);
