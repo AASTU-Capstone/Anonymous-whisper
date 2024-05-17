@@ -27,7 +27,7 @@ namespace ComplaintSystem.API.Controllers
         public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints([FromQuery] PaginationDto PaginationDto)
         {
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
-            var request = new GetUserAcceptedComplaintsRequest { UserId = userId, Status = "Accepted", PaginationDto = PaginationDto };
+            var request = new GetUserAcceptedComplaintsRequest { UserId = userId, PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
