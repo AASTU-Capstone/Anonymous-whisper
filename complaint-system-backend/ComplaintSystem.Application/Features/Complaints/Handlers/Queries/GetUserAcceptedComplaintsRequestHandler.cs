@@ -40,7 +40,7 @@ public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAc
         }
         else
         {
-            var complaints = await _complaintRepository.GetUserComplaints(request.UserId, request.Status);
+            var complaints = await _complaintRepository.GetUserComplaints(request.UserId);
             var getComplaints = _mapper.Map<List<GetComplaintsDto>>(complaints);
 
             response = new BaseResponseClass
