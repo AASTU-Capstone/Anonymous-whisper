@@ -1,4 +1,5 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
+using ComplaintSystem.Application.DTOs.PaginationDto;
 using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
@@ -16,7 +17,7 @@ using System.Security.Claims;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Policy ="Manager")]
+    [Authorize(Policy = "Manager")]
     [ApiController]
     //policy
     public class ManagerController : ControllerBase
@@ -40,20 +41,20 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("GetComplaintLogToAssign")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogToAssign()
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogToAssign([FromQuery] PaginationDto PaginationDto)
         {
             var ManagerId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
-            var request = new GetComplaintLogRequestForManager { ManagerId = ManagerId, Status = "progressing" };
+            var request = new GetComplaintLogRequestForManager { ManagerId = ManagerId, Status = "progressing", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
         [Route("GetComplaintLogToUpdate")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogToUpdate()
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogToUpdate([FromQuery] PaginationDto PaginationDto)
         {
             var ManagerId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
-            var request = new GetComplaintLogRequestForManager { ManagerId = ManagerId, Status = "overviewing" };
+            var request = new GetComplaintLogRequestForManager { ManagerId = ManagerId, Status = "overviewing", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
@@ -113,7 +114,7 @@ namespace ComplaintSystem.API.Controllers
                 Status = updateComplaintLogStatusControllerDto.Status,
                 Role = "manager"
             };
-            var command = new UpdateComplaintLogStatusForManagerCommand { ComplaintLogStatus = updateComplaintLogStatusDto};
+            var command = new UpdateComplaintLogStatusForManagerCommand { ComplaintLogStatus = updateComplaintLogStatusDto };
 
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);

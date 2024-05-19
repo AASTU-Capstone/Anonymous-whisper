@@ -1,4 +1,5 @@
-﻿using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
+﻿using ComplaintSystem.Application.DTOs.PaginationDto;
+using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
 using ComplaintSystem.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,9 +22,9 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpGet]
         [Route("GetResolvedComplaintLogs")]
-        public async Task<ActionResult<BaseResponseClass>> GetResolvedComplaintLogs()
+        public async Task<ActionResult<BaseResponseClass>> GetResolvedComplaintLogs([FromQuery] PaginationDto PaginationDto)
         {
-            var request = new GetResolvedComplaintLogsRequest { Status = "resolved"};
+            var request = new GetResolvedComplaintLogsRequest { Status = "resolved", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
