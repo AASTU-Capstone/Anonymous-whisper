@@ -7,9 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Application.Features.Managers.Requests.Commands;
-public class UpdateComplaintLogStatusForManagerRequest : IRequest<BaseResponseClass>
+namespace ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
+public class UpdateComplaintLogStatusForAdminCommand : IRequest<BaseResponseClass>
 {
     public UpdateComplaintLogStatusDto ComplaintLogStatus { get; set;}
-    public Guid ManagerId { get; set;}
 }

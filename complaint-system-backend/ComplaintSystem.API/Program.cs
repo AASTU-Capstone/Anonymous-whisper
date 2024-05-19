@@ -65,6 +65,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Subordinate", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "subordinate"));
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Worker", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "subordinate", "manager", "admin"));
+});
+
 
 //Date now works with this for east african time
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

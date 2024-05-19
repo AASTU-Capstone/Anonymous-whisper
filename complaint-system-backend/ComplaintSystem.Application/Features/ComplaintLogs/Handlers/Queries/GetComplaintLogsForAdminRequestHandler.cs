@@ -32,7 +32,7 @@ public class GetComplaintLogsForAdminRequestHandler : IRequestHandler<GetComplai
         BaseResponseClass response;
         if(admin != null)
         {
-            var complaintsLog = await _complaintLogRepository.GetForAdmin(request.AdminId);
+            var complaintsLog = await _complaintLogRepository.GetForAdmin(request.AdminId, request.Status);
             var getComplaintLogs = _mapper.Map<List<GetComplaintLogsDto>>(complaintsLog);
             response = new BaseResponseClass
             {

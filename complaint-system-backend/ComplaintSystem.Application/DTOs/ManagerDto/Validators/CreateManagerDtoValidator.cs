@@ -7,9 +7,9 @@ namespace ComplaintSystem.Application.DTOs.ManagerDto.Validators
     {
         private bool IsManageeRole(string roleType)
         {
-            var managerRoles = new List<string> { "preprotective", "corrective"};
-            var match = managerRoles.Where(type => roleType.ToLower() == type);
-            return match.Any();
+            var managerRoles = new List<string> { "premitigation", "postmitigation" };
+            var match = managerRoles.Contains(roleType.ToLower());
+            return match;
         }
 
         private readonly IUserRepository _userRepository;
@@ -43,7 +43,7 @@ namespace ComplaintSystem.Application.DTOs.ManagerDto.Validators
                     return false;
                 }
                 var user = await _userRepository.GetByEmail(email);
-                return user != null  && user.User_Type != "manager";
+                return user != null  && user.User_Type == "user";
             }).WithMessage("{PropertyName} must be valid");
         }
     }

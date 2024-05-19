@@ -24,11 +24,11 @@ public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequ
     }
     public async Task<BaseResponseClass> Handle(GetSubordinatesRequest request, CancellationToken cancellationToken)
     {
-        var manager = await _managerRepository.GetAsync(request.ManagerId);
+        var manager = await _managerRepository.GetManagerByUserId(request.ManagerId);
         BaseResponseClass response;
         if (manager != null)
         {
-            var subordinates = await _subordinateRepository.GetSubordinatesForManager(request.ManagerId);
+            var subordinates = await _subordinateRepository.GetSubordinatesForManager(manager.Id);
             var getSubordinates = _mapper.Map<List<GetSubordinateDto>>(subordinates);
             response = new BaseResponseClass
             {

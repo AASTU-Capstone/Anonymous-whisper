@@ -21,7 +21,8 @@ namespace ComplaintSystem.Persistence.Repositories
 
         public async Task<List<Complaint>> GetMatchingComplaints(string Keyword)
         {
-            var complaints = await _complaintSystemAppDbContext.Complaints.Where(complaint=>EF.Functions.ILike(complaint.Title, "%"+Keyword+"%")).ToListAsync();
+            var complaints = await _complaintSystemAppDbContext.Complaints.Where(complaint => EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") ||complaint.Tag.Contains(Keyword.ToLower()) ||
+            EF.Functions.ILike(complaint.Content, "%" + Keyword + "%")).ToListAsync();
 
             return complaints;
         }

@@ -11,4 +11,5 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
 public class GetComplaintLogRequestForManager : IRequest<BaseResponseClass>
 {
     public Guid ManagerId { get; set; }
+    public string Status {  get; set; }
 }

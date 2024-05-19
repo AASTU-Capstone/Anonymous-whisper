@@ -12,6 +12,12 @@ namespace ComplaintSystem.Persistence.Repositories
             _complaintSystemAppDbContext = complaintSystemAppDbContext;
         }
 
+        public async Task<Subordinate> GetSubordinateByUserId(Guid UserId)
+        {
+            var subordinate = await _complaintSystemAppDbContext.Subordinates.FirstOrDefaultAsync(sub => sub.UserEntityId == UserId);
+            return subordinate;
+        }
+
         public async Task<List<Subordinate>> GetSubordinatesForManager(Guid ManagerId)
         {
             var subordinates = await _complaintSystemAppDbContext.Subordinates.Where(sub => sub.ManagerId == ManagerId).ToListAsync();
@@ -20,7 +26,7 @@ namespace ComplaintSystem.Persistence.Repositories
 
         public async Task<List<Subordinate>> SearchSubordinates(string Keyword)
         {
-            var subordinates = await _complaintSystemAppDbContext.Subordinates.Where(subordinate=>EF.Functions.ILike(subordinate.Name, Keyword)).ToListAsync();
+            var subordinates = await _complaintSystemAppDbContext.Subordinates.Where(subordinate=>EF.Functions.ILike(subordinate.Name, "%"+Keyword+"%")).ToListAsync();
             return subordinates;
         }
     }

@@ -20,17 +20,17 @@ public class UpdateComplaintDtoValidator : AbstractValidator<UpdateComplaintDto>
     {
         _complaintRepository = complaintRepository;
 
-        RuleFor(complaint => complaint.ComplaintId).NotEmpty().NotNull().WithMessage("{PropertyName} is required")
+        RuleFor(comp => comp.ComplaintId).NotEmpty().NotNull().WithMessage("{PropertyName} is required")
             .MustAsync(async (id, token) =>
             {
                 var complaint = await _complaintRepository.GetAsync(id);
                 return complaint != null;
             }).WithMessage("{PropertyName} must be valid");
 
-        RuleFor(complaint => complaint.Status).NotEmpty().NotNull().WithMessage("{PropertyName} is required")
-            .Must((complaint, token) =>
+        RuleFor(comp => comp.Status).NotEmpty().NotNull().WithMessage("{PropertyName} is required")
+            .Must((compl, token) =>
             {
-                bool valid = IsStatusType(complaint.Status);
+                bool valid = IsStatusType(compl.Status);
                 return valid;
             }).WithMessage("{PropertyName} must be valid");
     }

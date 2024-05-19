@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 
-public class AssignSubordinateComplaintLogDtoValidator : AbstractValidator<AssignSubordinateComplaintLogDto>
+public class AssignSubordinateComplaintLogDtoValidator : AbstractValidator<AssignSubordinateControllerDto>
 {
     private readonly IManagerRepository _managerRepository;
     private readonly ISubordinateRepository _subordinateRepository;
@@ -22,12 +22,6 @@ public class AssignSubordinateComplaintLogDtoValidator : AbstractValidator<Assig
         _subordinateRepository = subordinateRepository;
         _managerRepository = managerRepository;
 
-        RuleFor(log => log.ManagerId).NotEmpty().NotNull().WithMessage("{PropertyName} can not be empty")
-            .MustAsync(async (id, token) =>
-        {
-            var manager = await _managerRepository.GetAsync(id);
-            return manager != null;
-        }).WithMessage("{PropertyName} does not exist");
 
         RuleFor(log => log.SubordinateId).NotEmpty().NotNull().WithMessage("{PropertyName} can not be empty").
             MustAsync(async (id, token) =>
