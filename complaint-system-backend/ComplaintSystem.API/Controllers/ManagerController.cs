@@ -31,10 +31,10 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("GetSubordinates")]
-        public async Task<ActionResult<BaseResponseClass>> GetSubordinates()
+        public async Task<ActionResult<BaseResponseClass>> GetSubordinates([FromQuery] PaginationDto PaginationDto)
         {
             var ManagerId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
-            var request = new GetSubordinatesRequest { ManagerId = ManagerId };
+            var request = new GetSubordinatesRequest { ManagerId = ManagerId, PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
@@ -72,9 +72,9 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpGet]
         [Route("SearchSubordinates")]
-        public async Task<ActionResult<BaseResponseClass>> SearchSubordinates(string Keyword)
+        public async Task<ActionResult<BaseResponseClass>> SearchSubordinates(string Keyword, [FromQuery] PaginationDto PaginationDto)
         {
-            var request = new SearchSubordinatesRequest { Keyword = Keyword };
+            var request = new SearchSubordinatesRequest { Keyword = Keyword, PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);

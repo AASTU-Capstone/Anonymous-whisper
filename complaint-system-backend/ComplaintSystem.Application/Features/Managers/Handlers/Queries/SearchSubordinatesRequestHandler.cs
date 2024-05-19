@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Managers.Handlers.Queries;
-public class SearchSubordinatesRequestHandler : IRequestHandler<SearchSubordinatesRequest, BaseResponseClass>
+public class SearchSubordinatesRequestHandler : IRequestHandler<SearchSubordinatesRequest, PaginatedResponseClass>
 {
     private readonly ISubordinateRepository _subordinateRepository;
     private readonly IMapper _mapper;
@@ -20,16 +20,19 @@ public class SearchSubordinatesRequestHandler : IRequestHandler<SearchSubordinat
         _mapper = mapper;
         _subordinateRepository = subordinateRepository;
     }
-    public async Task<BaseResponseClass> Handle(SearchSubordinatesRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedResponseClass> Handle(SearchSubordinatesRequest request, CancellationToken cancellationToken)
     {
-        var subordiantes = await _subordinateRepository.SearchSubordinates(request.Keyword);
+        var subordiantes = await _subordinateRepository.SearchSubordinates(request.Keyword, request.PaginationDto);
         var getSubordinates = _mapper.Map<List<GetSubordinateDto>>(subordiantes);
-        BaseResponseClass response = new BaseResponseClass
+        PaginatedResponseClass response = new PaginatedResponseClass
         {
             StatusCode = 200,
             Success = true,
             Data = getSubordinates,
-            Message = "Subordinate Search Results Fetched Successfully"
+            Message = "Subordinate Search Results Fetched Successfully",
+            TotalCount = await _subordinateRepository.SearchSubordinatesCount(request.Keyword),
+            PageNumber = request.PaginationDto.PageNumber,
+            PageSize = request.PaginationDto.PageSize
         };
 
         return response;
