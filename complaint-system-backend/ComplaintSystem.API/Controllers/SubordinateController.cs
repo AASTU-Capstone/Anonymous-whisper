@@ -23,11 +23,11 @@ namespace ComplaintSystem.API.Controllers
             _mediator = mediator;
         }
         [HttpGet]
-        [Route("GetComplaintLogs")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogs()
+        [Route("GetComplaintLogsToUpdate")]
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToUpdate()
         {
-            var subordinateId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("user_id"));
-            var request = new GetComplaintLogsForSubordinateRequest { SubordinateId = subordinateId };
+            var subordinateId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
+            var request = new GetComplaintLogsForSubordinateRequest { UserId = subordinateId, Status = "processing"};
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
@@ -47,8 +47,8 @@ namespace ComplaintSystem.API.Controllers
         [Route("UpdateComplaintLog")]
         public async Task<ActionResult<BaseResponseClass>> UpdateComplaintLog(UpdateComplaintLogDto updateComplaintLogDto)
         {
-            var subordinateId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("user_id"));
-            var command = new UpdateComplaintLogDtoCommand { UpdateComplaintLogDto = updateComplaintLogDto, SubordinateId = subordinateId };
+            var subordinateId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
+            var command = new UpdateComplaintLogDtoCommand { UpdateComplaintLogDto = updateComplaintLogDto, UserId = subordinateId };
             var response = await _mediator.Send(command);
 
             return StatusCode(response.StatusCode, response);
@@ -56,9 +56,17 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpPatch]
         [Route("UpdateComplaintLogStatus")]
-        public async Task<ActionResult<BaseResponseClass>> UpdateComplaintLogStatus(UpdateComplaintLogStatusDto updateComplaintLogStatusDto)
+        public async Task<ActionResult<BaseResponseClass>> UpdateComplaintLogStatus(UpdateComplaintLogStatusControllerDto updateComplaintLogStatusControllerDto)
         {
-            var command = new UpdateComplaintLogStatusCommand { ComplaintLogStatus = updateComplaintLogStatusDto };
+            var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
+            UpdateComplaintLogStatusDto updateComplaintLogStatusDto = new UpdateComplaintLogStatusDto
+            {
+                ComplainLogId = updateComplaintLogStatusControllerDto.ComplainLogId,
+                StatusChangerId = userId,
+                Status = updateComplaintLogStatusControllerDto.Status,
+                Role = "subordinate"
+            };
+            var command = new UpdateComplaintLogStatusForSubordinateCommand { ComplaintLogStatus =  updateComplaintLogStatusDto};
             var response = await _mediator.Send(command);
 
             return StatusCode(response.StatusCode, response);

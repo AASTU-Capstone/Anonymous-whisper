@@ -7,8 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
-public class GetComplaintLogsForSubordinateRequest : IRequest<BaseResponseClass>
+public class GetResolvedComplaintLogsRequest : IRequest<BaseResponseClass>
 {
-    public Guid UserId { get; set; }
-    public string Status {  get; set; }
+    public string Status { get; set; }
 }

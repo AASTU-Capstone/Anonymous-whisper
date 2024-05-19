@@ -1,5 +1,6 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
 using ComplaintSystem.Application.DTOs.SubordinateDto;
+using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Features.Managers.Requests.Queries;
@@ -38,11 +39,21 @@ namespace ComplaintSystem.API.Controllers
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
-        [Route("GetComplaintLogForManager")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogForManager()
+        [Route("GetComplaintLogToAssign")]
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogToAssign()
         {
             var ManagerId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
-            var request = new GetComplaintLogRequestForManager { ManagerId = ManagerId };
+            var request = new GetComplaintLogRequestForManager { ManagerId = ManagerId, Status = "progressing" };
+            var response = await _mediator.Send(request);
+
+            return StatusCode(response.StatusCode, response);
+        }
+        [HttpGet]
+        [Route("GetComplaintLogToUpdate")]
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogToUpdate()
+        {
+            var ManagerId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
+            var request = new GetComplaintLogRequestForManager { ManagerId = ManagerId, Status = "overviewing" };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
@@ -74,16 +85,8 @@ namespace ComplaintSystem.API.Controllers
         public async Task<ActionResult<BaseResponseClass>> CreateSubordinates(CreateSubordinateControllerDto createSubordinateControllerDto)
         {
             var ManagerId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
-            CreateSubordinateDto createSubordinateDto = new CreateSubordinateDto
-            {
-                MitigatedCount = 0,
-                Name = createSubordinateControllerDto.Name,
-                ManagerId = ManagerId,
-                Email = createSubordinateControllerDto.Email,
 
-            };
-
-            var command = new CreateSubordinateRequest { CreateSubordinateDto = createSubordinateDto };
+            var command = new CreateSubordinateRequest { CreateSubordinateDto = createSubordinateControllerDto, UserId = ManagerId };
             var response = await _mediator.Send(command);
 
             return StatusCode(response.StatusCode, response);
@@ -93,24 +96,24 @@ namespace ComplaintSystem.API.Controllers
         public async Task<ActionResult<BaseResponseClass>> AssignSubordinate(AssignSubordinateControllerDto assignSubordinateControllerDto)
         {
             var ManagerId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
-            AssignSubordinateComplaintLogDto assignSubordinateComplaintLogDto = new AssignSubordinateComplaintLogDto
-            {
-                SubordinateId = assignSubordinateControllerDto.SubordinateId,
-                ComplaintLogId = assignSubordinateControllerDto.ComplaintLogId,
-                ManagerId = ManagerId
-            };
-
-            var command = new AssignSubordinateCommand { ComplaintLog = assignSubordinateComplaintLogDto };
+            var command = new AssignSubordinateCommand { ComplaintLog = assignSubordinateControllerDto, UserId = ManagerId };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpPatch]
         [Route("UpdateComplaintLogStatus")]
-        public async Task<ActionResult<BaseResponseClass>> UpdateComplaintLogStatus(UpdateComplaintLogStatusDto updateComplaintLogStatusDto)
+        public async Task<ActionResult<BaseResponseClass>> UpdateComplaintLogStatus(UpdateComplaintLogStatusControllerDto updateComplaintLogStatusControllerDto)
         {
-            var ManagerId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
-            var command = new UpdateComplaintLogStatusForManagerRequest { ComplaintLogStatus = updateComplaintLogStatusDto, ManagerId = ManagerId };
+            var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
+            UpdateComplaintLogStatusDto updateComplaintLogStatusDto = new UpdateComplaintLogStatusDto
+            {
+                ComplainLogId = updateComplaintLogStatusControllerDto.ComplainLogId,
+                StatusChangerId = userId,
+                Status = updateComplaintLogStatusControllerDto.Status,
+                Role = "manager"
+            };
+            var command = new UpdateComplaintLogStatusForManagerCommand { ComplaintLogStatus = updateComplaintLogStatusDto};
 
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);

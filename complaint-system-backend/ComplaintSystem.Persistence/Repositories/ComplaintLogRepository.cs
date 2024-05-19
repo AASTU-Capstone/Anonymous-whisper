@@ -18,21 +18,27 @@ namespace ComplaintSystem.Persistence.Repositories
             _complaintSystemAppDbContext = complaintSystemAppDbContext;
         }
 
-        public async Task<List<ComplaintLog>> GetForAdmin(Guid AdminId)
+        public async Task<List<ComplaintLog>> GetByStatus(string Status)
         {
-            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.AdminId == AdminId).ToListAsync();
+            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.Status == Status).ToListAsync();
             return complaints;
         }
 
-        public async Task<List<ComplaintLog>> GetForManager(Guid ManagerId)
+        public async Task<List<ComplaintLog>> GetForAdmin(Guid AdminId, string Status)
         {
-            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log=> log.ManagerId == ManagerId).ToListAsync();
+            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.AdminId == AdminId && log.Status.ToLower() == Status).ToListAsync();
             return complaints;
         }
 
-        public async Task<List<ComplaintLog>> GetForSubordinate(Guid SubordinateId)
+        public async Task<List<ComplaintLog>> GetForManager(Guid ManagerId, string Status)
         {
-            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.SubordinateId == SubordinateId).ToListAsync();
+            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log=> log.ManagerId == ManagerId && log.Status.ToLower() == Status).ToListAsync();
+            return complaints;
+        }
+
+        public async Task<List<ComplaintLog>> GetForSubordinate(Guid SubordinateId, string Status)
+        {
+            var complaints = await _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.SubordinateId == SubordinateId && log.Status.ToLower() == Status).ToListAsync();
             return complaints;
         }
     }

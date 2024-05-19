@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
-public class UpdateComplaintLogStatusCommand : IRequest<BaseResponseClass>
+public class UpdateComplaintLogStatusForManagerCommand : IRequest<BaseResponseClass>
 {
     public UpdateComplaintLogStatusDto ComplaintLogStatus { get; set;}
 }

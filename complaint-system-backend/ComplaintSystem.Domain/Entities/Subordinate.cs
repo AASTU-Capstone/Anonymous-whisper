@@ -8,5 +8,6 @@ namespace ComplaintSystem.Domain.Entities
         public string Email {  get; set; }
         public int MitigatedCount { get; set; } = 0;
         public Guid ManagerId { get; set; }
+        public Guid UserEntityId { get; set; }
     }
 }

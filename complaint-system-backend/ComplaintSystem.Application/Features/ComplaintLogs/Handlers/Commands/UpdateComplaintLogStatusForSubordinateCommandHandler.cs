@@ -2,56 +2,55 @@
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Google.Apis.Requests.BatchRequest;
 
 namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands;
-
-public class UpdateComplaintLogStatusCommandHandler : IRequestHandler<UpdateComplaintLogStatusCommand, BaseResponseClass>
+public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHandler<UpdateComplaintLogStatusForSubordinateCommand, BaseResponseClass>
 {
     private readonly IComplaintLogRepository _complaintLogRepository;
+    private readonly IAdminRepository _adminRepository;
+    private readonly IManagerRepository _managerRepository;
     private readonly ISubordinateRepository _subordinateRepository;
-    public UpdateComplaintLogStatusCommandHandler(IComplaintLogRepository complaintLogRepository, ISubordinateRepository subordinateRepository)
+    public UpdateComplaintLogStatusForSubordinateCommandHandler(
+        IComplaintLogRepository complaintLogRepository,
+        ISubordinateRepository subordinateRepository,
+        IManagerRepository managerRepository,
+        IAdminRepository adminRepository)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
-        
+        _managerRepository = managerRepository;
+        _adminRepository = adminRepository;
     }
-    public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForSubordinateCommand request, CancellationToken cancellationToken)
     {
-        
-        var validator = new UpdateComplaintLogStatusDtoValidator(_complaintLogRepository);
+        var validator = new UpdateComplaintLogStatusDtoValidator (_complaintLogRepository,_subordinateRepository,_managerRepository,_adminRepository);
         var validated = await validator.ValidateAsync(request.ComplaintLogStatus, cancellationToken);
         BaseResponseClass response;
-        if (validated.IsValid)
+        if(validated.IsValid)
         {
-            var complaintlog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
-            Guid statusChangerId = request.ComplaintLogStatus.StatusChangerId;
+            var subordinate = await _subordinateRepository.GetSubordinateByUserId(request.ComplaintLogStatus.StatusChangerId);
+            var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
 
-            if (complaintlog.AdminId == statusChangerId  || statusChangerId == complaintlog.ManagerId || complaintlog.SubordinateId  == statusChangerId)
+            if(subordinate.Id == complaintLog.SubordinateId)
             {
-                complaintlog.Status = request.ComplaintLogStatus.Status;
-                await _complaintLogRepository.Update(complaintlog);
-
-                //update the mititaged count for the subordinate
-                var subordinate = await _subordinateRepository.GetAsync(complaintlog.SubordinateId);
-                if (subordinate != null && request.ComplaintLogStatus.Status.ToLower() == "resolved")
-                {
-                    subordinate.MitigatedCount += 1;
-                    await _subordinateRepository.Update(subordinate);
-                }
-
+                complaintLog.Status = request.ComplaintLogStatus.Status;
+                await _complaintLogRepository.Update(complaintLog);
                 response = new BaseResponseClass
                 {
                     StatusCode = 204,
                     Success = true,
                     Message = "Status Updated Successfully",
-                    Id = complaintlog.Id,
+                    Id = complaintLog.Id,
                 };
+
             }
             else
             {
@@ -63,10 +62,8 @@ public class UpdateComplaintLogStatusCommandHandler : IRequestHandler<UpdateComp
                     Message = "Complaint Log Status Failed"
                 };
             }
-
-            
-
-        }else
+        }
+        else
         {
             response = new BaseResponseClass
             {
@@ -76,7 +73,7 @@ public class UpdateComplaintLogStatusCommandHandler : IRequestHandler<UpdateComp
                 Error = validated.Errors.Select(e => e.ErrorMessage).ToList()
             };
         }
+
         return response;
-        
     }
 }

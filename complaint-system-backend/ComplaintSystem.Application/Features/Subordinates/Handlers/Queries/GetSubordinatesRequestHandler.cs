@@ -28,7 +28,7 @@ public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequ
         BaseResponseClass response;
         if (manager != null)
         {
-            var subordinates = await _subordinateRepository.GetSubordinatesForManager(request.ManagerId);
+            var subordinates = await _subordinateRepository.GetSubordinatesForManager(manager.Id);
             var getSubordinates = _mapper.Map<List<GetSubordinateDto>>(subordinates);
             response = new BaseResponseClass
             {

@@ -22,15 +22,18 @@ public class FirebaseLoginCommandHandler : IRequestHandler<FirebaseLoginCommand,
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IPasswordService _passwordService;
     public FirebaseLoginCommandHandler(
         IUserRepository userRepository,
         IMapper mapper,
-        IJwtTokenGenerator jwtTokenGenerator
+        IJwtTokenGenerator jwtTokenGenerator,
+        IPasswordService passwordService
         )
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _passwordService = passwordService;
     }
     public async Task<AuthenticationResult> Handle(FirebaseLoginCommand request, CancellationToken cancellationToken)
     {
@@ -59,7 +62,7 @@ public class FirebaseLoginCommandHandler : IRequestHandler<FirebaseLoginCommand,
                     CreateUserDto userEntity = new CreateUserDto
                     {
                         Email = email,
-                        Password = "Pass@1234"
+                        Password = _passwordService.HashPassword("Pass@1234")
                     };
                     var newUser = _mapper.Map<UserEntity>(userEntity);
                     newUser.User_Type = "user";

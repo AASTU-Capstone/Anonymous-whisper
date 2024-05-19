@@ -9,6 +9,7 @@ using MediatR;
 namespace ComplaintSystem.Application.Features.Subordinates.Requests.Commands;
 public class CreateSubordinateRequest : IRequest<BaseResponseClass>
 {
-    public CreateSubordinateDto CreateSubordinateDto { get; set; }
+    public CreateSubordinateControllerDto CreateSubordinateDto { get; set; }
+    public Guid UserId { get; set; }
 
 }

@@ -24,11 +24,11 @@ public class GetComplaintLogsForSubordinateRequestHandler : IRequestHandler<GetC
     }
     public async Task<BaseResponseClass> Handle(GetComplaintLogsForSubordinateRequest request, CancellationToken cancellationToken)
     {
-        var subordinate = await _subordinateRepository.GetAsync(request.SubordinateId);
+        var subordinate = await _subordinateRepository.GetSubordinateByUserId(request.UserId);
         BaseResponseClass response;
         if(subordinate != null)
         {
-            var complaintLogs = await _complaintLogRepository.GetForSubordinate(request.SubordinateId);
+            var complaintLogs = await _complaintLogRepository.GetForSubordinate(subordinate.Id, request.Status);
             var getComplaintLogs = _mapper.Map<List<GetComplaintLogsDto>>(complaintLogs);
 
             response = new BaseResponseClass
