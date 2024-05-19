@@ -1,13 +1,11 @@
-﻿using ComplaintSystem.Application.Responses;
+﻿using ComplaintSystem.Application.DTOs.PaginationDto;
+using ComplaintSystem.Application.Responses;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ComplaintSystem.Application.Features.Managers.Requests.Queries;
-public class SearchSubordinatesRequest : IRequest<BaseResponseClass>
+public class SearchSubordinatesRequest : IRequest<PaginatedResponseClass>
 {
     public string Keyword { get; set; }
+    public PaginationDto PaginationDto { get; set; }
 }

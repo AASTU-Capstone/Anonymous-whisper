@@ -11,11 +11,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Queries;
-public class GetComplaintLogsForAdminRequestHandler : IRequestHandler<GetComplaintLogsForAdminRequest, BaseResponseClass>
+public class GetComplaintLogsForAdminRequestHandler : IRequestHandler<GetComplaintLogsForAdminRequest, PaginatedResponseClass>
 {
     private readonly IComplaintLogRepository _complaintLogRepository;
     private readonly IMapper _mapper;
     private readonly IAdminRepository _adminRepository;
+
     public GetComplaintLogsForAdminRequestHandler(
         IComplaintLogRepository complaintLogRepository,
         IMapper mapper,
@@ -25,26 +26,31 @@ public class GetComplaintLogsForAdminRequestHandler : IRequestHandler<GetComplai
         _mapper = mapper;
         _complaintLogRepository = complaintLogRepository;
     }
-    public async Task<BaseResponseClass> Handle(GetComplaintLogsForAdminRequest request, CancellationToken cancellationToken)
+
+    public async Task<PaginatedResponseClass> Handle(GetComplaintLogsForAdminRequest request, CancellationToken cancellationToken)
     {
         var admin = await _adminRepository.GetAsync(request.AdminId);
-        
-        BaseResponseClass response;
-        if(admin != null)
+
+        PaginatedResponseClass response;
+        if (admin != null)
         {
-            var complaintsLog = await _complaintLogRepository.GetForAdmin(request.AdminId, request.Status);
+            var complaintsLog = await _complaintLogRepository.GetForAdmin(request.AdminId, request.Status, request.PaginationDto);
             var getComplaintLogs = _mapper.Map<List<GetComplaintLogsDto>>(complaintsLog);
-            response = new BaseResponseClass
+
+            response = new PaginatedResponseClass
             {
                 Success = true,
                 StatusCode = 201,
                 Data = getComplaintLogs,
-                Message = "Complaint Log Fetched Successfully"
+                Message = "Complaint Log Fetched Successfully",
+                TotalCount = await _complaintLogRepository.GetForAdminCount(request.AdminId, request.Status),
+                PageNumber = request.PaginationDto.PageNumber,
+                PageSize = request.PaginationDto.PageSize
             };
         }
         else
         {
-            response = new BaseResponseClass
+            response = new PaginatedResponseClass
             {
                 StatusCode = 404,
                 Success = false,

@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Queries;
-public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequest, BaseResponseClass>
+public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequest, PaginatedResponseClass>
 {
     private readonly ISubordinateRepository _subordinateRepository;
     private readonly IManagerRepository _managerRepository;
@@ -22,27 +22,30 @@ public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequ
         _mapper = mapper;
         _subordinateRepository = subordinateRepository;
     }
-    public async Task<BaseResponseClass> Handle(GetSubordinatesRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedResponseClass> Handle(GetSubordinatesRequest request, CancellationToken cancellationToken)
     {
         var manager = await _managerRepository.GetManagerByUserId(request.ManagerId);
-        BaseResponseClass response;
+        PaginatedResponseClass response;
         if (manager != null)
         {
-            var subordinates = await _subordinateRepository.GetSubordinatesForManager(manager.Id);
+            var subordinates = await _subordinateRepository.GetSubordinatesForManager(manager.Id, request.PaginationDto);
             var getSubordinates = _mapper.Map<List<GetSubordinateDto>>(subordinates);
-            response = new BaseResponseClass
+
+            response = new PaginatedResponseClass
             {
                 StatusCode = 200,
                 Success = true,
                 Data = getSubordinates,
-                Message = "Subordinates Fetched Successfully"
-
+                Message = "Subordinates Fetched Successfully",
+                TotalCount = await _subordinateRepository.GetSubordinatesForManagerCount(manager.Id),
+                PageNumber = request.PaginationDto.PageNumber,
+                PageSize = request.PaginationDto.PageSize
             };
 
         }
         else
         {
-            response = new BaseResponseClass
+            response = new PaginatedResponseClass
             {
                 Success = false,
                 StatusCode = 400,

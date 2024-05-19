@@ -1,6 +1,7 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintDto;
 using ComplaintSystem.Application.DTOs.ComplaintLogDto;
 using ComplaintSystem.Application.DTOs.ManagerDto;
+using ComplaintSystem.Application.DTOs.PaginationDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
 using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
@@ -42,18 +43,18 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpGet]
         [Route("GetRecievedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints()
+        public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints([FromQuery] PaginationDto PaginationDto)
         {
-            var request = new GetRecievedComplaintForAdminRequest { };
+            var request = new GetRecievedComplaintForAdminRequest { PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
         [Route("GetComplaintLogsToAssign")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToAssign()
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToAssign([FromQuery] PaginationDto PaginationDto)
         {
             var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
-            var request = new GetComplaintLogsForAdminRequest { AdminId = adminId, Status = "pending" };
+            var request = new GetComplaintLogsForAdminRequest { AdminId = adminId, Status = "pending", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
 
@@ -61,10 +62,10 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpGet]
         [Route("GetComplaintLogsToUpdate")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToUpdate()
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToUpdate([FromQuery] PaginationDto PaginationDto)
         {
             var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
-            var request = new GetComplaintLogsForAdminRequest { AdminId = adminId, Status = "submitted" };
+            var request = new GetComplaintLogsForAdminRequest { AdminId = adminId, Status = "submitted", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
 
@@ -74,7 +75,7 @@ namespace ComplaintSystem.API.Controllers
         [Route("CreateManagers")]
         public async Task<ActionResult<BaseResponseClass>> CreateManager(CreateManagerDto createManagerDto)
         {
-            var adminId = new Guid( _contextAccessor.HttpContext.User!.FindFirstValue("userid"));
+            var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
             var command = new CreateManagerRequest { CreateManagerDto = createManagerDto, AdminId = adminId };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
@@ -94,7 +95,7 @@ namespace ComplaintSystem.API.Controllers
         [Route("UpdateComplaintStatus")]
         public async Task<ActionResult<BaseResponseClass>> UpdateComplaintStatus(UpdateComplaintDto updateComplainDto)
         {
-            var command  = new UpdateComplaintStatusCommand { UpdateComplainDto = updateComplainDto };
+            var command = new UpdateComplaintStatusCommand { UpdateComplainDto = updateComplainDto };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }

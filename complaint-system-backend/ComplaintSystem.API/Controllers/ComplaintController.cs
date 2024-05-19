@@ -2,6 +2,7 @@
 using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
 using ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Application.DTOs.PaginationDto;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using System.Security.Claims;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Policy ="user")]
+    [Authorize(Policy = "user")]
     [ApiController]
     public class ComplaintController : ControllerBase
     {
@@ -22,21 +23,21 @@ namespace ComplaintSystem.API.Controllers
             _mediator = mediator;
         }
         [HttpGet]
-        [Route("GetNonRejectedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints()
+        [Route("GetAcceptedComplaints")]
+        public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints([FromQuery] PaginationDto PaginationDto)
         {
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
-            var request = new GetUserAcceptedComplaintsRequest { UserId = userId };
+            var request = new GetUserAcceptedComplaintsRequest { UserId = userId, PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
         }
         [HttpGet]
         [Route("GetRejectedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetResolvedComplaints()
+        public async Task<ActionResult<BaseResponseClass>> GetResolvedComplaints([FromQuery] PaginationDto PaginationDto)
         {
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
-            var request = new GetRejectedComplaintsRequest { UserId = userId, Status = "rejected" };
+            var request = new GetRejectedComplaintsRequest { UserId = userId, Status = "rejected", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
@@ -53,16 +54,16 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("SearchComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> SearchComplaints(string keyword)
+        public async Task<ActionResult<BaseResponseClass>> SearchComplaints(string keyword, [FromQuery] PaginationDto PaginationDto)
         {
-            var request = new SearchComplaintRequest { Keyword = keyword };
+            var request = new SearchComplaintRequest { Keyword = keyword, PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
         [Route("CreateComplaint")]
-        public async Task<ActionResult<BaseResponseClass>> CreateComplaint([FromForm]CreateComplaintControllerDto createComplaintDto)
+        public async Task<ActionResult<BaseResponseClass>> CreateComplaint([FromForm] CreateComplaintControllerDto createComplaintDto)
         {
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
             var command = new CreateComplaintCommand { UserId = userId, CreateComplaintDto = createComplaintDto };
