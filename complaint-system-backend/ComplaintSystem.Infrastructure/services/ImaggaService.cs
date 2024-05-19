@@ -93,10 +93,7 @@ namespace ComplaintSystem.Infrastructure.services
             string apiSecret = Environment.GetEnvironmentVariable("Immaga_API_Secret");
             string apiKey = Environment.GetEnvironmentVariable("Immaga_API_Key");
             string basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", apiKey, apiSecret)));
-            //RestClient client = new RestClient(baseURL);
-
             var client = new RestClient("https://api.imagga.com/v2/");
-
             var request = new RestRequest("tags", Method.Get);
 
             request.AddParameter("image_url", image);
