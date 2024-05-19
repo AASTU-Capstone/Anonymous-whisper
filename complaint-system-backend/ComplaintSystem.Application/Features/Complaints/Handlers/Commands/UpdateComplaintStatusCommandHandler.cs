@@ -15,6 +15,11 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
 {
     private readonly IComplaintRepository _complaintRepository;
     private readonly IMapper _mapper;
+    public UpdateComplaintStatusCommandHandler(IComplaintRepository complaintRepository, IMapper mapper)
+    {
+        _complaintRepository = complaintRepository;
+        _mapper = mapper;
+    }
     public async Task<BaseResponseClass> Handle(UpdateComplaintStatusCommand request, CancellationToken cancellationToken)
     {
         var validator = new UpdateComplaintDtoValidator(_complaintRepository);
@@ -23,7 +28,7 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
         if(validated.IsValid)
         {
             var complaint = await _complaintRepository.GetAsync(request.UpdateComplainDto.ComplaintId);
-            _mapper.Map(complaint,request.UpdateComplainDto);
+            _mapper.Map(request.UpdateComplainDto,complaint);
             await _complaintRepository.Update(complaint);
 
             response = new BaseResponseClass

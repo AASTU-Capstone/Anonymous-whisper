@@ -30,7 +30,8 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
         if(validated.IsValid)
         {
             var complaintLog = await _complaintLogRepository.GetAsync(request.UpdateComplaintLogDto.Id);
-            if(complaintLog.SubordinateId  == request.SubordinateId)
+            var subordinate = await _subordinateRepository.GetSubordinateByUserId(request.UserId);
+            if(subordinate != null && complaintLog.SubordinateId  == subordinate.Id)
             {
                 _mapper.Map(request.UpdateComplaintLogDto, complaintLog);
                 await _complaintLogRepository.Update(complaintLog);

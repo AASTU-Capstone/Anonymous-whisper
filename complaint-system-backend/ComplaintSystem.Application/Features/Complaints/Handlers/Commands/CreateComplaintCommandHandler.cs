@@ -8,6 +8,7 @@ using ComplaintSystem.Application.Persistence.Contracts.Cloudinary;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
+using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
@@ -60,13 +61,14 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 List<string> videos = new List<string>();
                 List<string> documents = new List<string>();
                 List<string> audios = new List<string>();
-                List<string> tags = new List<string>();
+                HashSet<string> tags = new HashSet<string>();
                 if (request.CreateComplaintDto.ImageEvidence!= null)
                 {
                     foreach (var image in request.CreateComplaintDto.ImageEvidence)
                     {
                         CloudinaryResponse currImage = await _cloudinaryService.UploadImageAsync(image);
-                        tags.AddRange(await _imaggaService.Tagger(currImage.Link));
+                        List<string> imaggaTags = await _imaggaService.Tagger(currImage.Link);
+                        tags.UnionWith(imaggaTags);
                         imageEvidences.Add(currImage.Link);
                     }
                 }
@@ -76,8 +78,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                     foreach (var video in request.CreateComplaintDto.Videos)
                     {
                         CloudinaryResponse currVideo = await _cloudinaryService.UploadImageAsync(video);
-                        tags.AddRange(await _imaggaService.Tagger(currVideo.Link));
-                        imageEvidences.Add(currVideo.Link);
+                        videos.Add(currVideo.Link);
                     }
 
                 }
@@ -99,11 +100,10 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                         audios.Add(currAudio.Link);
                     }
                 }
-               
 
                 CreateComplaintDto createComplaintDto = new CreateComplaintDto
                 {
-                    Tag = tags,
+                    Tag = tags.ToList(),
                     Title = request.CreateComplaintDto.Title,
                     SoundTracks = audios,
                     Status = "recieved",

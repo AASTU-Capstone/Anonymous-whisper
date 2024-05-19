@@ -6,5 +6,6 @@ namespace ComplaintSystem.Application.Persistence.Contracts
     {
         public Task<List<Subordinate>> GetSubordinatesForManager(Guid ManagerId);
         public Task<List<Subordinate>> SearchSubordinates(string Keyword);
+        public Task<Subordinate> GetSubordinateByUserId(Guid UserId);
     }
 }

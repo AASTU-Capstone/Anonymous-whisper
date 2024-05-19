@@ -12,6 +12,12 @@ namespace ComplaintSystem.Persistence.Repositories
             _complaintSystemAppDbContext = complaintSystemAppDbContext;
         }
 
+        public async Task<Manager> GetManagerByUserId(Guid UserId)
+        {
+            var manager = await _complaintSystemAppDbContext.Managers.FirstOrDefaultAsync(m=>m.UserEntityId == UserId);
+            return manager;
+        }
+
         public async Task<Manager> GetMananger(Guid AdminId, string Role)
         {
             var manager = await _complaintSystemAppDbContext.Managers.FirstOrDefaultAsync(m=>m.AdminId ==  AdminId && m.Role == Role);

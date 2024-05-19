@@ -10,5 +10,6 @@ using System.Threading.Tasks;
 namespace ComplaintSystem.Application.Features.Managers.Requests.Commands;
 public class AssignSubordinateCommand : IRequest<BaseResponseClass>
 {
-    public AssignSubordinateComplaintLogDto ComplaintLog { get; set; }
+    public AssignSubordinateControllerDto ComplaintLog { get; set; }
+    public Guid UserId { get; set; }
 }

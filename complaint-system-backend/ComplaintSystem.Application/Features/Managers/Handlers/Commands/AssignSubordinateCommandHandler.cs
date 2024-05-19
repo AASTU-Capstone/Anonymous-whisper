@@ -1,7 +1,9 @@
-﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
+﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
+using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -27,14 +29,17 @@ public class AssignSubordinateCommandHandler : IRequestHandler<AssignSubordinate
     public async Task<BaseResponseClass> Handle(AssignSubordinateCommand request, CancellationToken cancellationToken)
     {
         var validator = new AssignSubordinateComplaintLogDtoValidator(_complaintLogRepository, _subordinateRepository, _managerRepository);
-        var validated = await validator.ValidateAsync(request.ComplaintLog);
+        var validated = await validator.ValidateAsync(request.ComplaintLog, cancellationToken);
+        var manager = await _managerRepository.GetManagerByUserId(request.UserId);
         BaseResponseClass response;
         if(validated.IsValid)
         {
             var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLog.ComplaintLogId);
-            if(complaintLog.ManagerId == request.ComplaintLog.ManagerId)
+            if(manager != null && complaintLog.ManagerId == manager.Id)
             {
+
                 complaintLog.SubordinateId = request.ComplaintLog.SubordinateId;
+                complaintLog.Status = "processing";
                 await _complaintLogRepository.Update(complaintLog);
                 response = new BaseResponseClass
                 {

@@ -27,14 +27,18 @@ namespace ComplaintSystem.Application.DTOs.ComplaintDto.Validators
             RuleFor(x => x.ImageEvidence).MustAsync( async (images, token) =>
             {
                 // handle the api to check if its a valid image
-                foreach(var image in images)
+                if(images != null)
                 {
-                    var isAiGenereated = await _maggaService.AIGenerated(image);
-                    if (!isAiGenereated)
+                    foreach (var image in images)
                     {
-                        return isAiGenereated;
+                        var isAiGenereated = await _maggaService.AIGenerated(image);
+                        if (!isAiGenereated)
+                        {
+                            return isAiGenereated;
+                        }
                     }
                 }
+               
                 return true;
             }).WithMessage("{PropertyName} is not valid");
         }

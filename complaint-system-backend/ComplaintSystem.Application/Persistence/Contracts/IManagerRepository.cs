@@ -5,5 +5,6 @@ namespace ComplaintSystem.Application.Persistence.Contracts
     public interface IManagerRepository : IGenericRepository<Manager>
     {
         public Task<Manager> GetMananger(Guid AdminId, string Role);
+        public Task<Manager> GetManagerByUserId(Guid UserId);
     }
 }

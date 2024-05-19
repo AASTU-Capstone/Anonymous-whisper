@@ -28,11 +28,11 @@ public class GetComplaintLogRequestHandlerForManager : IRequestHandler<GetCompla
     }
     public async Task<BaseResponseClass> Handle(GetComplaintLogRequestForManager request, CancellationToken cancellationToken)
     {
-        var manager = await _managerRepository.GetAsync(request.ManagerId);
+        var manager = await _managerRepository.GetManagerByUserId(request.ManagerId);
         BaseResponseClass response;
         if (manager != null)
         {
-            var complaints = await _complaintLogRepository.GetForManager(request.ManagerId);
+            var complaints = await _complaintLogRepository.GetForManager(manager.Id, request.Status);
             var complaintsLog = _mapper.Map<List<GetComplaintLogsDto>>(complaints);
             response = new BaseResponseClass
             {

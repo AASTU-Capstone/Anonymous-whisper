@@ -39,18 +39,18 @@ namespace ComplaintSystem.Infrastructure.services
             if (response.IsSuccessStatusCode)
             {
                 SightEngineResponse sightEngineResponse = JsonConvert.DeserializeObject<SightEngineResponse>(response.Content);
-                if (sightEngineResponse != null && sightEngineResponse.type.ai_generated >= 0.5) {
+                if (sightEngineResponse != null && sightEngineResponse.type.ai_generated >= 0.5)
+                {
                     flag = false;
                 }
             }
-            Console.WriteLine(file.Link);
             await _cloudinaryService.DeleteFile(file.PublicId);
 
             return flag;
 
         }
 
-            public async Task<AIdto> Check(IFormFile image)
+        public async Task<AIdto> Check(IFormFile image)
         {
             // Define the base URL of the API endpoint
             string baseUrl = "https://api.aiornot.com/v1";
@@ -71,12 +71,10 @@ namespace ComplaintSystem.Infrastructure.services
             request.AddJsonBody(requestJSon);
 
             //add header 
-            request.AddHeader("Authorization", "Bearer "+aiOrNotToken);
-            Console.WriteLine("here  working");
+            request.AddHeader("Authorization", "Bearer " + aiOrNotToken);
             // Execute the request asynchronously
             var response = await client.ExecuteAsync(request);
             AIdto idto;
-            Console.WriteLine(response.Content);
             if (response.IsSuccessStatusCode)
             {
                 idto = JsonConvert.DeserializeObject<AIdto>(response.Content);
@@ -86,7 +84,7 @@ namespace ComplaintSystem.Infrastructure.services
                 idto = new AIdto();
             }
             return idto;
-            
+
 
         }
 
@@ -94,19 +92,18 @@ namespace ComplaintSystem.Infrastructure.services
         {
             string apiSecret = Environment.GetEnvironmentVariable("Immaga_API_Secret");
             string apiKey = Environment.GetEnvironmentVariable("Immaga_API_Key");
-            string baseURL = "https://api.imagga.com/v2";
             string basicAuthValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", apiKey, apiSecret)));
             //RestClient client = new RestClient(baseURL);
 
             var client = new RestClient("https://api.imagga.com/v2/");
 
-            var request = new RestRequest("tags",Method.Post);
+            var request = new RestRequest("tags", Method.Get);
 
-            request.AddFile("image", image);
+            request.AddParameter("image_url", image);
             request.AddHeader("Authorization", String.Format("Basic {0}", basicAuthValue));
 
             RestResponse response = await client.ExecuteAsync(request);
-            
+
             List<string> imageTags = new List<string>();
             if (response.IsSuccessStatusCode)
             {
@@ -116,11 +113,11 @@ namespace ComplaintSystem.Infrastructure.services
                     if (tags.confidence >= 40)
                     {
                         imageTags.Add(tags.tag.en);
-                       
+
                     }
                 }
             }
-           
+
             return imageTags;
         }
     }

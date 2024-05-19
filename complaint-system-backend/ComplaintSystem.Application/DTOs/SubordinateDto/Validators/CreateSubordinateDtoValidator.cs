@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace ComplaintSystem.Application.DTOs.SubordinateDto.Validators
 {
-    public class CreateSubordinateDtoValidator : AbstractValidator<CreateSubordinateDto>
+    public class CreateSubordinateDtoValidator : AbstractValidator<CreateSubordinateControllerDto>
     {
         private readonly IUserRepository _userRepository;
         public CreateSubordinateDtoValidator(IUserRepository userRepository)
@@ -13,14 +13,6 @@ namespace ComplaintSystem.Application.DTOs.SubordinateDto.Validators
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .WithMessage("Name is required");
-
-            // Rule for MitigatedCount
-            RuleFor(u => u.MitigatedCount)
-                .NotEmpty().WithMessage("{PropertyName} is required!");
-
-            // Rule for ManagerId
-            RuleFor(u => u.ManagerId)
-                .NotEmpty().WithMessage("{PropertyName} is required!");
 
             RuleFor(u => u.Email).NotEmpty().NotNull().WithMessage("{PropertyName} is required")
                 .MustAsync(async (email, token) =>
