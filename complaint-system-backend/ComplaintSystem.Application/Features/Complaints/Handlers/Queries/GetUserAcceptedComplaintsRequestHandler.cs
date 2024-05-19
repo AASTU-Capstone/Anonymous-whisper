@@ -25,7 +25,7 @@ public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAc
     }
     public async Task<PaginatedResponseClass> Handle(GetUserAcceptedComplaintsRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetPaginatedAsync(request.PaginationDto.PageNumber, request.PaginationDto.PageSize);
+        var user = await _userRepository.GetAsync(request.UserId);
         PaginatedResponseClass response;
         if (user == null)
         {
@@ -49,7 +49,7 @@ public class GetUserAcceptedComplaintsRequestHandler : IRequestHandler<GetUserAc
                 StatusCode = 200,
                 Success = true,
                 Message = "Complaint Fetched Successfully",
-                TotalCount = complaints.Count(),
+                TotalCount = await _complaintRepository.GetUserAcceptedComplaintsCount(request.UserId),
                 PageNumber = request.PaginationDto.PageNumber,
                 PageSize = request.PaginationDto.PageSize
             };

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
 
-public class GetRecievedComplaintForAdminRequestHandler : IRequestHandler<GetRecievedComplaintForAdminRequest, BaseResponseClass>
+public class GetRecievedComplaintForAdminRequestHandler : IRequestHandler<GetRecievedComplaintForAdminRequest, PaginatedResponseClass>
 {
     private readonly IComplaintRepository _complaintRepository;
     private readonly IMapper _mapper;
@@ -21,17 +21,20 @@ public class GetRecievedComplaintForAdminRequestHandler : IRequestHandler<GetRec
         _complaintRepository = complaintRepository;
         _mapper = mapper;
     }
-    public async Task<BaseResponseClass> Handle(GetRecievedComplaintForAdminRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedResponseClass> Handle(GetRecievedComplaintForAdminRequest request, CancellationToken cancellationToken)
     {
-        var acceptedComplaints = await _complaintRepository.GetAcceptedComplaints();
+        var acceptedComplaints = await _complaintRepository.GetAcceptedComplaints(request.PaginationDto);
         var getAcceptedComplaints = _mapper.Map<List<GetComplaintsDto>>(acceptedComplaints);
 
-        BaseResponseClass response = new BaseResponseClass
+        PaginatedResponseClass response = new PaginatedResponseClass
         {
             StatusCode = 200,
             Success = true,
             Data = getAcceptedComplaints,
-            Message = "Complaints Fetched Successfully"
+            Message = "Complaints Fetched Successfully",
+            TotalCount = await _complaintRepository.GetRecievedComplaintsCount(),
+            PageNumber = request.PaginationDto.PageNumber,
+            PageSize = request.PaginationDto.PageSize
         };
 
         return response;

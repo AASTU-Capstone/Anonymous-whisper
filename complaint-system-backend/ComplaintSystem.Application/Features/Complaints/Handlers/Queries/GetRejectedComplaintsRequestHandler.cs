@@ -28,8 +28,8 @@ public class GetRejectedComplaintsRequestHandler : IRequestHandler<GetRejectedCo
     {
         var user = await _userRepository.GetAsync(request.UserId);
         PaginatedResponseClass response;
-        
-        if(user == null)
+
+        if (user == null)
         {
             response = new PaginatedResponseClass
             {
@@ -50,7 +50,7 @@ public class GetRejectedComplaintsRequestHandler : IRequestHandler<GetRejectedCo
                 Success = true,
                 Data = complaints,
                 Message = "Complaint Fetched Successfully",
-                TotalCount = resolvedComplaints.Count(),
+                TotalCount = await _complaintRepository.GetUserRejectedComplaintsCount(request.UserId),
                 PageNumber = request.PaginationDto.PageNumber,
                 PageSize = request.PaginationDto.PageSize,
             };

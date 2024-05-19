@@ -30,7 +30,7 @@ public class GetComplaintByIdRequestHandler : IRequestHandler<GetComplaintByIdRe
                 Data = complaint,
                 StatusCode = 200,
                 Success = true,
-                Message = "Fe"
+                Message = "Complaint Fetched Successfully"
             };
         }
         else

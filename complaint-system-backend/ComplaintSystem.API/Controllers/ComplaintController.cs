@@ -11,7 +11,7 @@ using System.Security.Claims;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Policy ="user")]
+    [Authorize(Policy = "user")]
     [ApiController]
     public class ComplaintController : ControllerBase
     {
@@ -54,16 +54,16 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("SearchComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> SearchComplaints(string keyword)
+        public async Task<ActionResult<BaseResponseClass>> SearchComplaints(string keyword, [FromQuery] PaginationDto PaginationDto)
         {
-            var request = new SearchComplaintRequest { Keyword = keyword };
+            var request = new SearchComplaintRequest { Keyword = keyword, PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
         [Route("CreateComplaint")]
-        public async Task<ActionResult<BaseResponseClass>> CreateComplaint([FromForm]CreateComplaintControllerDto createComplaintDto)
+        public async Task<ActionResult<BaseResponseClass>> CreateComplaint([FromForm] CreateComplaintControllerDto createComplaintDto)
         {
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
             var command = new CreateComplaintCommand { UserId = userId, CreateComplaintDto = createComplaintDto };
