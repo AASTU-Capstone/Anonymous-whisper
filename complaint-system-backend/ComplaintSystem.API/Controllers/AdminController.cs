@@ -44,16 +44,26 @@ namespace ComplaintSystem.API.Controllers
         [Route("GetRecievedComplaints")]
         public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints()
         {
-            var request = new GetRecievedComplaintForAdminRequest { };
+            var request = new GetRecievedComplaintForAdminRequest {Status = "recieved" };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }
+
         [HttpGet]
-        [Route("GetComplaintLogsToAssign")]
+        [Route("GetAcceptedComplaints")]
+        public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints()
+        {
+            var request = new GetRecievedComplaintForAdminRequest { Status = "accepted"};
+            var response = await _mediator.Send(request);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet]
+        [Route("GetComplaintsToAssign")]
         public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToAssign()
         {
             var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
-            var request = new GetComplaintLogsForAdminRequest { AdminId = adminId, Status = "pending" };
+            var request = new GetComplaintLogsForAdminRequest { AdminId = adminId, Status = "accepted" };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
 

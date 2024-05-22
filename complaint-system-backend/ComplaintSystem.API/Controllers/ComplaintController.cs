@@ -53,9 +53,9 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("SearchComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> SearchComplaints(string keyword)
+        public async Task<ActionResult<BaseResponseClass>> SearchComplaints(string keyword, string? category, string dateOrder)
         {
-            var request = new SearchComplaintRequest { Keyword = keyword };
+            var request = new SearchComplaintRequest { Keyword = keyword , Category = category, DateOrder = dateOrder};
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }

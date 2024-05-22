@@ -13,16 +13,25 @@ namespace ComplaintSystem.Persistence.Repositories
             _complaintSystemAppDbContext = complaintSystemAppDbContext;
         }
 
-        public async Task<List<Complaint>> GetAcceptedComplaints()
+        public async Task<List<Complaint>> GetComplaintsForAdminByStatus(string status)
         {
-            var complaints = await _complaintSystemAppDbContext.Complaints.Where(c => c.Status.ToLower() == "recieved").ToListAsync();
+            var complaints = await _complaintSystemAppDbContext.Complaints.Where(c => c.Status.ToLower() == status.ToLower()).ToListAsync();
             return complaints;
         }
 
-        public async Task<List<Complaint>> GetMatchingComplaints(string Keyword)
+        public async Task<List<Complaint>> GetMatchingComplaints(string Keyword, string category, string dateOrder)
         {
-            var complaints = await _complaintSystemAppDbContext.Complaints.Where(complaint => EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") ||complaint.Tag.Contains(Keyword.ToLower()) ||
-            EF.Functions.ILike(complaint.Content, "%" + Keyword + "%")).ToListAsync();
+            var query =  _complaintSystemAppDbContext.Complaints.Where(complaint => EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") || complaint.Tag.Contains(Keyword.ToLower()) ||
+            EF.Functions.ILike(complaint.Content, "%" + Keyword + "%") && EF.Functions.ILike(complaint.Category, "%" + category + "%"));
+            List<Complaint> complaints;
+            if(dateOrder.ToLower() == "asc")
+            {
+                complaints = await query.OrderBy(comp=>comp.CreatedAt).ToListAsync();
+            }
+            else
+            {
+                complaints = await query.OrderByDescending(comp=> comp.CreatedAt).ToListAsync();    
+            }
 
             return complaints;
         }

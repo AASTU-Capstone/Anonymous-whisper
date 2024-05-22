@@ -10,5 +10,5 @@ namespace ComplaintSystem.Application.Features.Complaints.Requests.Queries;
 
 public class GetRecievedComplaintForAdminRequest : IRequest<BaseResponseClass>
 {
-
+    public string Status { get; set; }
 }

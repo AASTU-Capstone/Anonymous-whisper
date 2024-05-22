@@ -22,7 +22,7 @@ public class SearchComplaintRequestHandler : IRequestHandler<SearchComplaintRequ
     }
     public async Task<BaseResponseClass> Handle(SearchComplaintRequest request, CancellationToken cancellationToken)
     {
-        var complaints = await _complaintRepository.GetMatchingComplaints(request.Keyword);
+        var complaints = await _complaintRepository.GetMatchingComplaints(request.Keyword, request.Category, request.DateOrder);
         var getComplaints = _mapper.Map<List<GetComplaintsDto>>(complaints);
         BaseResponseClass response = new BaseResponseClass
         {
