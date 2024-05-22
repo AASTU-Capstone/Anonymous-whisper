@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
-public class SearchComplaintRequestHandler : IRequestHandler<SearchComplaintRequest, BaseResponseClass>
+public class SearchComplaintRequestHandler : IRequestHandler<SearchComplaintRequest, PaginatedResponseClass>
 {
     private readonly IComplaintRepository _complaintRepository;
     private readonly IMapper _mapper;
@@ -20,16 +20,21 @@ public class SearchComplaintRequestHandler : IRequestHandler<SearchComplaintRequ
         _mapper = mapper;
         _complaintRepository = complaintRepository;
     }
-    public async Task<BaseResponseClass> Handle(SearchComplaintRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedResponseClass> Handle(SearchComplaintRequest request, CancellationToken cancellationToken)
     {
+        var complaints = await _complaintRepository.GetMatchingComplaints(request.Keyword, request.PaginationDto);
         var complaints = await _complaintRepository.GetMatchingComplaints(request.Keyword, request.Category, request.DateOrder);
         var getComplaints = _mapper.Map<List<GetComplaintsDto>>(complaints);
-        BaseResponseClass response = new BaseResponseClass
+
+        PaginatedResponseClass response = new PaginatedResponseClass
         {
             Data = getComplaints,
             StatusCode = 200,
             Success = true,
-            Message = "Search Results Fetched Successfully"
+            Message = "Search Results Fetched Successfully",
+            TotalCount = await _complaintRepository.GetMatchingComplaintsCount(request.Keyword),
+            PageNumber = request.PaginationDto.PageNumber,
+            PageSize = request.PaginationDto.PageSize
         };
 
         return response;

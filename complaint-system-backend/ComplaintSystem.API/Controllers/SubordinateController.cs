@@ -1,4 +1,5 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
+using ComplaintSystem.Application.DTOs.PaginationDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
 using ComplaintSystem.Application.Responses;
@@ -24,10 +25,10 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("GetComplaintLogsToUpdate")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToUpdate()
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToUpdate([FromQuery] PaginationDto PaginationDto)
         {
             var subordinateId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
-            var request = new GetComplaintLogsForSubordinateRequest { UserId = subordinateId, Status = "processing"};
+            var request = new GetComplaintLogsForSubordinateRequest { UserId = subordinateId, Status = "processing", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
@@ -66,7 +67,7 @@ namespace ComplaintSystem.API.Controllers
                 Status = updateComplaintLogStatusControllerDto.Status,
                 Role = "subordinate"
             };
-            var command = new UpdateComplaintLogStatusForSubordinateCommand { ComplaintLogStatus =  updateComplaintLogStatusDto};
+            var command = new UpdateComplaintLogStatusForSubordinateCommand { ComplaintLogStatus = updateComplaintLogStatusDto };
             var response = await _mediator.Send(command);
 
             return StatusCode(response.StatusCode, response);
