@@ -22,7 +22,7 @@ public class SearchComplaintRequestHandler : IRequestHandler<SearchComplaintRequ
     }
     public async Task<PaginatedResponseClass> Handle(SearchComplaintRequest request, CancellationToken cancellationToken)
     {
-        var complaints = await _complaintRepository.GetMatchingComplaints(request.Keyword, request.PaginationDto);
+        var complaints = await _complaintRepository.GetMatchingComplaints(request.Keyword, request.Category, request.DateOrder, request.PaginationDto);
         var getComplaints = _mapper.Map<List<GetComplaintsDto>>(complaints);
 
         PaginatedResponseClass response = new PaginatedResponseClass
@@ -31,7 +31,7 @@ public class SearchComplaintRequestHandler : IRequestHandler<SearchComplaintRequ
             StatusCode = 200,
             Success = true,
             Message = "Search Results Fetched Successfully",
-            TotalCount = await _complaintRepository.GetMatchingComplaintsCount(request.Keyword),
+            TotalCount = await _complaintRepository.GetMatchingComplaintsCount(request.Keyword, request.Category),
             PageNumber = request.PaginationDto.PageNumber,
             PageSize = request.PaginationDto.PageSize
         };

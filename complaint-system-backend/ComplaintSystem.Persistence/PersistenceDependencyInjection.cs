@@ -20,6 +20,7 @@ public static class PersistenceDependencyInjection
         services.AddScoped<IManagerRepository, ManagerRepository>();
         services.AddScoped<IAdminRepository, AdminRepository>();
         services.AddScoped<ISubordinateRepository, SubordinateRepository>();
+        services.AddScoped<ICorruptionTrendRepository, CorruptionTrendRepository>();
 
         return services;
     }

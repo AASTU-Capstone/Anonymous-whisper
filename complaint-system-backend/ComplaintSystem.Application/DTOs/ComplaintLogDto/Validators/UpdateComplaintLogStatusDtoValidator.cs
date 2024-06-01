@@ -20,7 +20,7 @@ public class UpdateComplaintLogStatusDtoValidator:AbstractValidator<UpdateCompla
      */
     private bool IsStatusType(string statusType)
     {
-        var statusTypes = new List<string> { "pending", "resolved", "submitted", "progressing", "overviewing", "processing" };
+        var statusTypes = new List<string> { "resolved", "submitted", "progressing", "overviewing", "processing" };
         var match = statusTypes.Where(type => statusType.ToLower() == type);
         return match.Any();
     }

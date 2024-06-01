@@ -18,19 +18,22 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
     private readonly IManagerRepository _managerRepository;
     private readonly ISubordinateRepository _subordinateRepository;
     private readonly IComplaintRepository _complaintRepository;
+    private readonly ICorruptionTrendRepository _corruptionTrendRepository;
 
     public UpdateComplaintLogStatusForAdminCommandHandler(
         IComplaintLogRepository complaintLogRepository,
         ISubordinateRepository subordinateRepository,
         IManagerRepository managerRepository,
         IAdminRepository adminRepository,
-        IComplaintRepository complaintRepository)
+        IComplaintRepository complaintRepository,
+        ICorruptionTrendRepository corruptionTrendRepository)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
         _managerRepository = managerRepository;
         _adminRepository = adminRepository;
         _complaintRepository = complaintRepository;
+        _corruptionTrendRepository = corruptionTrendRepository;
 
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForAdminCommand request, CancellationToken cancellationToken)
@@ -52,6 +55,12 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                 var subordinate = await _subordinateRepository.GetAsync(complaintlog.SubordinateId);
                 if (subordinate != null && request.ComplaintLogStatus.Status.ToLower() == "resolved")
                 {
+                    //get corruption trend and update the mitigated count
+                    var corruptionTrend = await _corruptionTrendRepository.GetCorruptionTrendByName(complaint.Category);
+                    corruptionTrend.MitigatedCount += 1;
+                    await _corruptionTrendRepository.Update(corruptionTrend);
+
+
                     //set complaint status to resolved
                     complaint.Status = "resolved";
                     await _complaintRepository.Update(complaint);

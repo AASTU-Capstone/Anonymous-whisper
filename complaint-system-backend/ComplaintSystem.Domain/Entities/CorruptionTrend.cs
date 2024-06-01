@@ -6,5 +6,6 @@ namespace ComplaintSystem.Domain.Entities
     {
         public string? Name { get; set; }
         public int MitigatedCount { get; set; }
+        public int TotalCount { get; set; }
     }
 }
