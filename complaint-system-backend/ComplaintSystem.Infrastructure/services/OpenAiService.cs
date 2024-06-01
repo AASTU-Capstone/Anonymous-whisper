@@ -23,8 +23,7 @@ public class OpenAiService : IOpenAiServices
         var chat = api.Chat.CreateConversation();
         chat.RequestParameters.Temperature = 0.2;
         chat.Model = OpenAI_API.Models.Model.ChatGPTTurbo;
-        chat.AppendUserInput("can you extract from the text the following list{Problem Statement, Solution, Financial Projection, Business Model, Market Analysis, Competition} as a key and paragraphs below them as a value and send back as JSON body. if key does not exist return empty value");
-        chat.AppendUserInput(texts);
+       chat.AppendUserInput(texts);
         var result = await chat.GetResponseFromChatbotAsync();
         return result.ToString();
     }

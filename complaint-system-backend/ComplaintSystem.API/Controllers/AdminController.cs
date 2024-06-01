@@ -45,29 +45,25 @@ namespace ComplaintSystem.API.Controllers
         [Route("GetRecievedComplaints")]
         public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints([FromQuery] PaginationDto PaginationDto)
         {
-            var request = new GetRecievedComplaintForAdminRequest {Status = "recieved" };
+            var request = new GetRecievedComplaintForAdminRequest {Status = "recieved", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet]
         [Route("GetAcceptedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints()
+        public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints([FromQuery] PaginationDto PaginationDto)
         {
-            var request = new GetRecievedComplaintForAdminRequest { Status = "accepted"};
-            var request = new GetRecievedComplaintForAdminRequest { PaginationDto = PaginationDto };
+            var request = new GetRecievedComplaintForAdminRequest { Status = "accepted", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet]
-        [Route("GetComplaintsToAssign")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToAssign()
-        [Route("GetComplaintLogsToAssign")]
-        public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToAssign([FromQuery] PaginationDto PaginationDto)
+        [Route("GetPendingComplaintsLogs")]
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintsToAssign([FromQuery] PaginationDto PaginationDto)
         {
             var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
-            var request = new GetComplaintLogsForAdminRequest { AdminId = adminId, Status = "accepted" };
             var request = new GetComplaintLogsForAdminRequest { AdminId = adminId, Status = "pending", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);

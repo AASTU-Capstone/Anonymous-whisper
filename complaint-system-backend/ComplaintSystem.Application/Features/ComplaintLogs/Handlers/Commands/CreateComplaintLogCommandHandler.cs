@@ -70,9 +70,15 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                 //create the complaint log with adminid nad status set to pending
 
                 var complaintLog = _mapper.Map<ComplaintLog>(request.ComplaintLogDto);
-                complaintLog.Status = "pending";
+                complaintLog.Status = "progressing";
                 complaintLog.AdminId = request.AdminId;
                 await _complaintLogRepository.Add(complaintLog);
+
+                // update the complaint status to pending
+
+                complaint.Status = "pending";
+                await _complaintRepository.Update(complaint);
+
                 response = new BaseResponseClass
                 {
                     Message = "Manager Asssigned Successfully",

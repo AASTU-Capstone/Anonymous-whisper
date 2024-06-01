@@ -23,8 +23,7 @@ public class GetRecievedComplaintForAdminRequestHandler : IRequestHandler<GetRec
     }
     public async Task<PaginatedResponseClass> Handle(GetRecievedComplaintForAdminRequest request, CancellationToken cancellationToken)
     {
-        var acceptedComplaints = await _complaintRepository.GetAcceptedComplaints(request.PaginationDto);
-        var acceptedComplaints = await _complaintRepository.GetComplaintsForAdminByStatus(request.Status);
+        var acceptedComplaints = await _complaintRepository.GetComplaintsForAdminByStatus(request.Status, request.PaginationDto);
         var getAcceptedComplaints = _mapper.Map<List<GetComplaintsDto>>(acceptedComplaints);
 
         PaginatedResponseClass response = new PaginatedResponseClass
@@ -33,7 +32,7 @@ public class GetRecievedComplaintForAdminRequestHandler : IRequestHandler<GetRec
             Success = true,
             Data = getAcceptedComplaints,
             Message = "Complaints Fetched Successfully",
-            TotalCount = await _complaintRepository.GetRecievedComplaintsCount(),
+            TotalCount = await _complaintRepository.GetComplaintsForAdminByStatusCount(request.Status),
             PageNumber = request.PaginationDto.PageNumber,
             PageSize = request.PaginationDto.PageSize
         };
