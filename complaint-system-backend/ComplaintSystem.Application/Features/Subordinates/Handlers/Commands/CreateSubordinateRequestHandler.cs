@@ -56,6 +56,8 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                     Name = request.CreateSubordinateDto.Name,
                     ManagerId = manager.Id,
                     Email = request.CreateSubordinateDto.Email,
+                    UserEntityId = request.UserId,
+                    
 
                 };
 

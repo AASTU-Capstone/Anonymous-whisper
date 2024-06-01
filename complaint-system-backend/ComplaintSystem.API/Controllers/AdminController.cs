@@ -69,6 +69,14 @@ namespace ComplaintSystem.API.Controllers
             return StatusCode(response.StatusCode, response);
 
         }
+        [HttpGet]
+        [Route("GetComplaintById")]
+        public async Task<ActionResult<BaseResponseClass>> GetComplaintById(Guid ComplaintID)
+        {
+            var request = new GetComplaintByIdRequest { ComplaintId = ComplaintID };
+            var response = await _mediator.Send(request);
+            return StatusCode(response.StatusCode, response);
+        }
 
         [HttpGet]
         [Route("GetComplaintLogsToUpdate")]

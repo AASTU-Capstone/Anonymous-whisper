@@ -1,4 +1,5 @@
-﻿using ComplaintSystem.Application.DTOs.PaginationDto;
+﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
+using ComplaintSystem.Application.DTOs.PaginationDto;
 using ComplaintSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ public interface IComplaintLogRepository : IGenericRepository<ComplaintLog>
     public Task<List<ComplaintLog>> GetForAdmin(Guid AdminId, string Status, PaginationDto paginationDto);
     public Task<List<ComplaintLog>> GetForSubordinate(Guid SubordinateId, string Status, PaginationDto paginationDto);
     public Task<List<ComplaintLog>> GetByStatus(string Status, PaginationDto paginationDto);
+    public Task<GetComplaintLogStatisticsDto> GetComplaintLogStatistics(Guid? ManagerId, Guid? SubordinateId);
 
     #endregion
 

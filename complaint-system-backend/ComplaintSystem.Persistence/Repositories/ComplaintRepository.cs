@@ -2,6 +2,7 @@ using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using ComplaintSystem.Application.DTOs.PaginationDto;
+using ComplaintSystem.Application.DTOs.ComplaintDto;
 
 namespace ComplaintSystem.Persistence.Repositories
 {
@@ -104,6 +105,41 @@ namespace ComplaintSystem.Persistence.Repositories
             return await _complaintSystemAppDbContext.Complaints
                 .CountAsync(complaint => EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") || complaint.Tag.Contains(Keyword.ToLower()) ||
             EF.Functions.ILike(complaint.Content, "%" + Keyword + "%") && EF.Functions.ILike(complaint.Category, "%" + category + "%"));
+        }
+
+        public async Task<GetComplaintStatisticsDto> GetComplaintStatistics(Guid? UserId)
+        {
+            int totalCount;
+            int pendingCount;
+            int resolvedCount;
+            int rejectedCount;
+            if (UserId != null)
+            {
+                var query =  _complaintSystemAppDbContext.Complaints.Where(comp => comp.UserEntityId == UserId);
+                totalCount = await query.CountAsync();
+                pendingCount = await query.Where(comp => comp.Status.ToLower() == "pending").CountAsync();
+                resolvedCount = await query.Where(comp => comp.Status.ToLower() == "resolved").CountAsync();
+                rejectedCount = await query.Where(comp => comp.Status.ToLower() == "rejected").CountAsync();
+            }
+            else
+            {
+                var query = _complaintSystemAppDbContext.Complaints;
+                totalCount = await query.CountAsync();
+                pendingCount = await query.Where(comp => comp.Status.ToLower() == "pending").CountAsync();
+                resolvedCount = await query.Where(comp => comp.Status.ToLower() == "resolved").CountAsync();
+                rejectedCount = await query.Where(comp => comp.Status.ToLower() == "rejected").CountAsync();
+            }
+
+            GetComplaintStatisticsDto getComplaintStatisticsDto = new GetComplaintStatisticsDto
+            {
+                PendingComplaints = pendingCount,
+                RejectedComplaints = rejectedCount,
+                ResolvedComplaints = resolvedCount,
+                TotalComplaints = totalCount,
+            };
+
+            return getComplaintStatisticsDto;
+            
         }
 
         #endregion
