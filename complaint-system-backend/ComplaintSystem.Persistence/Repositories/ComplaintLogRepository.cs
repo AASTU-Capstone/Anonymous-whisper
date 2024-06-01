@@ -1,4 +1,5 @@
-﻿using ComplaintSystem.Application.DTOs.PaginationDto;
+﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
+using ComplaintSystem.Application.DTOs.PaginationDto;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -101,6 +102,40 @@ namespace ComplaintSystem.Persistence.Repositories
         {
             var count = await _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.Status == Status).CountAsync();
             return count;
+        }
+
+        public async Task<GetComplaintLogStatisticsDto> GetComplaintLogStatistics(Guid? ManagerId, Guid? SubordinateId)
+        {
+            int totalComplaintLogCount = 0;
+            int PendingComplaintLogCount = 0;
+            int ResolvedComplaintLogCount = 0;
+            int AssignedComplaintLogCount = 0;
+            if(ManagerId != null)
+            {
+                var query = _complaintSystemAppDbContext.ComplaintLogs.Where(complog => complog.ManagerId == ManagerId);
+                totalComplaintLogCount = await query.CountAsync();
+                PendingComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "overviewing" || comp.Status.ToLower() == "progressing"|| comp.Status.ToLower() == "submitted").CountAsync();
+                ResolvedComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "resolved").CountAsync();
+                AssignedComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "processing").CountAsync();
+
+            }
+            else if(SubordinateId != null)
+            {
+                var query = _complaintSystemAppDbContext.ComplaintLogs.Where(complog => complog.SubordinateId == SubordinateId);
+                totalComplaintLogCount = await query.CountAsync();
+                PendingComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "processing").CountAsync();
+                ResolvedComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "resolved").CountAsync();
+            }
+
+            GetComplaintLogStatisticsDto getComplaintLogStatisticsDto = new GetComplaintLogStatisticsDto
+            {
+                PendingComplaintLogs = PendingComplaintLogCount,
+                ResolvedComplaintLogs = ResolvedComplaintLogCount,
+                TotalComplaintLogs = totalComplaintLogCount,
+                AssignedComplaintLogs = AssignedComplaintLogCount,
+            };
+
+            return getComplaintLogStatisticsDto;
         }
 
         #endregion
