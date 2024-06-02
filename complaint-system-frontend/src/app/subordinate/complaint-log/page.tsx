@@ -14,7 +14,7 @@ export interface Data {
   title: string;
   priority: string;
   manager: string;
-  createdDate: string;
+  createdAt: string;
 }
 
 // const data: Data[] = [
@@ -77,11 +77,10 @@ const ComplaintsLog = () => {
 
   
 
-
+  console.log(res)
   const data = res?.data?.map((item:any)=>{
     return {
       ...item,
-      createdDate: "21 July, 2020",
     }
   }) || []
 
