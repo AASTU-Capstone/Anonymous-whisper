@@ -14,7 +14,7 @@ export interface Data {
   title: string;
   priority: string;
   manager: string;
-  createdDate: string;
+  createdAt: string;
 }
 
 // const data: Data[] = [
@@ -70,21 +70,19 @@ export interface Data {
 // ];
 
 const ComplaintsLog = () => {
+  const {
+    data: res,
+    isLoading,
+    isSuccess,
+  } = useGetComplaintsToUpdateForSubordinateQuery({});
 
-
-
-  const {data:res,isLoading,isSuccess} = useGetComplaintsToUpdateForSubordinateQuery({})
-
-  
-
-
-  const data = res?.data?.map((item:any)=>{
-    return {
-      ...item,
-      createdDate: "21 July, 2020",
-    }
-  }) || []
-
+  const data =
+    res?.data?.map((item: any) => {
+      return {
+        ...item,
+        createdDate: "21 July, 2020",
+      };
+    }) || [];
 
   return (
     <Box className="py-3 w-full bg-primarykey-background">
@@ -134,13 +132,7 @@ const ComplaintsLog = () => {
         <IconAdjustmentsHorizontal className="cursor-pointer" />
       </Flex>
 
-      {
-        isSuccess &&
-
-      <RecentComplaints data={data} />
-      }
-      
-      
+      {isSuccess && <RecentComplaints data={data} />}
     </Box>
   );
 };
