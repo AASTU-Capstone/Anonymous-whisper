@@ -35,7 +35,7 @@ const ManagersList = ({ data }: { data: Data[] }) => {
       },
       {
         Header: "Created Date",
-        accessor: "createdDate",
+        accessor: "createdAt",
       },
       {
         Header: "Email",

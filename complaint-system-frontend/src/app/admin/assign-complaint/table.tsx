@@ -55,7 +55,7 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
       },
       {
         Header: "Created Date",
-        accessor: "createdDate",
+        accessor: "createdAt",
       },
       {
         Header: "Category",
