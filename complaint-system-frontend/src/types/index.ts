@@ -1,0 +1,106 @@
+export interface SignupCredentials {
+  email: string;
+  password: string;
+  user_Type?: string;
+}
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface SignupApiResponse {
+  id: string;
+  message: string;
+  success: boolean;
+  error?: string[];
+  statusCode: number;
+}
+
+export interface LoginApiResponse {
+  success: boolean;
+  message: string;
+  id: string;
+  email: string;
+  token: string;
+  isVerified: boolean;
+}
+
+export interface updateStartupProfileInput {
+  problemStatement: string;
+  proposedSolution: string,
+  financialProjection: string
+  businessModel: string;
+  marketAnalysis: string;
+  competitor: string;
+  pitchdeck: string;
+  pitchVideo: string;
+}
+
+export interface updateStartupProfileApiResponse {
+  id: string;
+  message: string;
+  statusCode: number;
+  success: boolean;
+  data: string;
+  error: string[]
+}
+
+/////////////////////////////////////////////////////////////
+
+export interface verifyAccountInput {
+  email: string;
+  OTPCode: string;
+}
+
+export interface verifyAccontApiResponse {
+  id: string;
+  message: string;
+  success: boolean;
+  error?: string[];
+}
+
+export interface forgotpasswordotp {
+  email: string;
+}
+
+export interface forgotpasswordotpApiResponse {
+  id: string;
+  message: string;
+  statusCode: number;
+  success: boolean;
+  data?: string;
+  error?: string[];
+}
+
+export interface resetPassword {
+  newPassword: string;
+  email: string;
+}
+
+export interface resetPasswordApiResponse {
+  id: string;
+  message: string;
+  statusCode: number;
+  success: boolean;
+  data?: string;
+  error?: string[];
+}
+
+export interface createOTPInput {
+  email: string;
+}
+export interface createOTPApiResponse {
+  id: string;
+  message: string;
+  success: boolean;
+  error?: string[];
+}
+
+export interface GetComplaintsResponse{
+  id: string;
+  message: string;
+  statusCode: number;
+  success: boolean;
+  data?: string;
+  error?: string[];
+}

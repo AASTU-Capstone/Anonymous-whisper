@@ -12,4 +12,5 @@ public class GetComplaintLogsDto
     public string? Report { get; set; }
     public string? Status { get; set; }
     public string? Priority { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
