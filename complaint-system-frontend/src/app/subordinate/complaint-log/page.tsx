@@ -70,9 +70,6 @@ export interface Data {
 // ];
 
 const ComplaintsLog = () => {
-
-
-
   const {data:res,isLoading,isSuccess} = useGetComplaintsToUpdateForSubordinateQuery({})
 
   
@@ -133,13 +130,7 @@ const ComplaintsLog = () => {
         <IconAdjustmentsHorizontal className="cursor-pointer" />
       </Flex>
 
-      {
-        isSuccess &&
-
-      <RecentComplaints data={data} />
-      }
-      
-      
+      {isSuccess && <RecentComplaints data={data} />}
     </Box>
   );
 };

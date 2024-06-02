@@ -3,6 +3,7 @@ export interface SignupCredentials {
   password: string;
   user_Type?: string;
 }
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -27,8 +28,8 @@ export interface LoginApiResponse {
 
 export interface updateStartupProfileInput {
   problemStatement: string;
-  proposedSolution: string,
-  financialProjection: string
+  proposedSolution: string;
+  financialProjection: string;
   businessModel: string;
   marketAnalysis: string;
   competitor: string;
@@ -42,7 +43,7 @@ export interface updateStartupProfileApiResponse {
   statusCode: number;
   success: boolean;
   data: string;
-  error: string[]
+  error: string[];
 }
 
 /////////////////////////////////////////////////////////////
@@ -96,11 +97,31 @@ export interface createOTPApiResponse {
   error?: string[];
 }
 
-export interface GetComplaintsResponse{
+export interface GetComplaintsResponse {
   id: string;
   message: string;
   statusCode: number;
   success: boolean;
   data?: string;
   error?: string[];
+}
+
+export interface GetSubordinatesResponse {
+  id: string;
+  name: string;
+  email: string;
+  mitigatedCount: Int32Array;
+}
+
+export interface CreateSubordinateInput {
+  name: string;
+  email: string;
+}
+
+export interface GetComplaintLogToAssignForManagerResponse {
+  id: string;
+  title: string;
+  status: string;
+  priority: string;
+  createdAt: string;
 }

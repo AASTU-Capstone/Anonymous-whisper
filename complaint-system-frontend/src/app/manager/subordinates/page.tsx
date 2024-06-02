@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import RecentComplaints from "./table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   IconAdjustmentsHorizontal,
   IconChevronDown,
@@ -19,57 +19,78 @@ import {
   IconSearch,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
+import {
+  useGetSubordinatesQuery,
+  useCreateSubordinateMutation,
+} from "@/lib/redux/features/manager";
+import { GetSubordinatesResponse, CreateSubordinateInput } from "@/types";
 
-export interface Data {
-  id: string;
-  name: string;
-  email: string;
-  mitigatedCount: string;
-}
 
-const data: Data[] = [
-  {
-    id: "1",
-    name: "David Wagner",
-    email: "Lorem Ipsum",
-    mitigatedCount: "3",
-  },
-  {
-    id: "2",
-    name: "Ina Hogan",
-    email: "Lorem Ipsum",
-    mitigatedCount: "4",
-  },
-  {
-    id: "3",
-    name: "Devin Harmon",
-    mitigatedCount: "1",
-    email: "Lorem Ipsum",
-  },
-  {
-    id: "4",
-    name: "Lee Harmon",
-    mitigatedCount: "6",
-    email: "Lorem Ipsum",
-  },
-  {
-    id: "5",
-    name: "Lena Page",
-    mitigatedCount: "8",
-    email: "Lorem Ipsum",
-  },
-];
-
-const page = () => {
+const Subordinates = () => {
   const [opened, { open, close }] = useDisclosure(false);
+  const {
+    data: res,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useGetSubordinatesQuery({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [createSubordinate] = useCreateSubordinateMutation();
+
+  const data =
+    res?.data?.map((item: GetSubordinatesResponse) => {
+      return {
+        ...item,
+      };
+    }) || [];
+
+  const filteredData = useMemo(() => {
+    return data.filter((item: GetSubordinatesResponse) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, data]);
+
+  const handleAddSubordinate = async () => {
+    if (!name || !email) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    const newSubordinate: CreateSubordinateInput = {
+      name,
+      email,
+    };
+
+    try {
+      const result = await createSubordinate(newSubordinate).unwrap();
+      refetch();
+      setName("");
+      setEmail("");
+      close();
+    } catch (error) {
+      console.error("Failed to add subordinate: ", error);
+      alert("Failed to add subordinate");
+    }
+  };
 
   return (
     <>
       <Modal centered opened={opened} onClose={close} title="Add Subordinate">
-        <TextInput placeholder="Full Name" className="mb-3" />
-        <TextInput placeholder="Email" />
+        <TextInput
+          placeholder="Full Name"
+          className="mb-3"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
         <Group justify="end" className="mt-7">
-          <Button>Add</Button>
+          <Button onClick={handleAddSubordinate}>Add</Button>
           <Button variant="light" onClick={close}>
             Cancel
           </Button>
@@ -85,6 +106,8 @@ const page = () => {
             radius="md"
             w={350}
             leftSection={<IconSearch />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
 
           <Button rightSection={<IconPlus />} onClick={open}>
@@ -124,10 +147,10 @@ const page = () => {
           <IconAdjustmentsHorizontal className="cursor-pointer" />
         </Flex>
 
-        <RecentComplaints data={data} />
+        <RecentComplaints data={filteredData} />
       </Box>
     </>
   );
 };
 
-export default page;
+export default Subordinates;
