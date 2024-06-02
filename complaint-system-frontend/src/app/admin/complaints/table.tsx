@@ -25,8 +25,8 @@ const Complaints = ({ data }: { data: Data[] }) => {
         ),
       },
       {
-        Header: "Status",
-        accessor: "status",
+        Header: "Category",
+        accessor: "category",
         Cell: ({ value }) => {
           const statusClass =
             value === "Resolved"
@@ -47,12 +47,9 @@ const Complaints = ({ data }: { data: Data[] }) => {
       },
       {
         Header: "Created Date",
-        accessor: "createdDate",
+        accessor: "createdAt",
       },
-      {
-        Header: "Issuer",
-        accessor: "issuer",
-      },
+      
       {
         Header: "Action",
         Cell: ({ row }) => (

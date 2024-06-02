@@ -38,14 +38,14 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
       },
       {
         Header: "Created Date",
-        accessor: "createdDate",
+        accessor: "createdAt",
       },
       {
         Header: "Action",
-        Cell: ({ row }) => (
+        Cell: ({ data }) => (
           <div className="flex space-x-4">
             <Link
-              href={`/subordinate/complaint-log/${row.id}`}
+              href={`/subordinate/complaint-log/${data.id}`}
               className="text-gray-500 ml-4 hover:text-gray-700"
             >
               <IconEdit className="w-5 h-5" />
