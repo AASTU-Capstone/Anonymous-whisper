@@ -133,3 +133,9 @@ export interface AssignManagerInput{
   managerId:string;
   complaintId:string;
 }
+
+//////////////////// subordinate ////////////////////
+export interface AssignSubordinateInput {
+  complaintLogId: string;
+  subordinateId: string;
+}

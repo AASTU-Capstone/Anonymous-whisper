@@ -19,7 +19,6 @@ const ComplaintsLog = () => {
   } = useGetComplaintLogToAssignForManagerQuery({});
 
   const [searchQuery, setSearchQuery] = useState("");
-  console.log(res);
 
   const data =
     res?.data?.map((item: GetComplaintLogToAssignForManagerResponse) => {
@@ -84,7 +83,7 @@ const ComplaintsLog = () => {
         <IconAdjustmentsHorizontal className="cursor-pointer" />
       </Flex>
 
-      <RecentComplaints data={filteredData} />
+      <RecentComplaints data={filteredData} refetchComplaints={refetch} />
     </Box>
   );
 };
