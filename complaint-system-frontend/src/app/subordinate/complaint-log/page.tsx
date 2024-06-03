@@ -70,19 +70,17 @@ export interface Data {
 // ];
 
 const ComplaintsLog = () => {
-  const {
-    data: res,
-    isLoading,
-    isSuccess,
-  } = useGetComplaintsToUpdateForSubordinateQuery({});
+  const {data:res,isLoading,isSuccess} = useGetComplaintsToUpdateForSubordinateQuery({})
 
-  const data =
-    res?.data?.map((item: any) => {
-      return {
-        ...item,
-        createdDate: "21 July, 2020",
-      };
-    }) || [];
+  
+
+  console.log(res)
+  const data = res?.data?.map((item:any)=>{
+    return {
+      ...item,
+    }
+  }) || []
+
 
   return (
     <Box className="py-3 w-full bg-primarykey-background">
