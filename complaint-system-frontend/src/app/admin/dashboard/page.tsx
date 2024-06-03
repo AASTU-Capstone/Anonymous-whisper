@@ -2,6 +2,7 @@
 import { Box, Flex, Paper, SimpleGrid, Text } from "@mantine/core";
 import RecentComplaints from "./table";
 import {useGetComplaintStatitisticsQuery} from "@/lib/redux/features/statistics"
+import {useGetAllComplaintsForAdminQuery} from "@/lib/redux/features/admin"
 import { useMemo } from "react";
 
 export interface Data {
@@ -10,71 +11,77 @@ export interface Data {
   category: string;
   status: string;
   tags: string;
-  createdDate: string;
+  createdAt: string;
 }
 
-const data: Data[] = [
-  {
-    id: "1",
-    title: "David Wagner",
-    status: "Resolved",
-    createdDate: "24 Oct, 2015",
-    tags: "LA2445",
-    category: "Lorem Ipsum",
-  },
-  {
-    id: "2",
-    title: "Ina Hogan",
-    status: "Inprogress",
-    createdDate: "24 Oct, 2015",
-    tags: "LA2445",
-    category: "Lorem Ipsum",
-  },
-  {
-    id: "3",
-    title: "Devin Harmon",
-    status: "Rejected",
-    createdDate: "18 Dec, 2015",
-    tags: "LA2445",
-    category: "Lorem Ipsum",
-  },
-  {
-    id: "4",
-    title: "Lena Page",
-    status: "Received",
-    createdDate: "8 Oct, 2016",
-    tags: "LA2445",
-    category: "Lorem Ipsum",
-  },
-  {
-    id: "5",
-    title: "Eula Horton",
-    status: "Inprogress",
-    createdDate: "15 Jun, 2017",
-    tags: "LA2445",
-    category: "Lorem Ipsum",
-  },
-  {
-    id: "6",
-    title: "Victoria Perez",
-    status: "Inprogress",
-    createdDate: "12 Jan, 2019",
-    tags: "LA2445",
-    category: "Lorem Ipsum",
-  },
-  {
-    id: "7",
-    title: "Cora Medina",
-    status: "Received",
-    createdDate: "21 July, 2020",
-    tags: "LA2445",
-    category: "Lorem Ipsum",
-  },
-];
+// const data: Data[] = [
+//   {
+//     id: "1",
+//     title: "David Wagner",
+//     status: "Resolved",
+//     createdDate: "24 Oct, 2015",
+//     tags: "LA2445",
+//     category: "Lorem Ipsum",
+//   },
+//   {
+//     id: "2",
+//     title: "Ina Hogan",
+//     status: "Inprogress",
+//     createdDate: "24 Oct, 2015",
+//     tags: "LA2445",
+//     category: "Lorem Ipsum",
+//   },
+//   {
+//     id: "3",
+//     title: "Devin Harmon",
+//     status: "Rejected",
+//     createdDate: "18 Dec, 2015",
+//     tags: "LA2445",
+//     category: "Lorem Ipsum",
+//   },
+//   {
+//     id: "4",
+//     title: "Lena Page",
+//     status: "Received",
+//     createdDate: "8 Oct, 2016",
+//     tags: "LA2445",
+//     category: "Lorem Ipsum",
+//   },
+//   {
+//     id: "5",
+//     title: "Eula Horton",
+//     status: "Inprogress",
+//     createdDate: "15 Jun, 2017",
+//     tags: "LA2445",
+//     category: "Lorem Ipsum",
+//   },
+//   {
+//     id: "6",
+//     title: "Victoria Perez",
+//     status: "Inprogress",
+//     createdDate: "12 Jan, 2019",
+//     tags: "LA2445",
+//     category: "Lorem Ipsum",
+//   },
+//   {
+//     id: "7",
+//     title: "Cora Medina",
+//     status: "Received",
+//     createdDate: "21 July, 2020",
+//     tags: "LA2445",
+//     category: "Lorem Ipsum",
+//   },
+// ];
 
 const Dashboard = () => {
   const {data:res, isLoading,isSuccess} = useGetComplaintStatitisticsQuery({});
+  const {data:complaintResponse, isLoading: loading, isSuccess: success} = useGetAllComplaintsForAdminQuery({});
   const complaintData = res?.data;
+  const complaintList = complaintResponse?.data?.map((item:any)=>{
+    return {
+      ...item
+    }
+  }) || []
   return (
     <Box className="py-6 w-full bg-primarykey-background">
       <SimpleGrid
@@ -104,7 +111,10 @@ const Dashboard = () => {
       <Box className="h-52 w-full flex justify-center items-center mt-6 bg-gray-200">
         <h1 className="text-2xl">Some Analytic Data</h1>
       </Box>
-      <RecentComplaints data={data} />
+      {
+        <RecentComplaints data={complaintList} />
+      }
+      
     </Box>
   );
 };

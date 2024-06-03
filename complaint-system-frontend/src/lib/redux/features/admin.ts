@@ -3,5 +3,7 @@ export const {
     useGetComplaintLogsToUpdateForAdminQuery,
     useGetRecievedComplaintsForAdminQuery,
     useGetAcceptedComplaintsForAdminQuery,
-    useGetManagersForAdminQuery
+    useGetManagersForAdminQuery,
+    useGetAllComplaintsForAdminQuery,
+    useAssignManagerForAdminMutation
 } = AdminApi;

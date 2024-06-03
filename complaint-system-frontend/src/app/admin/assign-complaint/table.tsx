@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import DataTable from "@/shared/table";
 import { IconTextPlus, IconUserPlus } from "@tabler/icons-react";
+import {useGetManagersForAdminQuery} from "@/lib/redux/features/admin"
 import { Column } from "react-table";
 import {
   Box,
@@ -77,8 +78,14 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
     ],
     []
   );
-
+  const {data:res,isLoading,isSuccess} = useGetManagersForAdminQuery({})
+  const type1 = res?.data?.type1
+  const type2 = res?.data?.type2
+  const managers = [type1?.name, type2?.name]
+  
   return (
+
+    
     <>
       <Modal centered opened={opened} onClose={close} title="Assign Manager">
         <Flex className="flex-col my-5 gap-7">
@@ -86,7 +93,7 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
           <Select placeholder="Priority" data={["High", "Medium", "Low"]} />
           <Select
             placeholder="Select Manager"
-            data={["manager 1", "manager 2", "manager 3"]}
+            data={managers}
           />
         </Flex>
         <Group justify="end">
