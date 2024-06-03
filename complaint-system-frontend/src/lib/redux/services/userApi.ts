@@ -11,7 +11,7 @@ import {
   verifyAccountInput,
   createOTPApiResponse,
   createOTPInput,
-  CreateComplaintInput
+  CreateComplaintInput,
 } from "@/types";
 
 import baseApi from "./baseApi";
@@ -67,6 +67,13 @@ const userApi = baseApi.injectEndpoints({
         url: "/Authentication/resetPassword",
         method: "POST",
         body: credentials,
+      }),
+    }),
+
+    GetUserById: builder.query<any, string>({
+      query: (userId: string) => ({
+        url: `/User/GetUserById?Id=${userId}`,
+        method: "GET",
       }),
     }),
 
