@@ -1,5 +1,7 @@
+"use client";
 import { Box, Flex, Paper, SimpleGrid, Text } from "@mantine/core";
 import RecentComplaints from "./table";
+import {useGetComplaintStatitisticsQuery} from "@/lib/redux/features/statistics"
 import { useMemo } from "react";
 
 export interface Data {
@@ -71,6 +73,8 @@ const data: Data[] = [
 ];
 
 const Dashboard = () => {
+  const {data:res, isLoading,isSuccess} = useGetComplaintStatitisticsQuery({});
+  const complaintData = res?.data;
   return (
     <Box className="py-6 w-full bg-primarykey-background">
       <SimpleGrid
@@ -81,19 +85,19 @@ const Dashboard = () => {
       >
         <Paper className="py-4 px-7">
           <Text c="dimmed">Total Complaints</Text>
-          <Text className="font-bold mt-1 text-xl">645</Text>
+          <Text className="font-bold mt-1 text-xl">{complaintData?.totalComplaints|| 0}</Text>
         </Paper>
         <Paper className="py-4 px-7">
           <Text c="dimmed">Total Resolved</Text>
-          <Text className="font-bold mt-1 text-xl">124</Text>
+          <Text className="font-bold mt-1 text-xl">{complaintData?.resolvedComplaints || 0}</Text>
         </Paper>
         <Paper className="py-4 px-7">
           <Text c="dimmed">In-Review Complaints</Text>
-          <Text className="font-bold mt-1 text-xl">545</Text>
+          <Text className="font-bold mt-1 text-xl">{complaintData?.pendingComplaints|| 0}</Text>
         </Paper>
         <Paper className="py-4 px-7">
           <Text c="dimmed">Rejected Complaints</Text>
-          <Text className="font-bold mt-1 text-xl">100</Text>
+          <Text className="font-bold mt-1 text-xl">{complaintData?.rejectedComplaints|| 0}</Text>
         </Paper>
       </SimpleGrid>
 

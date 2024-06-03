@@ -58,8 +58,6 @@ export interface Data {
 
 const page = () => {
   const {data:res,isLoading,isSuccess} = useGetManagersForAdminQuery({})
-  console.log("here")
-  console.log(res);
   const type1 = res?.data?.type1
   const type2 = res?.data?.type2
   const data = [type1, type2]

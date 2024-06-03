@@ -142,6 +142,16 @@ namespace ComplaintSystem.Persistence.Repositories
             
         }
 
+        public async Task<List<Complaint>> GetAllComplaintsForAdmin(PaginationDto paginationDto)
+        {
+            var complaints = await _complaintSystemAppDbContext.Complaints
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip((paginationDto.PageNumber - 1) * paginationDto.PageSize)
+                .Take(paginationDto.PageSize)
+                .ToListAsync();
+            return complaints;
+        }
+
         #endregion
     }
 }

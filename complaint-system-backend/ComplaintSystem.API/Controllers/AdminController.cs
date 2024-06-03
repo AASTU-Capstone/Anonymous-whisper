@@ -42,6 +42,15 @@ namespace ComplaintSystem.API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllComplaints")]
+        public async Task<ActionResult<BaseResponseClass>> GetAllComplaints([FromQuery] PaginationDto paginationDto)
+        {
+            var request = new GetAllComplaintsRequest { PaginationDto = paginationDto };
+            var response = await _mediator.Send(request);
+
+            return StatusCode(response.StatusCode, response);
+        }
+        [HttpGet]
         [Route("GetRecievedComplaints")]
         public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints([FromQuery] PaginationDto PaginationDto)
         {
