@@ -4,10 +4,10 @@ import { Box, Flex, Paper, SimpleGrid, Text } from "@mantine/core";
 import { IconCheck, IconTrash } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { Column } from "react-table";
-import { Data } from "./page";
+import { GetSubordinatesResponse } from "@/types";
 
-const ManagersList = ({ data }: { data: Data[] }) => {
-  const columns: Array<Column<Data>> = useMemo(
+const ManagersList = ({ data }: { data: GetSubordinatesResponse[] }) => {
+  const columns: Array<Column<GetSubordinatesResponse>> = useMemo(
     () => [
       {
         Header: "Name",

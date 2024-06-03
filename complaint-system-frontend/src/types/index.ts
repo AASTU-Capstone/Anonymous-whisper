@@ -1,3 +1,5 @@
+import { FileWithPath } from "@mantine/dropzone";
+
 export interface SignupCredentials {
   email: string;
   password: string;
@@ -129,4 +131,22 @@ export interface GetComplaintLogToAssignForManagerResponse {
 export interface AssignSubordinateInput {
   complaintLogId: string;
   subordinateId: string;
+}
+
+export interface GetComplaintsForUserResponse {
+  id: string;
+  title: string;
+  status: string;
+  createdAt: string;
+  category: string;
+}
+
+export interface CreateComplaintInput {
+  title: string;
+  category: string | null;
+  content: string;
+  images: FileWithPath[];
+  audio: FileWithPath[];
+  video: FileWithPath[];
+  documents: FileWithPath[];
 }

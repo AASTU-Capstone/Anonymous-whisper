@@ -7,5 +7,6 @@ export const {
   useResetPasswordMutation,
   useVerifyAccountMutation,
   useCreateOTPMutation,
-  useGetFollowingsQuery,
+  useGetComplaintsQuery,
+  useCreateComplaintMutation,
 } = userApi;
