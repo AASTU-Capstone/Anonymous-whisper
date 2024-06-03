@@ -11,6 +11,7 @@ import {
   verifyAccountInput,
   createOTPApiResponse,
   createOTPInput,
+  CreateComplaintInput
 } from "@/types";
 
 import baseApi from "./baseApi";
@@ -33,15 +34,18 @@ const userApi = baseApi.injectEndpoints({
       }),
     }),
 
-    forgotPassword: builder.mutation<forgotpasswordotpApiResponse, forgotpasswordotp>({
+    forgotPassword: builder.mutation<
+      forgotpasswordotpApiResponse,
+      forgotpasswordotp
+    >({
       query: (credentials: forgotpasswordotp) => {
-          return {
-            url: `/Authentication/forgotPassword`,
-            method: "POST",
-            body: credentials,
-          }
+        return {
+          url: `/Authentication/forgotPassword`,
+          method: "POST",
+          body: credentials,
+        };
       },
-  }),
+    }),
 
     verifyAccount: builder.mutation<
       verifyAccontApiResponse,
@@ -65,10 +69,19 @@ const userApi = baseApi.injectEndpoints({
         body: credentials,
       }),
     }),
-    getFollowings: builder.query<any, void>({
+
+    GetComplaints: builder.query({
       query: () => ({
-        url: "/Follow/following",
+        url: "/Complaint/GetAcceptedComplaints",
         method: "GET",
+      }),
+    }),
+
+    CreateComplaint: builder.mutation<any, CreateComplaintInput>({
+      query: (complaint: CreateComplaintInput) => ({
+        url: "/Complaint/CreateComplaint",
+        method: "POST",
+        body: complaint,
       }),
     }),
   }),

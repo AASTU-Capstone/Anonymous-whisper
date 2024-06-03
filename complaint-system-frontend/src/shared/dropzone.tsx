@@ -14,6 +14,7 @@ import {
   IconX,
   IconFile3d,
   IconImageInPicture,
+  IconFile,
 } from "@tabler/icons-react";
 import {
   Dropzone,
@@ -21,31 +22,88 @@ import {
   FileWithPath,
   MIME_TYPES,
 } from "@mantine/dropzone";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export function FilePicker(props: Partial<DropzoneProps>) {
-  const [files, setFiles] = useState<FileWithPath[]>([]);
+export function FilePicker({
+  onFilesSelected,
+  ...props
+}: Partial<DropzoneProps> & {
+  onFilesSelected: (files: {
+    images: FileWithPath[];
+    audio: FileWithPath[];
+    documents: FileWithPath[];
+  }) => void;
+}) {
+  const [imageFiles, setImageFiles] = useState<FileWithPath[]>([]);
+  const [audioFiles, setAudioFiles] = useState<FileWithPath[]>([]);
+  const [documentFiles, setDocumentFiles] = useState<FileWithPath[]>([]);
 
-  const removeFile = (file: FileWithPath) => {
-    setFiles((p) => p.filter((f) => file !== f));
+  useEffect(() => {
+    onFilesSelected({
+      images: imageFiles,
+      audio: audioFiles,
+      documents: documentFiles,
+    });
+  }, [imageFiles, audioFiles, documentFiles]);
+
+  const removeFile = (file: FileWithPath, fileType: string) => {
+    switch (fileType) {
+      case "image":
+        setImageFiles((prevFiles) => prevFiles.filter((f) => file !== f));
+        break;
+      case "audio":
+        setAudioFiles((prevFiles) => prevFiles.filter((f) => file !== f));
+        break;
+      case "document":
+        setDocumentFiles((prevFiles) => prevFiles.filter((f) => file !== f));
+        break;
+      default:
+        break;
+    }
   };
 
-  const previews = files.map((file, index) => {
-    const imageUrl = URL.createObjectURL(file);
-    return (
-      <Box
-      key={index}
-        className="border-2 border-gray-300 cursor-pointer"
-        onClick={() => removeFile(file)}
-      >
-        <Image
-          src={imageUrl}
-          onLoad={() => URL.revokeObjectURL(imageUrl)}
-        />
-        <Text className="text-sm">{file.name}</Text>
-      </Box>
-    );
-  });
+  const previews = [
+    ...imageFiles.map((file, index) => {
+      const fileUrl = URL.createObjectURL(file);
+      return (
+        <Box
+          key={index}
+          className="border-2 border-gray-300 cursor-pointer"
+          onClick={() => removeFile(file, "image")}
+        >
+          <Image src={fileUrl} onLoad={() => URL.revokeObjectURL(fileUrl)} />
+          <Text className="text-sm">{file.name}</Text>
+        </Box>
+      );
+    }),
+    ...audioFiles.map((file, index) => {
+      const fileUrl = URL.createObjectURL(file);
+      return (
+        <Box
+          key={index}
+          className="border-2 border-gray-300 cursor-pointer"
+          onClick={() => removeFile(file, "audio")}
+        >
+          <audio controls>
+            <source src={fileUrl} />
+          </audio>
+          <Text className="text-sm">{file.name}</Text>
+        </Box>
+      );
+    }),
+    ...documentFiles.map((file, index) => {
+      return (
+        <Box
+          key={index}
+          className="border-2 border-gray-300 cursor-pointer"
+          onClick={() => removeFile(file, "document")}
+        >
+          <IconFile size={rem(48)} />
+          <Text className="text-sm">{file.name}</Text>
+        </Box>
+      );
+    }),
+  ];
 
   return (
     <Flex className="w-full gap-7">
@@ -53,7 +111,9 @@ export function FilePicker(props: Partial<DropzoneProps>) {
         <Flex className="flex-col w-full">
           <Text>Upload Images</Text>
           <Dropzone
-            onDrop={setFiles}
+            onDrop={(acceptedFiles) =>
+              setImageFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
+            }
             onReject={(files) => console.log("rejected files")}
             maxSize={5 * 1024 ** 2}
             accept={{
@@ -93,9 +153,8 @@ export function FilePicker(props: Partial<DropzoneProps>) {
                   stroke={1.5}
                 />
               </Dropzone.Idle>
-
               <div className="text-center">
-                <Text size="md" inline>
+                <Text size="sm" inline>
                   Drag or select files here
                 </Text>
               </div>
@@ -105,7 +164,9 @@ export function FilePicker(props: Partial<DropzoneProps>) {
         <Flex className="flex-col w-full">
           <Text>Upload Audio</Text>
           <Dropzone
-            onDrop={setFiles}
+            onDrop={(acceptedFiles) =>
+              setAudioFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
+            }
             onReject={(files) => console.log("rejected files")}
             maxSize={5 * 1024 ** 2}
             accept={{
@@ -147,7 +208,7 @@ export function FilePicker(props: Partial<DropzoneProps>) {
               </Dropzone.Idle>
 
               <div className="text-center">
-                <Text size="md" inline>
+                <Text size="sm" inline>
                   Drag or select files here
                 </Text>
               </div>
@@ -157,7 +218,9 @@ export function FilePicker(props: Partial<DropzoneProps>) {
         <Flex className="flex-col w-full">
           <Text>Upload Document</Text>
           <Dropzone
-            onDrop={setFiles}
+            onDrop={(acceptedFiles) =>
+              setDocumentFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
+            }
             onReject={(files) => console.log("rejected files")}
             maxSize={5 * 1024 ** 2}
             accept={{
@@ -199,7 +262,7 @@ export function FilePicker(props: Partial<DropzoneProps>) {
               </Dropzone.Idle>
 
               <div className="text-center">
-                <Text size="md" inline>
+                <Text size="sm" inline>
                   Drag or select files here
                 </Text>
               </div>
