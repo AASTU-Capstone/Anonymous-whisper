@@ -13,7 +13,6 @@ export interface Data {
   id: string;
   title: string;
   priority: string;
-  manager: string;
   createdAt: string;
 }
 

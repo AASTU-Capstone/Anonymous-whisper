@@ -1,8 +1,8 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import DataTable from "@/shared/table";
-import { IconTextPlus, IconUserPlus } from "@tabler/icons-react";
-import {useGetManagersForAdminQuery} from "@/lib/redux/features/admin"
+import { IconUserPlus } from "@tabler/icons-react";
+import { useGetManagersForAdminQuery, useAssignManagerForAdminMutation } from "@/lib/redux/features/admin";
 import { Column } from "react-table";
 import {
   Box,
@@ -19,9 +19,33 @@ import { useDisclosure } from "@mantine/hooks";
 
 const AssignComplaintTable = ({ data }: { data: Data[] }) => {
   const [opened, { open, close }] = useDisclosure(false);
+  const [selectedManager, setSelectedManager] = useState<string | null>(null);
+  const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("");
+  const [priority, setPriority] = useState<string>("");
 
-  const handleAssign = (id: string) => {
+  const [assignManager, { isLoading: isAssigning }] = useAssignManagerForAdminMutation();
+
+  const handleAssign = (complaintId: string) => {
+    setSelectedComplaintId(complaintId);
     open();
+  };
+
+  const handleManagerSelect = (value: string) => {
+    setSelectedManager(value);
+  };
+
+  const handleSubmit = async () => {
+    if (selectedManager && selectedComplaintId && title && priority) {
+      const assignData = {
+        title,
+        priority,
+        managerId: selectedManager,
+        complaintId: selectedComplaintId,
+      };
+      await assignManager(assignData);
+      close();
+    }
   };
 
   const columns: Array<Column<Data>> = useMemo(
@@ -78,26 +102,38 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
     ],
     []
   );
-  const {data:res,isLoading,isSuccess} = useGetManagersForAdminQuery({})
-  const type1 = res?.data?.type1
-  const type2 = res?.data?.type2
-  const managers = [type1?.name, type2?.name]
-  
-  return (
 
-    
+  const { data: res, isLoading, isSuccess } = useGetManagersForAdminQuery({});
+  const type1 = res?.data?.type1 || [];
+  const type2 = res?.data?.type2 || [];
+  const managers = [type1, type2];
+
+  return (
     <>
       <Modal centered opened={opened} onClose={close} title="Assign Manager">
         <Flex className="flex-col my-5 gap-7">
-          <TextInput placeholder="title" />
-          <Select placeholder="Priority" data={["High", "Medium", "Low"]} />
+          <TextInput
+            placeholder="Title"
+            value={title}
+            onChange={(event) => setTitle(event.currentTarget.value)}
+          />
+          <Select
+            placeholder="Priority"
+            data={["High", "Medium", "Low"]}
+            value={priority}
+            onChange={(value) => setPriority(value)}
+          />
           <Select
             placeholder="Select Manager"
-            data={managers}
+            data={managers.map(manager => ({ value: manager.id, label: manager.name }))}
+            value={selectedManager}
+            onChange={handleManagerSelect}
           />
         </Flex>
         <Group justify="end">
-          <Button>Add</Button>
+          <Button onClick={handleSubmit} loading={isAssigning}>
+            Add
+          </Button>
           <Button variant="light" onClick={close}>
             Cancel
           </Button>
