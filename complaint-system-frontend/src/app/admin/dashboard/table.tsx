@@ -40,12 +40,9 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
       },
       {
         Header: "Created Date",
-        accessor: "createdDate",
+        accessor: "createdAt",
       },
-      {
-        Header: "Tags",
-        accessor: "tags",
-      },
+      
     ],
     []
   );

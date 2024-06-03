@@ -126,6 +126,39 @@ export interface GetComplaintLogToAssignForManagerResponse {
   createdAt: string;
 }
 
+/////////////////////// admin  ////////////////////////
+export interface AssignManagerInput{
+  title:string;
+  priority:string;
+  managerId:string;
+  complaintId:string;
+}
+
+export interface AddManagerInput{
+  name:string,
+  email:string,
+  role:string
+}
+
+export interface UpdateComplaintStatusInputForAdmin{
+  complaintId:string,
+  status:string,
+}
+
+export interface UpdateComplaintLogStatusInputForAdmin{
+  complaintLogId:string,
+  status:string,
+}
+
+export interface ManagerReponse{
+  id:string;
+  Name:string;
+  Role:string;
+  Email:string;
+  CreatedAt:string;
+}
+
+//////////////////// subordinate ////////////////////
 export interface AssignSubordinateInput {
   complaintLogId: string;
   subordinateId: string;

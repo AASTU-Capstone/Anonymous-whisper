@@ -1,7 +1,7 @@
 "use client";
 import DataTable from "@/shared/table";
-import { Box, Flex, Paper, SimpleGrid, Text } from "@mantine/core";
-import { IconCheck, IconTrash } from "@tabler/icons-react";
+import { Box, Flex, Paper, Select, SimpleGrid, Text } from "@mantine/core";
+import { IconCheck, IconDropletDown, IconEdit, IconTrash } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
@@ -37,11 +37,15 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
       },
       {
         Header: "Created Date",
-        accessor: "createdDate",
+        accessor: "createdAt",
       },
       {
-        Header: "Manager",
-        accessor: "manager",
+        Header: "Action",
+        Cell: ({ row }) => (
+          <div className="flex space-x-4">
+            <IconDropletDown className="w-5 h-5" />  
+          </div>
+        ),
       },
     ],
     []
