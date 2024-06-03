@@ -1,4 +1,4 @@
-import { CreateSubordinateInput } from "@/types";
+import { CreateSubordinateInput, AssignSubordinateInput } from "@/types";
 import baseApi from "./baseApi";
 
 const managerApi = baseApi.injectEndpoints({
@@ -22,6 +22,14 @@ const managerApi = baseApi.injectEndpoints({
 
     GetComplaintLogToAssignForManager: builder.query({
       query: () => `/Manager/GetComplaintLogToAssign`,
+    }),
+
+    AssignSubordinate: builder.mutation<any, AssignSubordinateInput>({
+      query: (credentials: AssignSubordinateInput) => ({
+        url: "/Manager/AssignSubordinate",
+        method: "POST",
+        body: credentials,
+      }),
     }),
   }),
 });

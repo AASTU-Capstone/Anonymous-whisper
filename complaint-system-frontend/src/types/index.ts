@@ -125,3 +125,8 @@ export interface GetComplaintLogToAssignForManagerResponse {
   priority: string;
   createdAt: string;
 }
+
+export interface AssignSubordinateInput {
+  complaintLogId: string;
+  subordinateId: string;
+}
