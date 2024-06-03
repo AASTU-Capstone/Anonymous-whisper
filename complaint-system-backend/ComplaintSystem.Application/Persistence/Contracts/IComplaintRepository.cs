@@ -14,6 +14,7 @@ namespace ComplaintSystem.Application.Persistence.Contracts
         public Task<List<Complaint>> GetComplaintsForAdminByStatus(string status, PaginationDto paginationDto);
         public Task<List<Complaint>> GetMatchingComplaints(string Keyword, string category, string dateOrder, PaginationDto paginationDto);
         public Task<GetComplaintStatisticsDto> GetComplaintStatistics(Guid? UserId);
+        public Task<List<Complaint>> GetAllComplaintsForAdmin(PaginationDto paginationDto);
 
         #endregion
 

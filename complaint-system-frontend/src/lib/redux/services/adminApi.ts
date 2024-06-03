@@ -17,6 +17,7 @@ const AdminApi = baseApi.injectEndpoints({
           GetManagersForAdmin: builder.query({
             query:()=> `/Admin/GetManagers`,
           }),
+          
         }),
         
 })
