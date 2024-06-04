@@ -1,17 +1,17 @@
+import Header from "@/shared/header";
+import Sidebar from "@/shared/sidebar";
 import { Box, Flex } from "@mantine/core";
 import React from "react";
-import Sidebar from "./_components/sidebar";
-import Header from "@/shared/header";
 
-export default function PublicLayout({
+export default function ManagerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <Flex>
-      <Sidebar />
-      <Box className="gap-5 flex flex-col px-10 py-5 w-full bg-primarykey-background">
+      <Sidebar role="manager" />
+      <Box className="gap-10 flex flex-col px-10 py-5 w-full bg-primary-background">
         <Header role="Manager" />
         {children}
       </Box>
