@@ -9,7 +9,7 @@ import { Divider } from "antd";
 
 const MyComponent = () => {
   const [createOTP] = useCreateOTPMutation();
-  const [verifyAccount, {isLoading}] = useVerifyAccountMutation();
+  const [verifyAccount, { isLoading }] = useVerifyAccountMutation();
 
   const [values, setValues] = useState(Array(6).fill(""));
   const params = useSearchParams();
@@ -40,7 +40,7 @@ const MyComponent = () => {
     newValues[index] = event.target.value;
     setValues(newValues);
     if (index < values.length - 1 && event.target.value) {
-      if (typeof window === 'undefined') {
+      if (typeof window === "undefined") {
         const nextInput = document.getElementById(`input-${index + 1}`);
         if (nextInput) {
           nextInput.focus();
@@ -57,21 +57,26 @@ const MyComponent = () => {
     if (res && "data" in res) {
       if (res.data.success) {
         console.log("verified account");
-        router.push(`/auth/success`);
+        router.push(`/success`);
       }
     }
   };
 
-  const handlePaste = (index: number, event: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (
+    index: number,
+    event: React.ClipboardEvent<HTMLInputElement>
+  ) => {
     event.preventDefault();
-    const pasteValue = event.clipboardData.getData('text');
+    const pasteValue = event.clipboardData.getData("text");
     const newValues = [...values];
     newValues.splice(index, pasteValue.length);
-    newValues.splice(index, 0, ...pasteValue.split(''));
+    newValues.splice(index, 0, ...pasteValue.split(""));
     setValues(newValues);
     if (index < newValues.length - 1) {
-      if (typeof window !== 'undefined') {
-        const nextInput = document.getElementById(`input-${index + pasteValue.length}`);
+      if (typeof window !== "undefined") {
+        const nextInput = document.getElementById(
+          `input-${index + pasteValue.length}`
+        );
         if (nextInput) {
           nextInput.focus();
         }
@@ -87,7 +92,8 @@ const MyComponent = () => {
         </h1>
 
         <p className="text-center text-xs  text-[#777777] px-4 whitespace-normal">
-          We{"'"}ve sent a verification code to {email}. Please enter the 6-digit code below to verify your account
+          We{"'"}ve sent a verification code to {email}. Please enter the
+          6-digit code below to verify your account
         </p>
 
         {/* Input Boxes */}
@@ -123,12 +129,12 @@ const MyComponent = () => {
               type="submit"
             >
               {isLoading ? (
-              <div className="flex items-center justify-center gap-x-3 bg-transparent">
-                <div className="spinner"></div>
-                <div>Processing . . .</div>
-              </div>
-            ) : (
-              <span>Verify code</span> 
+                <div className="flex items-center justify-center gap-x-3 bg-transparent">
+                  <div className="spinner"></div>
+                  <div>Processing . . .</div>
+                </div>
+              ) : (
+                <span>Verify code</span>
               )}
             </button>
           </div>
