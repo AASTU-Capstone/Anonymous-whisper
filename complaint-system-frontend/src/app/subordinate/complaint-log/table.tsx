@@ -21,6 +21,11 @@ import {
 } from "@/lib/redux/features/subordinate"
 import { UpdateComplaintLogStatusForSubordinate } from "@/types";
 import { useDisclosure } from "@mantine/hooks";
+
+const getcomplaintLogById = (id:string)=>{
+  const {data:complaintLogById, isLoading:complaintLogByIdLoading,isSuccess} = useGetComplaintLogByIdForSubordinateQuery(id);
+  return complaintLogById;
+}
  
 const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetchComplaintLogs: () => void; }) => {
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
@@ -53,9 +58,9 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
     });
   };
 
-  const {data:complaintLogById, isLoading:complaintLogByIdLoading,isSuccess} = useGetComplaintLogByIdForSubordinateQuery("04a0c55c-6acb-4479-8480-2db7c8fd7702");
+  
   const handleView = async (id: string) => {
-    console.log(complaintLogById?.data)
+    const complaintLogById = getcomplaintLogById(id);
     setComplaintLog(complaintLogById?.data?.complaints)
     // fetch the complaint using the id
     // set to setComplaint after fetching the complaint
@@ -75,7 +80,7 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
         accessor: "priority",
         Cell: ({ value }) => {
           const statusClass =
-            value === "high"
+            value.toLocaleLowerCase() === "high"
               ? "bg-red-200 text-red-800"
               : value === "medium"
                 ? "bg-blue-200 text-blue-800"
@@ -101,12 +106,12 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
           
           return (
           <div className="flex space-x-4">
-            <button
-              onClick={() => handleView(value)}
+            <Link
+              href={`/subordinate/complaint/${value}`}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconEye className="w-5 h-5" />
-            </button>
+            </Link>
             <Link
               href={`/subordinate/complaint-log/${value}`}
               className="text-gray-500 ml-4 hover:text-gray-700"
