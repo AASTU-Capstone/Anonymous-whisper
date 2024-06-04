@@ -8,6 +8,7 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { FaRegEyeSlash, FaLinkedin } from "react-icons/fa";
 import Link from "next/link";
+import jwt from "jsonwebtoken";
 
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -18,9 +19,6 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { CiUser } from "react-icons/ci";
-import { LoginApiResponse } from "@/types";
-// import { useGetStartupProfileQuery } from "@/lib/redux/features/startup";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
 import { AiOutlineMail } from "react-icons/ai";
@@ -46,7 +44,6 @@ const notify = () => {
 
 type Props = {};
 
-
 export default function Login({}: Props) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -59,16 +56,6 @@ export default function Login({}: Props) {
 
   const router = useRouter();
   const dispatch = useDispatch();
-  // re-route to home page if authenticated
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     setShowErrorBorder(false);
-  //     router.replace("/");
-  //   } else {
-  //     setShowErrorBorder(true);
-  //   }
-  // }, [isAuthenticated]);
-
   const [errorMessage, setErrorMessage] = useState("");
 
   let response: any;
@@ -76,7 +63,6 @@ export default function Login({}: Props) {
     ev.preventDefault();
 
     const res = await auth.loginHandler({ email, password });
-    console.log(res);
     if (res && "data" in res) {
       if (res.data.success && !res.data.isVerified) {
         router.push("/app");
@@ -85,7 +71,27 @@ export default function Login({}: Props) {
     if (res && "data" in res) {
       if (res.data.isVerified) {
         notify();
-        
+        const decodedToken: any = jwt.decode(res.data.token);
+        const userType = decodedToken.typ;
+
+        // Redirect based on userType
+        switch (userType) {
+          case "admin":
+            router.push("/admin/dashboard");
+            break;
+          case "manager":
+            router.push("/manager/dashboard");
+            break;
+          case "subordinate":
+            router.push("/subordinate/dashboard");
+            break;
+          case "user":
+            router.push("/dashboard");
+            break;
+          default:
+            router.push("/");
+            break;
+        }
       } else {
         const response = await auth.createOTPHandler(email);
         router.push("/auth/signup/verify-otp?email=" + email);
@@ -212,7 +218,6 @@ export default function Login({}: Props) {
               </div>
             </span>
           </button>
-          
         </div>
 
         <div className="text-center pt-2 mt-3">

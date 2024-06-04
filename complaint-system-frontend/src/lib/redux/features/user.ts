@@ -8,4 +8,6 @@ export const {
   useVerifyAccountMutation,
   useCreateOTPMutation,
   useGetComplaintsQuery,
+  useCreateComplaintMutation,
+  useGetUserByIdQuery,
 } = userApi;
