@@ -1,18 +1,77 @@
 "use client";
-import React, { useMemo } from "react";
 import DataTable from "@/shared/table";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import ViewComplaint from "@/shared/view-complaint";
+import { Box, Modal, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { modals } from "@mantine/modals";
+import { IconEye, IconSquareCheck, IconSquareX } from "@tabler/icons-react";
+import { useMemo, useState } from "react";
 import { Column } from "react-table";
-import { Box, Text } from "@mantine/core";
 import { Data } from "./page";
+import { UpdateComplaintStatusInputForAdmin } from "@/types";
+import { useUpdateComplaintStatusForAdminMutation } from "@/lib/redux/features/admin";
 
-const Complaints = ({ data }: { data: Data[] }) => {
-  const handleEdit = (id: string) => {
-    console.log(`Edit item with id: ${id}`);
+const Complaints = ({
+  data,
+  refetchComplaints,
+}: {
+  data: Data[];
+  refetchComplaints: () => void;
+}) => {
+  const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
+    useDisclosure(false);
+  // const [complaint, setComplaint] = useState();
+  const [useUpdateComplaintStatus] = useUpdateComplaintStatusForAdminMutation();
+
+  const handleAccept = (id: string) => {
+    modals.openConfirmModal({
+      title: "Accept Complaint",
+      centered: true,
+      children: (
+        <Text size="sm">Are you sure you want to Accept this complaint?</Text>
+      ),
+      labels: { confirm: "Accept Complaint", cancel: "Cancel" },
+      confirmProps: { color: "green" },
+      closeOnConfirm: true,
+      onConfirm: async () => {
+        const input: UpdateComplaintStatusInputForAdmin = {
+          complaintId: id,
+          status: "accepted",
+        };
+        await useUpdateComplaintStatus(input).unwrap();
+        refetchComplaints();
+        return;
+      },
+    });
   };
 
-  const handleDelete = (id: string) => {
-    console.log(`Delete item with id: ${id}`);
+  const handleReject = (id: string) => {
+    modals.openConfirmModal({
+      title: "Reject Complaint",
+      centered: true,
+      children: (
+        <Text size="sm">Are you sure you want to Reject this complaint?</Text>
+      ),
+      labels: { confirm: "Reject Complaint", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      closeOnConfirm: true,
+      onConfirm: async () => {
+        const input: UpdateComplaintStatusInputForAdmin = {
+          complaintId: id,
+          status: "progressing",
+        };
+        await useUpdateComplaintStatus(input).unwrap();
+        refetchComplaints();
+        return;
+      },
+    });
+  };
+
+  const handleView = (id: string) => {
+    // fetch the complaint using the id
+    // set to setComplaint after fetching the complaint
+    // the open the modal by calling open()
+    openViewModal();
   };
 
   const columns: Array<Column<Data>> = useMemo(
@@ -25,8 +84,8 @@ const Complaints = ({ data }: { data: Data[] }) => {
         ),
       },
       {
-        Header: "Category",
-        accessor: "category",
+        Header: "Status",
+        accessor: "status",
         Cell: ({ value }) => {
           const statusClass =
             value === "Resolved"
@@ -49,22 +108,31 @@ const Complaints = ({ data }: { data: Data[] }) => {
         Header: "Created Date",
         accessor: "createdAt",
       },
-      
+      {
+        Header: "Category",
+        accessor: "category",
+      },
       {
         Header: "Action",
         Cell: ({ row }) => (
           <div className="flex space-x-4">
             <button
-              onClick={() => handleEdit(row.original.id)}
+              onClick={() => handleView(row.original.id)}
               className="text-gray-500 hover:text-gray-700"
             >
-              <IconEdit className="w-5 h-5" />
+              <IconEye className="w-5 h-5" />
             </button>
             <button
-              onClick={() => handleDelete(row.original.id)}
+              onClick={() => handleAccept(row.original.id)}
               className="text-gray-500 hover:text-gray-700"
             >
-              <IconTrash className="w-5 h-5" />
+              <IconSquareCheck color="green" className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => handleReject(row.original.id)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <IconSquareX color="red" className="w-5 h-5" />
             </button>
           </div>
         ),
@@ -74,13 +142,24 @@ const Complaints = ({ data }: { data: Data[] }) => {
   );
 
   return (
-    <Box className="w-full bg-primarykey-body">
-      <Box className="px-2 py-5">
-        <Text className="text-xl">Complaints</Text>
-      </Box>
+    <>
+      <Modal
+        size="70%"
+        centered
+        opened={isViewModalOpened}
+        onClose={closeViewModal}
+        title="Complaint"
+      >
+        <ViewComplaint complaint={data} />
+      </Modal>
+      <Box className="w-full bg-primary-body">
+        <Box className="px-2 py-5">
+          <Text className="text-xl">Complaints</Text>
+        </Box>
 
-      <DataTable columns={columns} data={data} pageSize={10} />
-    </Box>
+        <DataTable columns={columns} data={data} pageSize={10} />
+      </Box>
+    </>
   );
 };
 

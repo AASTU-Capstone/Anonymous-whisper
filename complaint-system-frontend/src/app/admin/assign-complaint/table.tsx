@@ -2,7 +2,10 @@
 import React, { useMemo, useState } from "react";
 import DataTable from "@/shared/table";
 import { IconUserPlus } from "@tabler/icons-react";
-import { useGetManagersForAdminQuery, useAssignManagerForAdminMutation } from "@/lib/redux/features/admin";
+import {
+  useGetManagersForAdminQuery,
+  useAssignManagerForAdminMutation,
+} from "@/lib/redux/features/admin";
 import { Column } from "react-table";
 import {
   Box,
@@ -20,19 +23,18 @@ import { useDisclosure } from "@mantine/hooks";
 const AssignComplaintTable = ({ data }: { data: Data[] }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedManager, setSelectedManager] = useState<string | null>(null);
-  const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null);
+  const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(
+    null
+  );
   const [title, setTitle] = useState<string>("");
-  const [priority, setPriority] = useState<string>("");
+  const [priority, setPriority] = useState<string | null>(null);
 
-  const [assignManager, { isLoading: isAssigning }] = useAssignManagerForAdminMutation();
+  const [assignManager, { isLoading: isAssigning }] =
+    useAssignManagerForAdminMutation();
 
   const handleAssign = (complaintId: string) => {
     setSelectedComplaintId(complaintId);
     open();
-  };
-
-  const handleManagerSelect = (value: string) => {
-    setSelectedManager(value);
   };
 
   const handleSubmit = async () => {
@@ -125,9 +127,12 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
           />
           <Select
             placeholder="Select Manager"
-            data={managers.map(manager => ({ value: manager.id, label: manager.name }))}
+            data={managers.map((manager) => ({
+              value: manager.id,
+              label: manager.name,
+            }))}
             value={selectedManager}
-            onChange={handleManagerSelect}
+            onChange={(value) => setSelectedManager(value)}
           />
         </Flex>
         <Group justify="end">
@@ -139,7 +144,7 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
           </Button>
         </Group>
       </Modal>
-      <Box className="w-full bg-primarykey-body">
+      <Box className="w-full bg-primary-body">
         <Box className="px-2 py-5">
           <Text className="text-xl">My Complaints</Text>
         </Box>
