@@ -1,86 +1,86 @@
 "use client";
 import DataTable from "@/shared/table";
+import ViewComplaintResponse from "@/shared/view-complaint-reponse";
+import { Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { modals } from "@mantine/modals";
 import {
-  Box,
-  Button,
-  Flex,
-  Group,
-  Input,
-  Modal,
-  Paper,
-  Select,
-  SimpleGrid,
-  Text,
-  TextInput,
-} from "@mantine/core";
-import {
-  IconCheck,
+  IconAdjustmentsHorizontal,
+  IconChevronDown,
+  IconEye,
   IconSearch,
-  IconTrash,
-  IconUserPlus,
+  IconSquareCheck,
+  IconSquareX,
 } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { Column } from "react-table";
-import {
-  GetComplaintLogToAssignForManagerResponse,
-  GetSubordinatesResponse,
-  AssignSubordinateInput,
-} from "@/types";
-import { useDisclosure } from "@mantine/hooks";
-import {
-  useGetSubordinatesQuery,
-  useAssignSubordinateMutation,
-} from "@/lib/redux/features/manager";
+import { GetComplaintLogToUpdateForManagerResponse } from "@/types/";
 
-const RecentComplaints = ({
+const ComplaintsLogBody = ({
   data,
-  refetchComplaints,
+  refetchComplaintLogs,
 }: {
-  data: GetComplaintLogToAssignForManagerResponse[];
-  refetchComplaints: () => void;
+  data: GetComplaintLogToUpdateForManagerResponse[];
+  refetchComplaintLogs: () => void;
 }) => {
-  const [opened, { open, close }] = useDisclosure(false);
-  const { data: subordinates, refetch } = useGetSubordinatesQuery({});
-  const [selectedSubordinate, setSelectedSubordinate] = useState<string | null>(
-    null
-  );
-  const [selectedComplaint, setSelectedComplaint] = useState<string | null>(
-    null
-  );
-  const [AssignSubordinate] = useAssignSubordinateMutation();
+  const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
+    useDisclosure(false);
 
-  const handleAssign = (id: string) => {
-    setSelectedComplaint(id);
-    refetch();
-    open();
+  const [complaint, setComplaint] = useState();
+  const [rejecting, isRejecting] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredData = useMemo(() => {
+    return data.filter((item: GetComplaintLogToUpdateForManagerResponse) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, data]);
+
+  const handleAccept = (id: string) => {
+    modals.openConfirmModal({
+      title: "Accept Complaint",
+      centered: true,
+      children: (
+        <Text size="sm">Are you sure you want to Accept this complaint</Text>
+      ),
+      labels: { confirm: "Accept Complaint", cancel: "Cancel" },
+      confirmProps: { color: "green" },
+      closeOnConfirm: true,
+      onConfirm: async () => {
+        console.log(`Delete item with id: ${id}`);
+        refetchComplaintLogs();
+        return;
+      },
+    });
   };
 
-  const handleSubordinateClick = (id: string) => {
-    setSelectedSubordinate(id);
+  const handleReject = (id: string) => {
+    modals.openConfirmModal({
+      title: "Reject Complaint",
+      centered: true,
+      children: (
+        <Text size="sm">Are you sure you want to Reject this complaint</Text>
+      ),
+      labels: { confirm: "Reject Complaint", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      closeOnConfirm: true,
+      onConfirm: async () => {
+        console.log(`Delete item with id: ${id}`);
+        refetchComplaintLogs();
+        return;
+      },
+    });
   };
 
-  const handleAddClick = async () => {
-    if (selectedSubordinate && selectedComplaint) {
-      const assignedSubordinate: AssignSubordinateInput = {
-        complaintLogId: selectedComplaint,
-        subordinateId: selectedSubordinate,
-      };
-
-      try {
-        const result = await AssignSubordinate(assignedSubordinate).unwrap();
-        refetch();
-        setSelectedComplaint("");
-        setSelectedSubordinate("");
-        close();
-        refetchComplaints();
-      } catch (error) {
-        console.error("Failed to assign subordinate: ", error);
-        alert("Failed to assign subordinate");
-      }
-    }
+  const handleView = (id: string) => {
+    // fetch the complaint using the id
+    // set to setComplaint after fetching the complaint
+    // the open the modal by calling open()
+    openViewModal();
   };
 
-  const columns: Array<Column<GetComplaintLogToAssignForManagerResponse>> =
+  const columns: Array<Column<GetComplaintLogToUpdateForManagerResponse>> =
     useMemo(
       () => [
         {
@@ -114,14 +114,30 @@ const RecentComplaints = ({
           accessor: "createdAt",
         },
         {
+          Header: "Subordinate",
+          accessor: "subordinate",
+        },
+        {
           Header: "Action",
           Cell: ({ row }) => (
             <div className="flex space-x-4">
               <button
-                onClick={() => handleAssign(row.original.id)}
-                className="text-gray-500 ml-4 hover:text-gray-700"
+                onClick={() => handleView(row.original.id)}
+                className="text-gray-500 hover:text-gray-700"
               >
-                <IconUserPlus className="w-5 h-5" />
+                <IconEye className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => handleAccept(row.original.id)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <IconSquareCheck color="green" className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => handleReject(row.original.id)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <IconSquareX color="red" className="w-5 h-5" />
               </button>
             </div>
           ),
@@ -133,61 +149,72 @@ const RecentComplaints = ({
   return (
     <>
       <Modal
+        size="70%"
         centered
-        opened={opened}
-        onClose={close}
-        title="Assign Subordinate"
+        opened={isViewModalOpened}
+        onClose={closeViewModal}
+        title="Complaint"
       >
-        <Flex className="flex-col my-5 gap-7">
-          <Flex className="gap-2">
-            <Input
-              placeholder="Search"
-              radius="md"
-              leftSection={<IconSearch />}
-            />
-
-            <Button>Search</Button>
-          </Flex>
-          <Box>
-            <Text className="text-2xl text-primary-default">Subordinates</Text>
-            <Flex className="py-5 flex-col gap-2">
-              {subordinates?.data?.map(
-                (subordinate: GetSubordinatesResponse) => (
-                  <Box
-                    key={subordinate.id}
-                    onClick={() => handleSubordinateClick(subordinate.id)}
-                    className={`w-full py-2 border border-gray-200 px-3 rounded-md cursor-pointer ${
-                      selectedSubordinate === subordinate.id
-                        ? "bg-blue-100"
-                        : ""
-                    }`}
-                  >
-                    <Text className="font-bold">{subordinate.name}</Text>
-                    <Text c="dimmed">{subordinate.email}</Text>
-                  </Box>
-                )
-              )}
-            </Flex>
-          </Box>
-        </Flex>
-        <Group justify="end">
-          <Button onClick={handleAddClick} disabled={!selectedSubordinate}>
-            Assign
-          </Button>
-          <Button variant="light" onClick={close}>
-            Cancel
-          </Button>
-        </Group>
+        <ViewComplaintResponse complaint={complaint} />
       </Modal>
-      <Box className="w-full bg-primarykey-body">
-        <Box className="px-2 py-5">
-          <Text className="text-xl">My Complaint Logs</Text>
+      <Text className="text-primary-default  font-bold text-2xl mb-5">
+        Complaints
+      </Text>
+      <Flex className="gap-3 items-center">
+        <Input
+          placeholder="Search"
+          radius="md"
+          w={350}
+          leftSection={<IconSearch />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
+        <Button>Search</Button>
+
+        <Menu>
+          <Menu.Target>
+            <Button
+              variant="transparent"
+              className="text-primary-text"
+              rightSection={<IconChevronDown />}
+            >
+              Sort by
+            </Button>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item>Items</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        <Menu>
+          <Menu.Target>
+            <Button
+              variant="transparent"
+              className="text-primary-text"
+              rightSection={<IconChevronDown />}
+            >
+              Saved Search
+            </Button>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item>Items</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        <IconAdjustmentsHorizontal className="cursor-pointer" />
+      </Flex>
+      <Box className="w-full mt-7">
+        <Box>
+          <Text className="text-xl px-5 py-4 bg-primary-body">
+            My Complaints
+          </Text>
         </Box>
 
-        <DataTable columns={columns} data={data} pageSize={5} />
+        <DataTable columns={columns} data={filteredData} pageSize={5} />
       </Box>
     </>
   );
 };
 
-export default RecentComplaints;
+export default ComplaintsLogBody;

@@ -24,6 +24,10 @@ const managerApi = baseApi.injectEndpoints({
       query: () => `/Manager/GetComplaintLogToAssign`,
     }),
 
+    GetComplaintLogToUpdateForManager: builder.query({
+      query: () => `/Manager/GetComplaintLogToUpdate`,
+    }),
+
     AssignSubordinate: builder.mutation<any, AssignSubordinateInput>({
       query: (credentials: AssignSubordinateInput) => ({
         url: "/Manager/AssignSubordinate",

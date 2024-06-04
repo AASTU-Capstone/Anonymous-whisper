@@ -4,5 +4,6 @@ export const {
   useSearchSubordinatesQuery,
   useCreateSubordinateMutation,
   useGetComplaintLogToAssignForManagerQuery,
+  useGetComplaintLogToUpdateForManagerQuery,
   useAssignSubordinateMutation,
 } = managerApi;
