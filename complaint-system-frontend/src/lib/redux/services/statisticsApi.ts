@@ -5,6 +5,8 @@ const StatisticsApi = baseApi.injectEndpoints({
         GetComplaintStatitistics: builder.query<any,string>({
             query:(userId:string)=>`/Statistics/GetComplaintStatistics?UserId=${userId}`
           }),
+
+        
     })
 })
 
