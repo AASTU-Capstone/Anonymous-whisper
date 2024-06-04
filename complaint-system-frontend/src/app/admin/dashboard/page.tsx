@@ -74,7 +74,7 @@ export interface Data {
 // ];
 
 const Dashboard = () => {
-  const {data:res, isLoading,isSuccess} = useGetComplaintStatitisticsQuery({});
+  const {data:res, isLoading,isSuccess} = useGetComplaintStatitisticsQuery("");
   const {data:complaintResponse, isLoading: loading, isSuccess: success} = useGetAllComplaintsForAdminQuery({});
   const complaintData = res?.data;
   const complaintList = complaintResponse?.data?.map((item:any)=>{

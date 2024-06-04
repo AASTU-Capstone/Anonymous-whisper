@@ -7,7 +7,7 @@ import {
   IconChevronDown,
   IconSearch,
 } from "@tabler/icons-react";
-import { useGetComplaintsToUpdateForSubordinateQuery } from "@/lib/redux/features/subordinate";
+import { useGetComplaintLogsToUpdateForSubordinateQuery } from "@/lib/redux/features/subordinate";
 
 export interface Data {
   id: string;
@@ -70,7 +70,7 @@ export interface Data {
 // ];
 
 const ComplaintsLog = () => {
-  const {data:res,isLoading,isSuccess,refetch} = useGetComplaintsToUpdateForSubordinateQuery({})
+  const {data:res,isLoading,isSuccess,refetch} = useGetComplaintLogsToUpdateForSubordinateQuery({})
 
   
 
