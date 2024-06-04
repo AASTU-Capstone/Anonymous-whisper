@@ -1,12 +1,38 @@
 "use client";
 import DataTable from "@/shared/table";
-import { Box, Flex, Paper, SimpleGrid, Text } from "@mantine/core";
-import { IconCheck, IconTrash } from "@tabler/icons-react";
-import { useMemo } from "react";
+import {
+  Box,
+  Button,
+  Flex,
+  Group,
+  Input,
+  Menu,
+  Modal,
+  Select,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import {
+  IconAdjustmentsHorizontal,
+  IconChevronDown,
+  IconPlus,
+  IconSearch,
+} from "@tabler/icons-react";
+import { useMemo, useState } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
 
 const ManagersList = ({ data }: { data: Data[] }) => {
+  const [opened, { open, close }] = useDisclosure(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredData = useMemo(() => {
+    return data.filter((item: Data) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, data]);
+
   const columns: Array<Column<Data>> = useMemo(
     () => [
       {
@@ -46,13 +72,83 @@ const ManagersList = ({ data }: { data: Data[] }) => {
   );
 
   return (
-    <Box className="w-full mt-7">
-      <Box>
-        <Text className="text-xl px-5 py-4 bg-primarykey-body">Managers List</Text>
-      </Box>
+    <>
+      <Modal centered opened={opened} onClose={close} title="Managers">
+        <Flex className="flex-col my-5 gap-7">
+          <TextInput placeholder="Full Name" required />
+          <TextInput placeholder="Email" required />
+          <Select
+            placeholder="Select Role Type"
+            data={["Super Admin", "Admin", "HR-Admin"]}
+          />
+        </Flex>
+        <Group justify="end">
+          <Button>Add Manager</Button>
+          <Button variant="light" onClick={close}>
+            Cancel
+          </Button>
+        </Group>
+      </Modal>
 
-      <DataTable columns={columns} data={data} pageSize={5} />
-    </Box>
+      <Text className="text-primary-default font-bold text-2xl mb-3">
+        Managers Dashboard
+      </Text>
+      <Flex className="gap-3 items-center">
+        <Input
+          placeholder="Search"
+          radius="md"
+          w={350}
+          leftSection={<IconSearch />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
+        <Button rightSection={<IconPlus />} onClick={open}>
+          Add Manager
+        </Button>
+
+        <Menu>
+          <Menu.Target>
+            <Button
+              variant="transparent"
+              className="text-primary-text"
+              rightSection={<IconChevronDown />}
+            >
+              Sort by
+            </Button>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item>Items</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        <Menu>
+          <Menu.Target>
+            <Button
+              variant="transparent"
+              className="text-primary-text"
+              rightSection={<IconChevronDown />}
+            >
+              Saved Search
+            </Button>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item>Items</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        <IconAdjustmentsHorizontal className="cursor-pointer" />
+      </Flex>
+      <Box className="w-full mt-7">
+        <Box>
+          <Text className="text-xl px-5 py-4 bg-primary-body">
+            Managers List
+          </Text>
+        </Box>
+
+        <DataTable columns={columns} data={filteredData} pageSize={5} />
+      </Box>
+    </>
   );
 };
 
