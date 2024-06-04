@@ -1,12 +1,12 @@
 "use client";
-import Link from "next/link";
 import React, { useState } from "react";
-import { CiUser } from "react-icons/ci";
-import { MdOutlineMailOutline } from "react-icons/md";
-import { useForgotPasswordMutation } from "@/lib/redux/features/user";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { AiOutlineMail } from "react-icons/ai";
+// import Link from "next/link";
+// import { CiUser } from "react-icons/ci";
+// import { MdOutlineMailOutline } from "react-icons/md";
+// import { useForgotPasswordMutation } from "@/lib/redux/features/user";
 
 type Props = {};
 
@@ -31,18 +31,15 @@ export default function SignUp({}: Props) {
       return;
     }
     setError("");
-    console.log("Email:", email);
     sessionStorage.setItem("email", email);
     try {
-      const res = await forgotPasswordHandler({ "email": email });
-      console.log("res", res);
+      const res = await forgotPasswordHandler({ email: email });
       if (res && "data" in res && res?.data?.success) {
-        router.push("/auth/reset-password/verify-otp");
+        router.push("/reset-password/verify-otp");
       }
-    } catch(err) {
+    } catch (err) {
       console.log("Error", err);
     }
-    
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,29 +58,29 @@ export default function SignUp({}: Props) {
         </p>
 
         {/* Form | Email */}
-        <form onSubmit={handleSubmit} className="gap-2 flex flex-col items-center justify-center w-full  ">
+        <form
+          onSubmit={handleSubmit}
+          className="gap-2 flex flex-col items-center justify-center w-full  "
+        >
           <div className="gap-y-3 w-full">
-            {/* <div className="flex flex-col w-full border border-black items-center justify-center"> */}
             <div className="relative w-full">
               <AiOutlineMail className="absolute left-[100px] top-[14px] font-light text-sm" />
               <div className="flex justify-center items-center w-full">
-              <input
-                type="email"
-                value={email}
-                onChange={handleEmailChange}
-                placeholder="Your Email"
-                className="text-sm py-3 w-3/4 border-blue-200 text-secondary leading-4 border outline-none pl-10 rounded-lg  px-3  focus:outline-none focus:ring-1 focus:ring-blue-300"
-                // value={email}
-                // onChange={handleEmailChange}
-              />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={handleEmailChange}
+                  placeholder="Your Email"
+                  className="text-sm py-3 w-3/4 border-blue-200 text-secondary leading-4 border outline-none pl-10 rounded-lg  px-3  focus:outline-none focus:ring-1 focus:ring-blue-300"
+                />
               </div>
             </div>
 
             <div className="flex flex-col gap-1 w-full justify-center items-center mt-3">
-              {/* error message */}
-              {/* {error && <div className="text-red-500 text-sm">{error}</div>} */}
-              <button type="submit" className="bg-primarykey font-roboto text-sm border-transparent py-3 text-white cursor-pointer hover:bg-custom-blue/75 transition duration-150 ease-linear rounded-lg w-1/3 mx-auto mt-4">
-                {/* <Link href="/auth/reset-password/verify-otp"> */}
+              <button
+                type="submit"
+                className="bg-primarykey font-roboto text-sm border-transparent py-3 text-white cursor-pointer hover:bg-custom-blue/75 transition duration-150 ease-linear rounded-lg w-1/3 mx-auto mt-4"
+              >
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-x-3 bg-transparent">
                     <div className="spinner"></div>
@@ -92,9 +89,7 @@ export default function SignUp({}: Props) {
                 ) : (
                   <span>Reset Password</span>
                 )}
-                {/* </Link> */}
               </button>
-            {/* </div> */}
             </div>
           </div>
         </form>

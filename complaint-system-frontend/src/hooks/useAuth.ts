@@ -1,4 +1,3 @@
-// import { createOTP } from "./../types/index";
 "use client";
 import {
   useLoginMutation,
@@ -25,7 +24,6 @@ import { useState } from "react";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
-  // const cookies = useCookies();
   const router = useRouter();
   const auth = useSelector(selectAuth);
   const [login] = useLoginMutation();
@@ -47,7 +45,6 @@ export const useAuth = () => {
     },
     logoutHandler: async () => {
       localStorage.removeItem("auth");
-      // cookies.set("token", "");
       document.cookie = `token=${""}; path=/; expires=${getExpirationDate()}`;
       const dummy: AuthState = {
         token: "",
