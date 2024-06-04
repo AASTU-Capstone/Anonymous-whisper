@@ -2,72 +2,33 @@
 import DataTable from "@/shared/table";
 import ViewComplaint from "@/shared/view-complaint";
 import { Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
-import { modals } from "@mantine/modals";
+import { useDisclosure } from "@mantine/hooks";
 import {
   IconAdjustmentsHorizontal,
   IconChevronDown,
   IconEdit,
   IconEye,
   IconSearch,
-  IconSquareCheck,
 } from "@tabler/icons-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
-import Link from "next/link";
-import {
-  useUpdateComplaintLogStatusForSubordinateMutation,
-  useGetComplaintLogByIdForSubordinateQuery
-} from "@/lib/redux/features/subordinate"
-import { UpdateComplaintLogStatusForSubordinate } from "@/types";
-import { useDisclosure } from "@mantine/hooks";
 
-const getcomplaintLogById = (id:string)=>{
-  const {data:complaintLogById, isLoading:complaintLogByIdLoading,isSuccess} = useGetComplaintLogByIdForSubordinateQuery(id);
-  return complaintLogById;
-}
- 
-const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetchComplaintLogs: () => void; }) => {
+const ComplaintsLog = ({ data }: { data: Data[] }) => {
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
     useDisclosure(false);
-  const [complaintLog, setComplaintLog] = useState();
-  console.log(data);
-  const [updateComplaintLogStatus,isLoading] = useUpdateComplaintLogStatusForSubordinateMutation({})
+  const [complaint, setComplaint] = useState();
 
-  const handleAccept = async (id: string) => {
-    modals.openConfirmModal({
-      title: "Submit Complaint Log",
-      centered: true,
-      children: (
-        <Text size="sm">Are you sure you want to submit this complaint log</Text>
-      ),
-      labels: { confirm: "Submit", cancel: "Cancel" },
-      confirmProps: { color: "green" },
-      closeOnConfirm: true,
-      onConfirm: async () => {
-        // delete from the db
-        const complaintLogStatus : UpdateComplaintLogStatusForSubordinate = {
-          complainLogId:id,
-          status:"progressing"
-        };
-        await updateComplaintLogStatus(complaintLogStatus)
-        refetchComplaintLogs()
-        console.log(`Delete item with id: ${id}`);
-        return;
-      },
-    });
-  };
-
-  
-  const handleView = async (id: string) => {
-    const complaintLogById = getcomplaintLogById(id);
-    setComplaintLog(complaintLogById?.data?.complaints)
+  const handleView = (id: string) => {
     // fetch the complaint using the id
     // set to setComplaint after fetching the complaint
     // the open the modal by calling open()
     openViewModal();
   };
-  const columns: Array<Column<Data>> = [
+
+  const columns: Array<Column<Data>> = useMemo(
+    () => [
       {
         Header: "Title",
         accessor: "title",
@@ -80,7 +41,7 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
         accessor: "priority",
         Cell: ({ value }) => {
           const statusClass =
-            value.toLocaleLowerCase() === "high"
+            value === "high"
               ? "bg-red-200 text-red-800"
               : value === "medium"
                 ? "bg-blue-200 text-blue-800"
@@ -96,49 +57,41 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
       },
       {
         Header: "Created Date",
-        accessor: "createdAt",
+        accessor: "createdDate",
       },
       {
         Header: "Action",
-        accessor:'id',
-        Cell: ({ value }) => {
-          console.log(value)
-          
-          return (
+        Cell: ({ row }) => (
           <div className="flex space-x-4">
-            <Link
-              href={`/subordinate/complaint/${value}`}
+            <button
+              onClick={() => handleView(row.original.id)}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconEye className="w-5 h-5" />
-            </Link>
+            </button>
             <Link
-              href={`/subordinate/complaint-log/${value}`}
+              href={`/subordinate/complaint-log/${row.id}`}
               className="text-gray-500 ml-4 hover:text-gray-700"
             >
               <IconEdit className="w-5 h-5" />
             </Link>
-            <button
-              onClick={() => handleAccept(value)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <IconSquareCheck color="green" className="w-5 h-5" />
-            </button>
           </div>
-        )}
+        ),
       },
-    ]
+    ],
+    []
+  );
 
   return (
     <>
-    <Modal
+      <Modal
         size="70%"
         centered
         opened={isViewModalOpened}
         onClose={closeViewModal}
         title="Complaint"
       >
-        <ViewComplaint complaint={complaintLog} />
+        <ViewComplaint complaint={complaint} />
       </Modal>
       <Text className="text-primary-default font-bold text-2xl mb-5">
         Complaints
@@ -188,7 +141,7 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
 
       <Box className="w-full bg-primary-body">
         <Box className="px-2 py-5">
-          <Text className="text-xl">Complaint Logs</Text>
+          <Text className="text-xl">Complaints Log</Text>
         </Box>
 
         <DataTable columns={columns} data={data} pageSize={5} />
@@ -197,4 +150,4 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
   );
 };
 
-export default RecentComplaints;
+export default ComplaintsLog;

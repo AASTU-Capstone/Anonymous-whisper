@@ -6,12 +6,12 @@ export interface Data {
   category: string;
   status: string;
   tags: string;
-  createdDate: string;
+  createdAt: string;
 }
 
 const Dashboard = () => {
   return (
-    <Box className="pb-6 w-full bg-primarykey-background">
+    <Box className="pb-6 w-full bg-primary-background">
       <Box className="h-screen w-full flex justify-center items-center bg-gray-200">
         <h1 className="text-2xl">Some Analytic Data</h1>
       </Box>

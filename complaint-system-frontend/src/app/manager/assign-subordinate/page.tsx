@@ -1,3 +1,4 @@
+"use client"
 import { Box } from "@mantine/core";
 import AssignSubordinateTable from "./table";
 import { useGetComplaintLogToAssignForManagerQuery } from "@/lib/redux/features/manager";
@@ -63,29 +64,30 @@ import { GetComplaintLogToAssignForManagerResponse } from "@/types";
 //     manager: "Lorem Ipsum",
 //   },
 // ];
-const {
-  data: res,
-  isLoading,
-  isSuccess,
-  refetch,
-} = useGetComplaintLogToAssignForManagerQuery({});
 
-const [searchQuery, setSearchQuery] = useState("");
-
-const data =
-  res?.data?.map((item: GetComplaintLogToAssignForManagerResponse) => {
-    return {
-      ...item,
-    };
-  }) || [];
-
-const filteredData = useMemo(() => {
-  return data.filter((item: GetComplaintLogToAssignForManagerResponse) =>
-    item.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-}, [searchQuery, data]);
 
 const AssignSubordinate = () => {
+  const {
+    data: res,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useGetComplaintLogToAssignForManagerQuery({});
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const data =
+    res?.data?.map((item: GetComplaintLogToAssignForManagerResponse) => {
+      return {
+        ...item,
+      };
+    }) || [];
+  
+  const filteredData = useMemo(() => {
+    return data.filter((item: GetComplaintLogToAssignForManagerResponse) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, data]);
   return (
     <Box className="w-full bg-primary-background">
       <AssignSubordinateTable

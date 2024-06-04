@@ -1,3 +1,4 @@
+"use client"
 import { Box } from "@mantine/core";
 import SubordinatesTable from "./table";
 import { useGetSubordinatesQuery } from "@/lib/redux/features/manager";
