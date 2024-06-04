@@ -141,7 +141,7 @@ export interface GetComplaintLogToUpdateForManagerResponse {
 }
 
 export interface UpdateComplaintLogStatusInput {
-  id: string;
+  complainLogId: string;
   status: string;
 }
 

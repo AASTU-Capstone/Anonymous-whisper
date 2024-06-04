@@ -13,7 +13,7 @@ export default function Carousel({}: Props) {
         <div className="w-full mx-auto h-full">
           <div className="flex flex-col items-center text-white mt-16">
             <Image
-              src="/welcome.png"
+              src="/assets/welcome-image.jpg"
               alt="this is the image"
               className="w-auto h-[350px] object-cover py-1"
               width={300}

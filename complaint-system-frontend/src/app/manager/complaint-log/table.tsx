@@ -30,7 +30,7 @@ const ComplaintsLogBody = ({
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
     useDisclosure(false);
   const [updateComplaintLogStatus] = useUpdateComplaintLogStatusMutation();
-
+  console.log(data)
   const [complaint, setComplaint] = useState();
   const [rejecting, isRejecting] = useState(false);
 
@@ -54,7 +54,7 @@ const ComplaintsLogBody = ({
       closeOnConfirm: true,
       onConfirm: async () => {
         const input: UpdateComplaintLogStatusInput = {
-          id,
+          complainLogId: id,
           status: "submitted",
         };
         await updateComplaintLogStatus(input).unwrap();
@@ -69,18 +69,18 @@ const ComplaintsLogBody = ({
       title: "Reject Complaint",
       centered: true,
       children: (
-        <Text size="sm">Are you sure you want to Reject this complaint</Text>
+        <Text size="sm">Are you sure you want to Reject this complaint?</Text>
       ),
       labels: { confirm: "Reject Complaint", cancel: "Cancel" },
       confirmProps: { color: "red" },
       closeOnConfirm: true,
       onConfirm: async () => {
         const input: UpdateComplaintLogStatusInput = {
-          id,
-          status: "overviewing",
+          complainLogId: id,
+          status: "processing",
         };
-
-        await updateComplaintLogStatus(input).unwrap();
+        console.log(input)
+        await updateComplaintLogStatus(input)
         refetchComplaintLogs();
         return;
       },
@@ -127,28 +127,29 @@ const ComplaintsLogBody = ({
           Header: "Created Date",
           accessor: "createdAt",
         },
-        {
-          Header: "Subordinate",
-          accessor: "subordinate",
-        },
+        // {
+        //   Header: "Subordinate",
+        //   accessor: "subordinate",
+        // },
         {
           Header: "Action",
-          Cell: ({ row }) => (
+          accessor: 'id',
+          Cell: ({ value }) => (
             <div className="flex space-x-4">
               <button
-                onClick={() => handleView(row.original.id)}
+                onClick={() => handleView(value)}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <IconEye className="w-5 h-5" />
               </button>
               <button
-                onClick={() => handleAccept(row.original.id)}
+                onClick={() => handleAccept(value)}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <IconSquareCheck color="green" className="w-5 h-5" />
               </button>
               <button
-                onClick={() => handleReject(row.original.id)}
+                onClick={() => handleReject(value)}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <IconSquareX color="red" className="w-5 h-5" />

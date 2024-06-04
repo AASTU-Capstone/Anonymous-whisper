@@ -84,9 +84,10 @@ export default function Login({}: Props) {
             break;
         }
       }
-    } else {
-      await auth.createOTPHandler(email);
-      router.push("/signup/verify-otp?email=" + email);
+    } else if (res && res.error) {
+      console.log("you need to verify")
+      // await auth.createOTPHandler(email);
+      // router.push("/signup/verify-otp?email=" + email);
     }
   };
 
