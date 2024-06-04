@@ -114,7 +114,7 @@ namespace ComplaintSystem.Infrastructure.services
                     }
                 }
             }
-
+            
             return imageTags;
         }
     }

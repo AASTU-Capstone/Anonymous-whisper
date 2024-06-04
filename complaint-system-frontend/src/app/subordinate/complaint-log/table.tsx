@@ -1,15 +1,43 @@
 "use client";
 import DataTable from "@/shared/table";
 import { Box, Button, Flex, Group, Input, Modal, Text } from "@mantine/core";
-import { IconEdit, IconSearch } from "@tabler/icons-react";
+import { modals } from "@mantine/modals";
+import { IconEdit, IconSearch, IconSquareCheck } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
 import Link from "next/link";
+import {useUpdateComplaintLogStatusForSubordinateMutation} from "@/lib/redux/features/subordinate"
+import { UpdateComplaintLogStatusForSubordinate } from "@/types";
+ 
+const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetchComplaintLogs: () => void; }) => {
+  console.log(data);
+  const [updateComplaintLogStatus,isLoading] = useUpdateComplaintLogStatusForSubordinateMutation({})
 
-const RecentComplaints = ({ data }: { data: Data[] }) => {
-  const columns: Array<Column<Data>> = useMemo(
-    () => [
+  const handleAccept = async (id: string) => {
+    modals.openConfirmModal({
+      title: "Submit Complaint Log",
+      centered: true,
+      children: (
+        <Text size="sm">Are you sure you want to submit this complaint log</Text>
+      ),
+      labels: { confirm: "Submit", cancel: "Cancel" },
+      confirmProps: { color: "green" },
+      closeOnConfirm: true,
+      onConfirm: async () => {
+        // delete from the db
+        const complaintLogStatus : UpdateComplaintLogStatusForSubordinate = {
+          complainLogId:id,
+          status:"progressing"
+        };
+        await updateComplaintLogStatus(complaintLogStatus)
+        refetchComplaintLogs()
+        console.log(`Delete item with id: ${id}`);
+        return;
+      },
+    });
+  };
+  const columns: Array<Column<Data>> = [
       {
         Header: "Title",
         accessor: "title",
@@ -42,20 +70,28 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
       },
       {
         Header: "Action",
-        Cell: ({ data }) => (
+        accessor:'id',
+        Cell: ({ value }) => {
+          console.log(value)
+          
+          return (
           <div className="flex space-x-4">
             <Link
-              href={`/subordinate/complaint-log/${data.id}`}
+              href={`/subordinate/complaint-log/${value}`}
               className="text-gray-500 ml-4 hover:text-gray-700"
             >
               <IconEdit className="w-5 h-5" />
             </Link>
+            <button
+              onClick={() => handleAccept(value)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <IconSquareCheck color="green" className="w-5 h-5" />
+            </button>
           </div>
-        ),
+        )}
       },
-    ],
-    []
-  );
+    ]
 
   return (
     <>
