@@ -1,8 +1,9 @@
 import managerApi from "../services/managerApi";
 export const {
   useGetSubordinatesQuery,
-  useSearchSubordinatesQuery,
+  useUpdateComplaintLogStatusMutation,
   useCreateSubordinateMutation,
   useGetComplaintLogToAssignForManagerQuery,
+  useGetComplaintLogToUpdateForManagerQuery,
   useAssignSubordinateMutation,
 } = managerApi;

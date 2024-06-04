@@ -33,7 +33,6 @@ const ViewComplaint = ({ complaint }: { complaint: any }) => {
             image. This model was trained on millions of artificially-created
             and human-created images spanning all sorts of content such as
             photography, art, drawings, memes and more.`}
-            
           </Text>
           <Text className="text-gray-700 mt-2">
             The Model works by analyzing the visual (pixel) content of the

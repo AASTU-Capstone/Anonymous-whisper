@@ -108,6 +108,9 @@ export interface GetComplaintsResponse {
   error?: string[];
 }
 
+/////////////////////////////////////////////////////////////
+/////////////////////// MANAGER /////////////////////////////
+/////////////////////////////////////////////////////////////
 export interface GetSubordinatesResponse {
   id: string;
   name: string;
@@ -128,36 +131,50 @@ export interface GetComplaintLogToAssignForManagerResponse {
   createdAt: string;
 }
 
+export interface GetComplaintLogToUpdateForManagerResponse {
+  id: string;
+  title: string;
+  priority: string;
+  subordinate: string;
+  manager: string;
+  createdAt: string;
+}
+
+export interface UpdateComplaintLogStatusInput {
+  id: string;
+  status: string;
+}
+
 /////////////////////// admin  ////////////////////////
-export interface AssignManagerInput{
-  title:string;
-  priority:string;
-  managerId:string;
-  complaintId:string;
+export interface AssignManagerInput {
+  title: string;
+  priority: string;
+  managerId: string;
+  complaintId: string;
 }
 
-export interface AddManagerInput{
-  name:string,
-  email:string,
-  role:string
+export interface AddManagerInput {
+  name: string;
+  email: string;
+  role: string;
 }
 
-export interface UpdateComplaintStatusInputForAdmin{
-  complaintId:string,
-  status:string,
+export interface UpdateComplaintStatusInputForAdmin {
+  complaintId: string;
+  status: string;
 }
 
-export interface UpdateComplaintLogStatusInputForAdmin{
-  complaintLogId:string,
-  status:string,
+export interface UpdateComplaintLogStatusInputForAdmin {
+  complaintLogId: string;
+  status: string;
 }
 
-export interface ManagerReponse{
-  id:string;
-  Name:string;
-  Role:string;
-  Email:string;
-  CreatedAt:string;
+export interface ManagerReponse {
+  id: string;
+  Name: string;
+  Role: string;
+  Email: string;
+  CreatedAt: string;
 }
 
 //////////////////// subordinate ////////////////////
@@ -184,11 +201,11 @@ export interface CreateComplaintInput {
   Documents: FileWithPath[];
 }
 
-export interface UpdateComplaintLogStatusForSubordinate{
+export interface UpdateComplaintLogStatusForSubordinate {
   complainLogId: string;
   status: string;
 }
-export interface updateComplaintLogReport{
+export interface updateComplaintLogReport {
   id: string;
   report: string;
 }

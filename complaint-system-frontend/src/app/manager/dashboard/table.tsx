@@ -1,6 +1,6 @@
 "use client";
 import DataTable from "@/shared/table";
-import { Box, Flex, Paper, SimpleGrid, Text } from "@mantine/core";
+import { Box, Text } from "@mantine/core";
 import { useMemo } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
@@ -52,7 +52,7 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
   return (
     <Box className="w-full mt-7">
       <Box>
-        <Text className="text-xl px-5 py-4 bg-primarykey-body">
+        <Text className="text-xl px-5 py-4 bg-primary-body">
           Recent Complaints
         </Text>
       </Box>
