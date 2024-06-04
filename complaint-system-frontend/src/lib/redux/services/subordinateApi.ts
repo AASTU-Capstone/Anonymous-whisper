@@ -7,11 +7,11 @@ import baseApi from "./baseApi";
 
 const subordinateApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        GetComplaintsToUpdateForSubordinate: builder.query({
+        GetComplaintLogsToUpdateForSubordinate: builder.query({
             query: () => `/Subordinate/GetComplaintLogsToUpdate`,
           }),
 
-        GetComplaintByIdForSubordinate : builder.query<any, string>({
+        GetComplaintLogByIdForSubordinate : builder.query<any, string>({
           query:(complaintLogId:string)=> `/ComplaintLog/GetComplaintLogById?ComplaintLogId=${complaintLogId}`,
         }),
 
