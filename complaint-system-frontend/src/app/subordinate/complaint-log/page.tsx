@@ -70,7 +70,7 @@ export interface Data {
 // ];
 
 const ComplaintsLog = () => {
-  const {data:res,isLoading,isSuccess} = useGetComplaintsToUpdateForSubordinateQuery({})
+  const {data:res,isLoading,isSuccess,refetch} = useGetComplaintsToUpdateForSubordinateQuery({})
 
   
 
@@ -130,7 +130,7 @@ const ComplaintsLog = () => {
         <IconAdjustmentsHorizontal className="cursor-pointer" />
       </Flex>
 
-      {isSuccess && <RecentComplaints data={data} />}
+      {<RecentComplaints data={data} refetchComplaintLogs={refetch} />}
     </Box>
   );
 };

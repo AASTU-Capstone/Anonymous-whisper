@@ -77,13 +77,13 @@ const userApi = baseApi.injectEndpoints({
       }),
     }),
 
-    CreateComplaint: builder.mutation<any, CreateComplaintInput>({
-      query: (complaint: CreateComplaintInput) => ({
-        url: "/Complaint/CreateComplaint",
-        method: "POST",
-        body: complaint,
-      }),
-    }),
+    // CreateComplaint: builder.mutation<any, CreateComplaintInput>({
+    //   query: (complaint: CreateComplaintInput) => ({
+    //     url: "/Complaint/CreateComplaint",
+    //     method: "POST",
+    //     body: complaint,
+    //   }),
+    // }),
   }),
 });
 

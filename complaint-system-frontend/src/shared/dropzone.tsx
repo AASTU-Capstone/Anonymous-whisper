@@ -32,17 +32,20 @@ export function FilePicker({
     images: FileWithPath[];
     audio: FileWithPath[];
     documents: FileWithPath[];
+    videos: FileWithPath[];
   }) => void;
 }) {
   const [imageFiles, setImageFiles] = useState<FileWithPath[]>([]);
   const [audioFiles, setAudioFiles] = useState<FileWithPath[]>([]);
   const [documentFiles, setDocumentFiles] = useState<FileWithPath[]>([]);
+  const [videoFiles, setVideoFiles] = useState<FileWithPath[]>([]);
 
   useEffect(() => {
     onFilesSelected({
       images: imageFiles,
       audio: audioFiles,
       documents: documentFiles,
+      videos:videoFiles
     });
   }, [imageFiles, audioFiles, documentFiles]);
 

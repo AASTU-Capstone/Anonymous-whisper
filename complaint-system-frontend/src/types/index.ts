@@ -175,11 +175,20 @@ export interface GetComplaintsForUserResponse {
 }
 
 export interface CreateComplaintInput {
-  title: string;
-  category: string | null;
-  content: string;
-  images: FileWithPath[];
-  audio: FileWithPath[];
-  video: FileWithPath[];
-  documents: FileWithPath[];
+  Title: string;
+  Category: string | null;
+  Content: string;
+  ImagesEvidence: FileWithPath[];
+  SoundTrack: FileWithPath[];
+  Videos: FileWithPath[];
+  Documents: FileWithPath[];
+}
+
+export interface UpdateComplaintLogStatusForSubordinate{
+  complainLogId: string;
+  status: string;
+}
+export interface updateComplaintLogReport{
+  id: string;
+  report: string;
 }
