@@ -33,7 +33,7 @@ public class GetComplaintLogByIdRequestHandler : IRequestHandler<GetComplaintLog
         if (complaintLog != null)
         {
             var complaint = await _complaintRepository.GetAsync(complaintLog.ComplaintId);
-            var getComplaint = _mapper.Map<GetComplaintsDto>(complaint);
+            var getComplaint = _mapper.Map<GetComplaintDto>(complaint);
 
             GetComplaintLogByIdDto getComplaintLogByIdDto = new GetComplaintLogByIdDto
             {
