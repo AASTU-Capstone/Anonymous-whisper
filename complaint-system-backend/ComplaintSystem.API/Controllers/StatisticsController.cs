@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace ComplaintSystem.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Policy = "Worker")]
     [ApiController]
     public class StatisticsController : ControllerBase
     {
@@ -23,6 +22,7 @@ namespace ComplaintSystem.API.Controllers
 
         }
         [HttpGet]
+        [Authorize(Policy = "Worker")]
         [Route("GetCorruptionTrends")]
         public async Task<ActionResult<BaseResponseClass>> GetCorruptionTrends()
         {
@@ -32,6 +32,7 @@ namespace ComplaintSystem.API.Controllers
         }
         // for user and admin
         [HttpGet]
+        [Authorize(Policy = "Usin")]
         [Route("GetComplaintStatistics")]
         public async Task<ActionResult<BaseResponseClass>> GetComplaintStatistics(Guid? UserId)
         {
@@ -42,6 +43,7 @@ namespace ComplaintSystem.API.Controllers
 
         //for managerr and subordinate
         [HttpGet]
+        [Authorize(Policy = "Worker")]
         [Route("GetComplaintLogStatistics")]
         public async Task<ActionResult<BaseResponseClass>> GetComplaintLogStatistics(Guid? ManagerId, Guid? SubordinateId)
         {
