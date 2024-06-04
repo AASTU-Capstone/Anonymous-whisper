@@ -79,7 +79,7 @@ const userApi = baseApi.injectEndpoints({
 
     GetComplaints: builder.query({
       query: () => ({
-        url: "/Complaint/GetAcceptedComplaints",
+        url: "/Complaint/GetAllComplaintsForUser",
         method: "GET",
       }),
     }),

@@ -15,5 +15,5 @@ public class GetComplaintDto
     public List<string>? SoundTracks { get; set; }
     public List<string>? Documents { get; set; }
     public string Category { get; set; }
-    public string? Tag { get; set; }
+    public List<string>? Tag { get; set; }
 }

@@ -13,5 +13,5 @@ public class GetComplaintLogByIdDto
     public string? Report { get; set; }
     public string? Status { get; set; }
     public string? Priority { get; set; }
-    public GetComplaintsDto Complaints { get; set; }
+    public GetComplaintDto Complaints { get; set; }
 }

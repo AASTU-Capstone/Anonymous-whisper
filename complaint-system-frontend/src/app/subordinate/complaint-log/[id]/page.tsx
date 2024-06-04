@@ -2,7 +2,7 @@
 import { Badge, Box, Button, Flex, Textarea } from "@mantine/core";
 import React, { useState } from "react";
 import {
-  useGetComplaintByIdForSubordinateQuery, 
+  useGetComplaintLogByIdForSubordinateQuery, 
   useUpdateComplaintLogReportForSubordinateMutation} 
 from "@/lib/redux/features/subordinate"
 
@@ -24,7 +24,7 @@ const page = ({ params: { id } }: { params: { id: string } }) => {
   }
 
   //fetch complaint log with the given id 
-  const {data:response, isLoading, isSuccess,refetch} = useGetComplaintByIdForSubordinateQuery(id)
+  const {data:response, isLoading, isSuccess,refetch} = useGetComplaintLogByIdForSubordinateQuery(id)
   const complaintLog = response?.data;
   return (
     <Box className="bg-white min-h-screen p-7 rounded-lg">
