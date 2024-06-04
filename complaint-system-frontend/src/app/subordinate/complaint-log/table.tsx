@@ -39,7 +39,7 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
       title: "Submit Complaint Log",
       centered: true,
       children: (
-        <Text size="sm">Are you sure you want to submit this complaint log</Text>
+        <Text size="sm">Are you sure you want to submit this complaint log?</Text>
       ),
       labels: { confirm: "Submit", cancel: "Cancel" },
       confirmProps: { color: "green" },
@@ -52,7 +52,6 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
         };
         await updateComplaintLogStatus(complaintLogStatus)
         refetchComplaintLogs()
-        console.log(`Delete item with id: ${id}`);
         return;
       },
     });
