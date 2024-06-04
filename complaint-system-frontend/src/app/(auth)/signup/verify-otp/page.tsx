@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 import { Suspense } from "react";
 import { useCreateOTPMutation } from "@/lib/redux/features/user";
 import { useVerifyAccountMutation } from "@/lib/redux/features/user";
-import { Divider } from "antd";
 
 const MyComponent = () => {
   const [createOTP] = useCreateOTPMutation();
@@ -49,14 +48,11 @@ const MyComponent = () => {
     }
   };
 
-  // const { verifyAccountHandler, auth: {isLoading, error} } = useAuth();
-
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
     const res = await verifyAccount({ email, OTPCode: values.join("") });
     if (res && "data" in res) {
       if (res.data.success) {
-        console.log("verified account");
         router.push(`/success`);
       }
     }

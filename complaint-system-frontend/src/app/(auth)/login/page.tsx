@@ -48,28 +48,19 @@ export default function Login({}: Props) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [showErrorBorder, setShowErrorBorder] = useState<boolean>(false);
-  const [isLoadingg, setIsLoadingg] = useState(false);
-  const [haveProfile, setHaveProfile] = useState(false);
-
-  const auth = useAuth();
-
-  const router = useRouter();
-  const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState("");
 
-  let response: any;
+  const auth = useAuth();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
-
     const res = await auth.loginHandler({ email, password });
+    console.log(res);
+
     if (res && "data" in res) {
-      if (res.data.success && !res.data.isVerified) {
-        router.push("/app");
-      }
-    }
-    if (res && "data" in res) {
-      if (res.data.isVerified) {
+      if (res.data.success && res.data.isVerified) {
         notify();
         const decodedToken: any = jwt.decode(res.data.token);
         const userType = decodedToken.typ;
@@ -92,10 +83,10 @@ export default function Login({}: Props) {
             router.push("/");
             break;
         }
-      } else {
-        const response = await auth.createOTPHandler(email);
-        router.push("/auth/signup/verify-otp?email=" + email);
       }
+    } else {
+      await auth.createOTPHandler(email);
+      router.push("/signup/verify-otp?email=" + email);
     }
   };
 
@@ -106,23 +97,25 @@ export default function Login({}: Props) {
           LOGIN
         </h1>
 
-        {auth.auth.error && auth.auth.error.data && (
-          <div className="w-full border border-red-600/50 text-red-600 rounded-lg py-2.5 text-sm font-light flex items-center s space-x-3 mb-3 pl-3">
-            <Image
-              src="/images/sign-error.svg"
-              width={20}
-              height={20}
-              alt="error sign"
-              className="object-contain cursor-pointer"
-              onClick={() => dispatch(resetAuth())}
-            />
-            <p>
-              {auth.auth.error?.status === "FETCH_ERROR"
-                ? "Network Error"
-                : auth.auth.error?.data.message}
-            </p>
-          </div>
-        )}
+        {auth.auth.error &&
+          auth.auth.error.data &&
+          !auth.auth.error.data.success && (
+            <div className="w-full border border-red-600/50 text-red-600 rounded-lg py-2.5 text-sm font-light flex items-center s space-x-3 mb-3 pl-3">
+              <Image
+                src="/images/sign-error.svg"
+                width={20}
+                height={20}
+                alt="error sign"
+                className="object-contain cursor-pointer"
+                onClick={() => dispatch(resetAuth())}
+              />
+              <p>
+                {auth.auth.error?.status === "FETCH_ERROR"
+                  ? "Network Error"
+                  : auth.auth.error?.data.message}
+              </p>
+            </div>
+          )}
 
         {/* Login Form */}
         <form
