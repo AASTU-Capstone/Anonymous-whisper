@@ -14,7 +14,11 @@ import {
 } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { Column } from "react-table";
-import { GetComplaintLogToUpdateForManagerResponse } from "@/types/";
+import {
+  GetComplaintLogToUpdateForManagerResponse,
+  UpdateComplaintLogStatusInput,
+} from "@/types/";
+import { useUpdateComplaintLogStatusMutation } from "@/lib/redux/features/manager";
 
 const ComplaintsLogBody = ({
   data,
@@ -25,6 +29,7 @@ const ComplaintsLogBody = ({
 }) => {
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
     useDisclosure(false);
+  const [updateComplaintLogStatus] = useUpdateComplaintLogStatusMutation();
 
   const [complaint, setComplaint] = useState();
   const [rejecting, isRejecting] = useState(false);
@@ -42,13 +47,17 @@ const ComplaintsLogBody = ({
       title: "Accept Complaint",
       centered: true,
       children: (
-        <Text size="sm">Are you sure you want to Accept this complaint</Text>
+        <Text size="sm">Are you sure you want to Accept this complaint?</Text>
       ),
       labels: { confirm: "Accept Complaint", cancel: "Cancel" },
       confirmProps: { color: "green" },
       closeOnConfirm: true,
       onConfirm: async () => {
-        console.log(`Delete item with id: ${id}`);
+        const input: UpdateComplaintLogStatusInput = {
+          id,
+          status: "submitted",
+        };
+        await updateComplaintLogStatus(input).unwrap();
         refetchComplaintLogs();
         return;
       },
@@ -66,7 +75,12 @@ const ComplaintsLogBody = ({
       confirmProps: { color: "red" },
       closeOnConfirm: true,
       onConfirm: async () => {
-        console.log(`Delete item with id: ${id}`);
+        const input: UpdateComplaintLogStatusInput = {
+          id,
+          status: "overviewing",
+        };
+
+        await updateComplaintLogStatus(input).unwrap();
         refetchComplaintLogs();
         return;
       },

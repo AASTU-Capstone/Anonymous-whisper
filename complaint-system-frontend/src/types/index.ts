@@ -108,6 +108,9 @@ export interface GetComplaintsResponse {
   error?: string[];
 }
 
+/////////////////////////////////////////////////////////////
+/////////////////////// MANAGER /////////////////////////////
+/////////////////////////////////////////////////////////////
 export interface GetSubordinatesResponse {
   id: string;
   name: string;
@@ -135,6 +138,11 @@ export interface GetComplaintLogToUpdateForManagerResponse {
   subordinate: string;
   manager: string;
   createdAt: string;
+}
+
+export interface UpdateComplaintLogStatusInput {
+  id: string;
+  status: string;
 }
 
 /////////////////////// admin  ////////////////////////
