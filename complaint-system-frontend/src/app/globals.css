@@ -10,11 +10,19 @@
 @import "@mantine/notifications/styles.css";
 @import "@mantine/dropzone/styles.css";
 
-.menu-item-hover {
+.menu-item-hover-alert {
   color: inherit; /* Use the inherited color for non-hover state */
 }
 
-.menu-item-hover:hover {
+.menu-item-hover-alert:hover {
   color: white;
   background-color: red;
+}
+.menu-item-hover-blue {
+  color: inherit; /* Use the inherited color for non-hover state */
+}
+
+.menu-item-hover-blue:hover {
+  color: white;
+  background-color: rgb(42, 183, 253)
 }

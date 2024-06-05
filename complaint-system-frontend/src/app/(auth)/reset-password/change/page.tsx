@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
+import jwt  from "jsonwebtoken";
 
 type Props = {};
 
@@ -20,8 +21,17 @@ export default function SignUp({}: Props) {
     resetPasswordHandler,
     auth: { isLoading },
   } = useAuth();
-  const email: string =
+  var email: string =
     typeof window !== "undefined" ? sessionStorage.getItem("email") ?? "" : "";
+
+  if(!email){
+    const token = decodeURIComponent(typeof window !== "undefined" ? document.cookie : "")
+    .split(";")
+    .find((c) => c.trim().startsWith("token="))
+    ?.split("=")[1];
+    const decodedToken: any = jwt.decode(token || "");
+    email= decodedToken?.useremail
+  }
   const router = useRouter();
 
   const notify = () => {
@@ -67,7 +77,7 @@ export default function SignUp({}: Props) {
     if (res && "data" in res && res?.data?.success) {
       console.log("Password reset successfully");
       notify();
-      router.push("/auth/password-updated");
+      router.push("/password-updated");
     }
   };
 

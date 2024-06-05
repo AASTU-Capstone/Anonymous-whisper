@@ -1,12 +1,13 @@
 "use client";
 import DataTable from "@/shared/table";
 import ViewComplaintResponse from "@/shared/view-complaint-reponse";
-import { Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
+import { ActionIcon, Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import {
   IconAdjustmentsHorizontal,
   IconChevronDown,
+  IconEdit,
   IconEye,
   IconSearch,
   IconSquareCheck,
@@ -19,6 +20,8 @@ import {
   UpdateComplaintLogStatusInput,
 } from "@/types/";
 import { useUpdateComplaintLogStatusMutation } from "@/lib/redux/features/manager";
+import Link from "next/link";
+import ViewComplaintLogById from "./viewmodal";
 
 const ComplaintsLogBody = ({
   data,
@@ -33,6 +36,7 @@ const ComplaintsLogBody = ({
   console.log(data)
   const [complaint, setComplaint] = useState();
   const [rejecting, isRejecting] = useState(false);
+  const [id, setId] = useState("")
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -136,25 +140,28 @@ const ComplaintsLogBody = ({
           accessor: 'id',
           Cell: ({ value }) => (
             <div className="flex space-x-4">
-              <button
-                onClick={() => handleView(value)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <IconEye className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleAccept(value)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <IconSquareCheck color="green" className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleReject(value)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <IconSquareX color="red" className="w-5 h-5" />
-              </button>
-            </div>
+            <ActionIcon variant="light"
+            onClick={()=>{
+              setId(value)
+            }}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <IconEye className="w-5 h-5" />
+            </ActionIcon>
+            
+            <ActionIcon variant="light"
+              onClick={() => handleAccept(value)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <IconSquareCheck color="green" className="w-5 h-5" />
+            </ActionIcon>
+            <ActionIcon variant="light"
+              onClick={() => handleReject(value)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <IconSquareX color="red" className="w-5 h-5" />
+            </ActionIcon>
+          </div>
           ),
         },
       ],
@@ -163,15 +170,6 @@ const ComplaintsLogBody = ({
 
   return (
     <>
-      <Modal
-        size="70%"
-        centered
-        opened={isViewModalOpened}
-        onClose={closeViewModal}
-        title="Complaint"
-      >
-        <ViewComplaintResponse complaint={complaint} />
-      </Modal>
       <Text className="text-primary-default  font-bold text-2xl mb-5">
         Complaints
       </Text>
@@ -227,6 +225,7 @@ const ComplaintsLogBody = ({
         </Box>
 
         <DataTable columns={columns} data={filteredData} pageSize={5} />
+        <ViewComplaintLogById id = {id} openViewModal={openViewModal} closeViewModal= {closeViewModal} isViewModalOpened = {isViewModalOpened}/>
       </Box>
     </>
   );

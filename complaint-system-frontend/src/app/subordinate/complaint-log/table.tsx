@@ -17,22 +17,17 @@ import { Data } from "./page";
 import Link from "next/link";
 import {
   useUpdateComplaintLogStatusForSubordinateMutation,
-  useGetComplaintLogByIdForSubordinateQuery
 } from "@/lib/redux/features/subordinate"
 import { UpdateComplaintLogStatusForSubordinate } from "@/types";
 import { useDisclosure } from "@mantine/hooks";
 import ViewComplaintLogById from "./viewmodal";
 
-const getcomplaintLogById = (id:string)=>{
-  const {data:complaintLogById, isLoading:complaintLogByIdLoading,isSuccess} = useGetComplaintLogByIdForSubordinateQuery(id);
-  return complaintLogById;
-}
+
  
 const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetchComplaintLogs: () => void; }) => {
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
     useDisclosure(false);
   const [id, setId] = useState("")
-  const [complaintLog, setComplaintLog] = useState();
   console.log(data);
   const [updateComplaintLogStatus,isLoading] = useUpdateComplaintLogStatusForSubordinateMutation({})
 
@@ -59,15 +54,6 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
     });
   };
 
-  
-  const handleView = async (id: string) => {
-    const complaintLogById = getcomplaintLogById(id);
-    setComplaintLog(complaintLogById?.data?.complaints)
-    // fetch the complaint using the id
-    // set to setComplaint after fetching the complaint
-    // the open the modal by calling open()
-    openViewModal();
-  };
   const columns: Array<Column<Data>> = [
       {
         Header: "Title",

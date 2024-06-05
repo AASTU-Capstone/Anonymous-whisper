@@ -1,7 +1,7 @@
 "use client";
 import DataTable from "@/shared/table";
 import ViewComplaintResponse from "@/shared/view-complaint-reponse";
-import { Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
+import { ActionIcon, Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import {
@@ -17,6 +17,7 @@ import { Column } from "react-table";
 import { Data } from "./page";
 import { useUpdateComplaintLogStatusForAdminMutation } from "@/lib/redux/features/admin";
 import { UpdateComplaintLogStatusInputForAdmin } from "@/types";
+import ViewComplaintLogById from "./viewmodal";
 
 const ComplaintsLogBody = ({
   data,
@@ -30,6 +31,7 @@ const ComplaintsLogBody = ({
   const [UpdateComplaintLogForAdmin] =
     useUpdateComplaintLogStatusForAdminMutation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [id, setId] = useState("")
 
   const filteredData = useMemo(() => {
     return data.filter((item: Data) =>
@@ -81,13 +83,6 @@ const ComplaintsLogBody = ({
     });
   };
 
-  const handleView = (id: string) => {
-    // fetch the complaint using the id
-    // set to setComplaint after fetching the complaint
-    // the open the modal by calling open()
-    openViewModal();
-  };
-
   const columns: Array<Column<Data>> = useMemo(
     () => [
       {
@@ -128,24 +123,27 @@ const ComplaintsLogBody = ({
         Header: "Action",
         Cell: ({ row }) => (
           <div className="flex space-x-4">
-            <button
-              onClick={() => handleView(row.original.id)}
+            <ActionIcon variant="light"
+            onClick={()=>{
+              setId(row.original.id)
+            }}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconEye className="w-5 h-5" />
-            </button>
-            <button
+            </ActionIcon>
+            
+            <ActionIcon variant="light"
               onClick={() => handleAccept(row.original.id)}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconSquareCheck color="green" className="w-5 h-5" />
-            </button>
-            <button
+            </ActionIcon>
+            <ActionIcon variant="light"
               onClick={() => handleReject(row.original.id)}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconSquareX color="red" className="w-5 h-5" />
-            </button>
+            </ActionIcon>
           </div>
         ),
       },
@@ -155,15 +153,6 @@ const ComplaintsLogBody = ({
 
   return (
     <>
-      <Modal
-        size="70%"
-        centered
-        opened={isViewModalOpened}
-        onClose={closeViewModal}
-        title="Complaint"
-      >
-        <ViewComplaintResponse complaint={data} />
-      </Modal>
       <Text className="text-primary-default font-bold text-2xl mb-5">
         Complaints Log
       </Text>
@@ -219,6 +208,7 @@ const ComplaintsLogBody = ({
         </Box>
 
         <DataTable columns={columns} data={filteredData} pageSize={5} />
+        <ViewComplaintLogById id = {id} openViewModal={openViewModal} closeViewModal= {closeViewModal} isViewModalOpened = {isViewModalOpened}/>
       </Box>
     </>
   );

@@ -15,13 +15,13 @@ const ViewComplaint = ({ complaint }: { complaint: any }) => {
       <Box className="w-full mx-auto p-8 rounded-lg shadow-md">
         <Box className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-primary-default">Title</h1>
-          <Box className="text-xl text-primary-default">{complaint.category||"Category"}</Box>
+          <Box className="text-xl text-primary-default">{complaint?.category||"Category"}</Box>
         </Box>
         <Box className="mb-6">
           <TextInput
             type="text"
             className="w-full p-2 border rounded"
-            value={complaint.title || "Land Issue"}
+            value={complaint?.title || "Land Issue"}
           />
         </Box>
         <Box className="flex justify-between items-center mb-4">
