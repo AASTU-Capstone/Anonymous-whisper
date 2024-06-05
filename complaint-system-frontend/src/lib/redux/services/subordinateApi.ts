@@ -15,6 +15,10 @@ const subordinateApi = baseApi.injectEndpoints({
           query:(complaintLogId:string)=> `/ComplaintLog/GetComplaintLogById?ComplaintLogId=${complaintLogId}`,
         }),
 
+        GetSubordinateProfile : builder.query({
+          query:()=> `/Subordinate/GetProfile`
+        }),
+
         UpdateComplaintLogStatusForSubordinate : builder.mutation<any, UpdateComplaintLogStatusForSubordinate>({
           query:(complaintLog:UpdateComplaintLogStatusForSubordinate)=>({
             url : `/Subordinate/UpdateComplaintLogStatus`,
@@ -30,6 +34,7 @@ const subordinateApi = baseApi.injectEndpoints({
             body:complaintLogReport
           }),
         }),
+        
 
         }),
 })

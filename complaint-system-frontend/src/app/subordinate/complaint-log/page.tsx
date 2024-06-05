@@ -2,6 +2,8 @@
 import { Box } from "@mantine/core";
 import RecentComplaints from "./table";
 import { useGetComplaintLogsToUpdateForSubordinateQuery } from "@/lib/redux/features/subordinate";
+import { useState } from "react";
+import { useDisclosure } from "@mantine/hooks";
 
 export interface Data {
   id: string;
@@ -13,6 +15,9 @@ export interface Data {
 
 const ComplaintsLog = () => {
   const {data:res,isLoading,isSuccess,refetch} = useGetComplaintLogsToUpdateForSubordinateQuery({})
+  const [id, setId] = useState("")
+  const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
+    useDisclosure(false);
   const data = res?.data?.map((item:any)=>{
     return {
       ...item,

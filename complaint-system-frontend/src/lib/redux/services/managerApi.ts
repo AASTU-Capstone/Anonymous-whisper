@@ -12,6 +12,10 @@ const managerApi = baseApi.injectEndpoints({
       query: () => `/Manager/GetSubordinates`,
     }),
 
+    GetManagerProfile : builder.query({
+      query:()=> `/Manager/GetProfile`
+    }),
+
     // Create Subordinate
     CreateSubordinate: builder.mutation<any, CreateSubordinateInput>({
       query: (credentials: CreateSubordinateInput) => ({

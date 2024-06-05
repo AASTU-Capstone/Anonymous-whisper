@@ -3,5 +3,6 @@ export const {
     useGetComplaintLogsToUpdateForSubordinateQuery,
     useGetComplaintLogByIdForSubordinateQuery,
     useUpdateComplaintLogStatusForSubordinateMutation,
-    useUpdateComplaintLogReportForSubordinateMutation
+    useUpdateComplaintLogReportForSubordinateMutation,
+    useGetSubordinateProfileQuery
 } = subordinateApi;
