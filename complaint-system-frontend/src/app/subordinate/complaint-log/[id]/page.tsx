@@ -1,15 +1,17 @@
 "use client";
 import { Badge, Box, Button, Flex, Textarea } from "@mantine/core";
 import React, { useState } from "react";
-import {
-  useGetComplaintLogByIdForSubordinateQuery, 
+import { 
   useUpdateComplaintLogReportForSubordinateMutation} 
 from "@/lib/redux/features/subordinate"
+import {useGetComplaintLogByIdQuery} from "@/lib/redux/features/complaintLog"
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const page = ({ params: { id } }: { params: { id: string } }) => {
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
-  const [assignComplaintLog,{ isLoading: isAssigning }] = useUpdateComplaintLogReportForSubordinateMutation({})
-
+  const [assignComplaintLog,{ isLoading: isComplaintLogAssigning }] = useUpdateComplaintLogReportForSubordinateMutation({})
+  const router = useRouter()
   
   const handleReportSubmit = async ()=>{
     if(selectedReport){
@@ -22,9 +24,12 @@ const page = ({ params: { id } }: { params: { id: string } }) => {
       close();
     }
   }
+  const handleRouter = async ()=>{
+    router.push("/subordinate/complaint-log")
+  }
 
   //fetch complaint log with the given id 
-  const {data:response, isLoading, isSuccess,refetch} = useGetComplaintLogByIdForSubordinateQuery(id)
+  const {data:response, isLoading, isSuccess,refetch} = useGetComplaintLogByIdQuery(id)
   const complaintLog = response?.data;
   return (
     <Box className="bg-white min-h-screen p-7 rounded-lg">
@@ -44,8 +49,18 @@ const page = ({ params: { id } }: { params: { id: string } }) => {
         <Textarea minRows={15} autosize onChange={(event) => setSelectedReport(event.currentTarget.value)} defaultValue={complaintLog?.report}/>
       </Box>
       <Box className="flex justify-end mt-16 space-x-4">
-        <Button onClick={handleReportSubmit}>Submit</Button>
-        <Button variant="outline">Cancel</Button>
+        <Button onClick={handleReportSubmit}> <div className="flex items-center justify-center gap-x-3 bg-transparent">
+          { isComplaintLogAssigning?(
+                <div className="spinner">
+                <span>saving . . .</span>
+                </div>) 
+              :(
+              <span>Save</span>
+            )}
+            </div>
+        </Button>
+        <Button variant="outline" onClick={handleRouter} >Cancel</Button>
+        
       </Box>
     </Box>
   );

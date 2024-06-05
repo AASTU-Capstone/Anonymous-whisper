@@ -1,8 +1,16 @@
 import { Accordion, ActionIcon, Box, Flex } from "@mantine/core";
 import { IconCircleChevronDown } from "@tabler/icons-react";
 import ViewComplaint from "./view-complaint";
+import { useState } from "react";
 
 const ViewComplaintResponse = ({ complaintLog }: { complaintLog: any }) => {
+  const statusClass =
+  complaintLog?.priority === "high"
+                ? "bg-red-200 text-red-800"
+                : complaintLog?.priority === "medium"
+                  ? "bg-blue-200 text-blue-800"
+                  : "bg-gray-200 text-gray-800";
+               
   return (
     <Flex className="flex-col gap-5">
       <Box className="bg-white shadow-md rounded-lg p-6 my-8">
@@ -10,8 +18,12 @@ const ViewComplaintResponse = ({ complaintLog }: { complaintLog: any }) => {
           <h4 className="text-2xl font-semibold text-blue-500">Report Title</h4>
           <Box className="flex flex-col gap-2 items-center">
             <Box className="text-xl font-semibold text-blue-500">Priority</Box>
-            <Box className="text-md bg-blue-100 text-blue-500 rounded-full px-4 py-1">
-            {complaintLog?.priority || "medium"}
+            <Box className={`text-md ${statusClass} text-blue-500 rounded-full px-4 py-1`}>
+              <span
+                className={`py-1 px-5 text-center text-xs leading-5 font-semibold rounded-full ${statusClass}`}
+              >
+                 {complaintLog?.priority || "medium"}
+              </span>
             </Box>
           </Box>
         </Box>

@@ -19,7 +19,7 @@ const ComplaintsLog = () => {
         ...item,
       };
     }) || [];
-
+  console.log(data)
   return (
     <Box className="w-full bg-primary-background">
       <ComplaintsLogBody data={data} refetchComplaintLogs={refetch} />
