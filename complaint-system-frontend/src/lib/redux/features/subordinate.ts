@@ -1,7 +1,7 @@
 import subordinateApi from "../services/subordinateApi";
 export const {
     useGetComplaintLogsToUpdateForSubordinateQuery,
-    useGetComplaintLogByIdForSubordinateQuery,
+    useGetComplaintLogByIdQuery,
     useUpdateComplaintLogStatusForSubordinateMutation,
     useUpdateComplaintLogReportForSubordinateMutation,
     useGetSubordinateProfileQuery

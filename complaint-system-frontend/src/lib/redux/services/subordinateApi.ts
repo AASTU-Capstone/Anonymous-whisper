@@ -11,7 +11,7 @@ const subordinateApi = baseApi.injectEndpoints({
             query: () => `/Subordinate/GetComplaintLogsToUpdate`,
           }),
 
-        GetComplaintLogByIdForSubordinate : builder.query<any, string>({
+        GetComplaintLogById : builder.query<any, string>({
           query:(complaintLogId:string)=> `/ComplaintLog/GetComplaintLogById?ComplaintLogId=${complaintLogId}`,
         }),
 

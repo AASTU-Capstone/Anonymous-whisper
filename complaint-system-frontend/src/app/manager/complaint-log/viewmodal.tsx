@@ -2,7 +2,7 @@
 import {
   useGetComplaintLogByIdQuery,
 } from "@/lib/redux/features/complaintLog";
-import ViewComplaint from "@/shared/view-complaint";
+import ViewComplaint from "@/shared/view-complaint-reponse";
 import { Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState, useEffect } from "react";
@@ -17,7 +17,7 @@ const ViewComplaintLogById = (
 
   useEffect(() => {
     if (isSuccess) {
-      setComplaintLog(complaintLogById?.data?.complaints);
+      setComplaintLog(complaintLogById?.data);
       openViewModal();
     }
   }, [isSuccess, complaintLogById, openViewModal]);
@@ -33,7 +33,7 @@ const ViewComplaintLogById = (
         }
         title="Complaint"
       >
-       { complaintLog &&<ViewComplaint complaint={complaintLog} />}
+       { complaintLog &&<ViewComplaint complaintLog={complaintLog} />}
       </Modal>
     </>
   );
