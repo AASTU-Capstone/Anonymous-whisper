@@ -2,6 +2,7 @@
 using ComplaintSystem.Application.DTOs.ComplaintLogDto;
 using ComplaintSystem.Application.DTOs.ManagerDto;
 using ComplaintSystem.Application.DTOs.PaginationDto;
+using ComplaintSystem.Application.Features.Admins.Requests.Queries;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
 using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
@@ -30,6 +31,18 @@ namespace ComplaintSystem.API.Controllers
             _mediator = mediator;
             _contextAccessor = httpContextAccessor;
         }
+        [HttpGet]
+        [Route("GetProfile")]
+        public async Task<ActionResult<BaseResponseClass>> GetProfile()
+        {
+            var adminId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
+            var request = new GetAdminProfileRequest { AdminId = adminId };
+            var response = await _mediator.Send(request);
+
+            return StatusCode(response.StatusCode, response);
+        }
+
+
 
         [HttpGet]
         [Route("GetManagers")]
