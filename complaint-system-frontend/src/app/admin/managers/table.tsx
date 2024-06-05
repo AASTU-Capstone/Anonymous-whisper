@@ -21,19 +21,44 @@ import {
 } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { Column } from "react-table";
-import { Data } from "./page";
+import { ManagerResponse,AddManagerInput } from "@/types";
+import {useAddManagerForAdminMutation} from "@/lib/redux/features/admin";
 
-const ManagersList = ({ data }: { data: Data[] }) => {
+const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refetchManagers: () => void; }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const[role, setRole] = useState<string | null>(null);
+  const [createManager] = useAddManagerForAdminMutation();
 
-  const filteredData = useMemo(() => {
-    return data.filter((item: Data) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery, data]);
+  
+  const handleAddManager = async () => {
+    if (!name || !email || !role) {
+      alert("Please fill in all fields");
+      return;
+    }
 
-  const columns: Array<Column<Data>> = useMemo(
+    const newManager: AddManagerInput = {
+      name,
+      email,
+      role,
+    };
+
+    try {
+      await createManager(newManager).unwrap();
+      refetchManagers();
+      setName("");
+      setEmail("");
+      setRole("");
+      close();
+    } catch (error) {
+      console.error("Failed to add manager: ", error);
+      // alert("Failed to add manager");
+    }
+  };
+
+  const columns: Array<Column<ManagerResponse>> = useMemo(
     () => [
       {
         Header: "Name",
@@ -73,17 +98,21 @@ const ManagersList = ({ data }: { data: Data[] }) => {
 
   return (
     <>
-      <Modal centered opened={opened} onClose={close} title="Managers">
+      <Modal centered opened={opened} onClose={close} title="Add Managers">
         <Flex className="flex-col my-5 gap-7">
-          <TextInput placeholder="Full Name" required />
-          <TextInput placeholder="Email" required />
+          <TextInput placeholder="Full Name" required value={name}
+          onChange={(e) => setName(e.target.value)}/>
+          <TextInput placeholder="Email" required value={email}
+          onChange={(e) => setEmail(e.target.value)}/>
           <Select
             placeholder="Select Role Type"
-            data={["Super Admin", "Admin", "HR-Admin"]}
+            data={["premitigation", "postmitigation"]}
+            value={role}
+            onChange={(value) => setRole(value)}
           />
         </Flex>
         <Group justify="end">
-          <Button>Add Manager</Button>
+          <Button onClick={handleAddManager}>Add Manager</Button>
           <Button variant="light" onClick={close}>
             Cancel
           </Button>
@@ -146,7 +175,7 @@ const ManagersList = ({ data }: { data: Data[] }) => {
           </Text>
         </Box>
 
-        <DataTable columns={columns} data={filteredData} pageSize={5} />
+        <DataTable columns={columns} data={data} pageSize={5} />
       </Box>
     </>
   );

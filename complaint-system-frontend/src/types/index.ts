@@ -1,5 +1,9 @@
 import { FileWithPath } from "@mantine/dropzone";
 
+
+/////////////////////////////////////////////////
+/////////////////AUTH///////////////////////////
+///////////////////////////////////////////////
 export interface SignupCredentials {
   email: string;
   password: string;
@@ -27,28 +31,6 @@ export interface LoginApiResponse {
   token: string;
   isVerified: boolean;
 }
-
-export interface updateStartupProfileInput {
-  problemStatement: string;
-  proposedSolution: string;
-  financialProjection: string;
-  businessModel: string;
-  marketAnalysis: string;
-  competitor: string;
-  pitchdeck: string;
-  pitchVideo: string;
-}
-
-export interface updateStartupProfileApiResponse {
-  id: string;
-  message: string;
-  statusCode: number;
-  success: boolean;
-  data: string;
-  error: string[];
-}
-
-/////////////////////////////////////////////////////////////
 
 export interface verifyAccountInput {
   email: string;
@@ -92,12 +74,21 @@ export interface resetPasswordApiResponse {
 export interface createOTPInput {
   email: string;
 }
+
 export interface createOTPApiResponse {
   id: string;
   message: string;
   success: boolean;
   error?: string[];
 }
+
+/////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////
+/////////////////////// COMPLAINTS /////////////////////////////
+///////////////////////////////////////////////////////////////
 
 export interface GetComplaintsResponse {
   id: string;
@@ -107,6 +98,29 @@ export interface GetComplaintsResponse {
   data?: string;
   error?: string[];
 }
+
+export interface GetComplaintsForUserResponse {
+  id: string;
+  title: string;
+  status: string;
+  createdAt: string;
+  category: string;
+}
+
+export interface CreateComplaintInput {
+  Title: string;
+  Category: string | null;
+  Content: string;
+  ImagesEvidence: FileWithPath[];
+  SoundTrack: FileWithPath[];
+  Videos: FileWithPath[];
+  Documents: FileWithPath[];
+}
+
+/////////////////////////////////////////////
+
+
+
 
 /////////////////////////////////////////////////////////////
 /////////////////////// MANAGER /////////////////////////////
@@ -145,7 +159,14 @@ export interface UpdateComplaintLogStatusInput {
   status: string;
 }
 
-/////////////////////// admin  ////////////////////////
+/////////////////////////////////////////////
+
+
+
+
+///////////////////////////////////////////////////////
+/////////////////////// ADMIN  ////////////////////////
+//////////////////////////////////////////////////////
 export interface AssignManagerInput {
   title: string;
   priority: string;
@@ -156,7 +177,7 @@ export interface AssignManagerInput {
 export interface AddManagerInput {
   name: string;
   email: string;
-  role: string;
+  role: string | null;
 }
 
 export interface UpdateComplaintStatusInputForAdmin {
@@ -169,36 +190,26 @@ export interface UpdateComplaintLogStatusInputForAdmin {
   status: string;
 }
 
-export interface ManagerReponse {
+export interface ManagerResponse {
   id: string;
-  Name: string;
-  Role: string;
-  Email: string;
-  CreatedAt: string;
+  name: string;
+  role: string;
+  email: string;
+  createdAt: string;
 }
 
-//////////////////// subordinate ////////////////////
+/////////////////////////////////////////////
+
+
+
+
+
+/////////////////////////////////////////////////////
+//////////////////// SUBORDINATE ////////////////////
+////////////////////////////////////////////////////
 export interface AssignSubordinateInput {
   complaintLogId: string;
   subordinateId: string;
-}
-
-export interface GetComplaintsForUserResponse {
-  id: string;
-  title: string;
-  status: string;
-  createdAt: string;
-  category: string;
-}
-
-export interface CreateComplaintInput {
-  Title: string;
-  Category: string | null;
-  Content: string;
-  ImagesEvidence: FileWithPath[];
-  SoundTrack: FileWithPath[];
-  Videos: FileWithPath[];
-  Documents: FileWithPath[];
 }
 
 export interface UpdateComplaintLogStatusForSubordinate {
@@ -209,3 +220,5 @@ export interface updateComplaintLogReport {
   id: string;
   report: string;
 }
+
+/////////////////////////////////////////////
