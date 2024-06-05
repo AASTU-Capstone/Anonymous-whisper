@@ -1,8 +1,9 @@
 "use client";
 import { Box, Paper, SimpleGrid, Text } from "@mantine/core";
 import RecentComplaints from "./table";
-import { useGetComplaintStatitisticsQuery } from "@/lib/redux/features/statistics";
+import { useGetComplaintStatitisticsQuery, useGetCorruptionTrendStatisticsQuery } from "@/lib/redux/features/statistics";
 import { useGetAllComplaintsForAdminQuery } from "@/lib/redux/features/admin";
+import BarGraph from "@/shared/bargraph";
 
 export interface Data {
   id: string;
@@ -31,6 +32,14 @@ const Dashboard = () => {
         ...item,
       };
     }) || [];
+  const {data:corruptionResponse, isLoading:corruptionLoading, isSuccess:corruptionSuccess} = useGetCorruptionTrendStatisticsQuery({})
+  
+  const corruptionData = corruptionResponse?.data
+  const bardata = corruptionData?.map((item:any) => ({
+    name: item.name,
+    mitigatedCount: item.mitigatedCount,
+    totalCount: item.totalCount,
+  }));
   return (
     <Box className="py-6 w-full bg-primarykey-background">
       <SimpleGrid
@@ -69,7 +78,9 @@ const Dashboard = () => {
         <h1 className="text-2xl">Some Analytic Data</h1>
       </Box>
       {<RecentComplaints data={complaintList} />}
+      <BarGraph data={bardata}></BarGraph>
     </Box>
+   
   );
 };
 

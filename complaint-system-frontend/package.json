@@ -51,6 +51,7 @@
     "react-slick": "^0.30.2",
     "react-table": "^7.8.0",
     "react-toastify": "^10.0.4",
+    "recharts": "^2.12.7",
     "redux-persist": "^6.0.0",
     "sharp": "^0.33.3",
     "slick-carousel": "^1.8.1",
