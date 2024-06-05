@@ -10,6 +10,11 @@ import { url } from "inspector";
 
 const AdminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
+    GetAdminProfile : builder.query({
+      query:()=> `/Admin/GetProfile`
+    }),
+
     GetComplaintLogsToUpdateForAdmin: builder.query({
       query: () => `/Admin/GetComplaintLogsToUpdate`,
     }),

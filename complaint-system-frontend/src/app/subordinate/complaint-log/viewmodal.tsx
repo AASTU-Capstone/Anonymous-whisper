@@ -8,10 +8,10 @@ import { Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 
-const getcomplaintLogById = ({ params: { id } }: { params: { id: string } }) => {
-  const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] = useDisclosure(
-    false
-  );
+const ViewComplaintLogById = (
+  {id, openViewModal, isViewModalOpened, closeViewModal}:{id:string, openViewModal: () => void; isViewModalOpened:boolean, closeViewModal: () => void;}
+) => {
+  
   const { data: complaintLogById, isLoading: complaintLogByIdLoading, isSuccess } =
     useGetComplaintLogByIdForSubordinateQuery(id);
   const [complaintLog, setComplaintLog] = useState();
@@ -34,10 +34,10 @@ const getcomplaintLogById = ({ params: { id } }: { params: { id: string } }) => 
         }
         title="Complaint"
       >
-        <ViewComplaint complaint={complaintLog} />
+       { complaintLog &&<ViewComplaint complaint={complaintLog} />}
       </Modal>
     </>
   );
 };
 
-export default getcomplaintLogById;
+export default ViewComplaintLogById;

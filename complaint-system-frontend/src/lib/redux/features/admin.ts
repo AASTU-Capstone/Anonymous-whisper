@@ -9,5 +9,6 @@ export const {
     useAddManagerForAdminMutation,
     useGetComplaintByIdForAdminQuery,
     useUpdateComplaintLogStatusForAdminMutation,
-    useUpdateComplaintStatusForAdminMutation
+    useUpdateComplaintStatusForAdminMutation,
+    useGetAdminProfileQuery
 } = AdminApi;
