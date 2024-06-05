@@ -1,7 +1,9 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto;
 using ComplaintSystem.Application.DTOs.PaginationDto;
+using ComplaintSystem.Application.Features.Admins.Requests.Queries;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
+using ComplaintSystem.Application.Features.Subordinates.Requests.Queries;
 using ComplaintSystem.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +25,19 @@ namespace ComplaintSystem.API.Controllers
             _contextAccessor = httpContextAccessor;
             _mediator = mediator;
         }
+
+        [HttpGet]
+        [Route("GetProfile")]
+        public async Task<ActionResult<BaseResponseClass>> GetProfile()
+        {
+            var subordinateId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
+            var request = new GetSubordinateProfileRequest { SubordinateId = subordinateId };
+            var response = await _mediator.Send(request);
+
+            return StatusCode(response.StatusCode, response);
+        }
+
+
         [HttpGet]
         [Route("GetComplaintLogsToUpdate")]
         public async Task<ActionResult<BaseResponseClass>> GetComplaintLogsToUpdate([FromQuery] PaginationDto PaginationDto)
