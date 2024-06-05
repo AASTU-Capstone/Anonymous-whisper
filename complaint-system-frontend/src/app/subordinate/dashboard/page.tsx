@@ -4,6 +4,7 @@ import RecentComplaints from "./table";
 import { useGetComplaintLogStatisticsQuery,useGetCorruptionTrendStatisticsQuery } from "@/lib/redux/features/statistics";
 import { useGetAllComplaintsForAdminQuery } from "@/lib/redux/features/admin";
 import jwt from "jsonwebtoken"
+import BarGraph from "@/shared/bargraph";
 export interface Data {
   id: string;
   title: string;
@@ -26,7 +27,13 @@ const Dashboard = () => {
     isSuccess,
   } = useGetComplaintLogStatisticsQuery({subordinateId:subordinateId, managerId:""});
   const complaintData = res?.data;
-  
+  const {data:corruptionResponse, isLoading:corruptionLoading, isSuccess:corruptionSuccess} = useGetCorruptionTrendStatisticsQuery({})
+  const corruptionData = corruptionResponse?.data
+  const bardata = corruptionData?.map((item:any) => ({
+    name: item.name,
+    mitigatedCount: item.mitigatedCount,
+    totalCount: item.totalCount,
+  }));
   return (
     <Box className="py-6 w-full bg-primarykey-background">
       <SimpleGrid
@@ -59,6 +66,7 @@ const Dashboard = () => {
       <Box className="h-52 w-full flex justify-center items-center mt-6 bg-gray-200">
         <h1 className="text-2xl">Some Analytic Data</h1>
       </Box>
+      <BarGraph data={bardata}></BarGraph>
     </Box>
   );
 };

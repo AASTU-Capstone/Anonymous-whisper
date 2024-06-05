@@ -4,7 +4,6 @@ import { Box, Text } from "@mantine/core";
 import { useMemo } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
-
 const RecentComplaints = ({ data }: { data: Data[] }) => {
   const columns: Array<Column<Data>> = useMemo(
     () => [
@@ -39,7 +38,7 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
       },
       {
         Header: "Created Date",
-        accessor: "createdDate",
+        accessor: "createdAt",
       },
       {
         Header: "Tags",
@@ -58,6 +57,7 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
       </Box>
 
       <DataTable columns={columns} data={data} pageSize={5} />
+      
     </Box>
   );
 };
