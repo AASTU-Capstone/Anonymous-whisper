@@ -14,9 +14,9 @@ export default function AuthLayout({
       <div className="grid lg:grid-cols-2 grid-cols-1 h-full">
         
           {/* <Carousel /> */}
-          <Box className="h-screen min-h-[600px]  p-4">
+          <Box className="h-screen min-h-[600px]  bg-background hidden lg:block p-4">
       <Flex className="h-full flex-col items-center justify-between px-1 md:flex-row md:px-32">
-        <Image src="/assets/welcome-image.jpg" w={600} h={600} alt="welcome" />
+        <Image src="/assets/welcome-image-removebg.png" w={600} h={600} alt="welcome" />
       </Flex>
     </Box>
         
