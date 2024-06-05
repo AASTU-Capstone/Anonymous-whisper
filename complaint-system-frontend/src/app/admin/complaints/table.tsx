@@ -20,7 +20,6 @@ const Complaints = ({
 }) => {
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
     useDisclosure(false);
-  // const [complaint, setComplaint] = useState();
   const [useUpdateComplaintStatus] = useUpdateComplaintStatusForAdminMutation();
 
   const handleAccept = (id: string) => {
