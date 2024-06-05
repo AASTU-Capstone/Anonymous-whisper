@@ -1,4 +1,6 @@
 import StatisticsApi from "../services/statisticsApi";
 export const {
-    useGetComplaintStatitisticsQuery
+    useGetComplaintStatitisticsQuery,
+    useGetComplaintLogStatisticsQuery,
+    useGetCorruptionTrendStatisticsQuery
 } = StatisticsApi
