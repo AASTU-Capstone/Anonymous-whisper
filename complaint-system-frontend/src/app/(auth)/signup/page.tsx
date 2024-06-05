@@ -225,7 +225,7 @@ export default function SignUp() {
         <div className="text-center pt-2 mt-3">
           <div className="text-12 flex justify-center items-center">
             <p className="text-black">I have an account?</p>
-            <Link href="/auth/login" className=" font-medium pl-2">
+            <Link href="/login" className=" font-medium pl-2">
               <span className="text-blue-500 hover:underline">Sign in</span>
             </Link>
           </div>

@@ -217,7 +217,7 @@ export default function Login({}: Props) {
         <div className="text-center pt-2 mt-3">
           <div className="text-sm flex justify-center items-center">
             <p className="text-black">I don{"'"}t have an account?</p>
-            <Link href="/auth/signup" className=" font-medium pl-2">
+            <Link href="/signup" className=" font-medium pl-2">
               <span className="text-primary hover:underline">Sign Up</span>
             </Link>
           </div>
