@@ -46,7 +46,7 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                     await _complaintLogRepository.Update(complaintLogs[i]);
                 }
 
-                user.User_Type = "User";
+                user.User_Type = "user";
                 await _userRepository.Update(user);
                 await _subordinateRepository.Delete(subordinate);
 

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using ComplaintSystem.Application.DTOs.ManagerDto.Validators;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
@@ -40,8 +36,15 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
             {
                 var user = await _userRepository.GetByEmail(request.UpdateManagerDto.Email);
                 var manager = await _managerRepository.GetAsync(request.UpdateManagerDto.Id);
-                user.User_Type = "manager";
-                await _userRepository.Update(user);
+                var Prev_user = await _userRepository.GetAsync(manager.UserEntityId);
+
+                if (Prev_user.Id != user.Id)
+                {
+                    Prev_user.User_Type = "user";
+                    await _userRepository.Update(Prev_user);
+                    user.User_Type = "manager";
+                    await _userRepository.Update(user);
+                }
 
                 _mapper.Map(request.UpdateManagerDto, manager);
                 manager.UserEntityId = user.Id;
