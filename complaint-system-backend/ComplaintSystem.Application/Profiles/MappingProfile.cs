@@ -24,6 +24,7 @@ namespace ComplaintSystem.Application.Profiles
 
             //Manager
             CreateMap<CreateManagerDto, Manager>().ReverseMap();
+            CreateMap<UpdateManagerDto, Manager>().ReverseMap();
             CreateMap<GetManagerDto, Manager>().ReverseMap();
 
             //Subordinate

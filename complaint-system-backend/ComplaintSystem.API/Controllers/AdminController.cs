@@ -67,7 +67,7 @@ namespace ComplaintSystem.API.Controllers
         [Route("GetRecievedComplaints")]
         public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints([FromQuery] PaginationDto PaginationDto)
         {
-            var request = new GetRecievedComplaintForAdminRequest {Status = "recieved", PaginationDto = PaginationDto };
+            var request = new GetRecievedComplaintForAdminRequest { Status = "recieved", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }
@@ -117,6 +117,15 @@ namespace ComplaintSystem.API.Controllers
         {
             var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
             var command = new CreateManagerRequest { CreateManagerDto = createManagerDto, AdminId = adminId };
+            var response = await _mediator.Send(command);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPatch]
+        [Route("UpdateManager")]
+        public async Task<ActionResult<BaseResponseClass>> UpdateManager(UpdateManagerDto updateManagerDto)
+        {
+            var command = new UpdateManagerCommand { UpdateManagerDto = updateManagerDto };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }
