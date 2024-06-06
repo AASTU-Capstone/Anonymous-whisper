@@ -1,8 +1,9 @@
-"use client"
+"use client";
 import { Box } from "@mantine/core";
 import SubordinatesTable from "./table";
 import { useGetSubordinatesQuery } from "@/lib/redux/features/manager";
 import { GetSubordinatesResponse } from "@/types";
+import { useWebSocket } from "@/providers/WebSocketContext";
 
 const page = () => {
   const {
@@ -11,6 +12,9 @@ const page = () => {
     isSuccess,
     refetch,
   } = useGetSubordinatesQuery({});
+
+  const { messages, sendMessage, logout } = useWebSocket();
+  console.log("here we go", messages);
 
   const data =
     res?.data?.map((item: GetSubordinatesResponse) => {

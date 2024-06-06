@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ComplaintSystem.Domain.Entities
 {
-    public class NotificationEntity:BaseEntity
+    public class NotificationEntity : BaseEntity
     {
         public string Message { get; set; }
-        public Guid UserEntityId { get; set; }
+        public DateTime Date { get; set; }
     }
 }

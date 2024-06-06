@@ -10,6 +10,7 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
+import { useWebSocket } from "@/providers/WebSocketContext";
 
 const notify = () => {
   toast.success("Logout Successful", {
@@ -31,13 +32,18 @@ const notify = () => {
 
 const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
+  const { logout } = useWebSocket();
   const handleSignOut = () => {
     logoutHandler();
+    logout();
+
     notify();
   };
 
   const notification = true;
-  const token = decodeURIComponent(typeof window !== "undefined" ? document.cookie : "")
+  const token = decodeURIComponent(
+    typeof window !== "undefined" ? document.cookie : ""
+  )
     .split(";")
     .find((c) => c.trim().startsWith("token="))
     ?.split("=")[1];
@@ -91,17 +97,25 @@ const Header = ({ role }: { role: string }) => {
               </Menu.Target>
 
               <Menu.Dropdown>
-              <Menu.Item component={Link} href="/reset-password/change" className="menu-item-hover-blue">
+                <Menu.Item
+                  component={Link}
+                  href="/reset-password/change"
+                  className="menu-item-hover-blue"
+                >
                   <Text className="text-primary-default py-2 font-bold ">
                     Reset Password
                   </Text>
                 </Menu.Item>
-                <Menu.Item component={Link} href="/login" className="menu-item-hover-alert" onClick={handleSignOut}>
+                <Menu.Item
+                  component={Link}
+                  href="/login"
+                  className="menu-item-hover-alert"
+                  onClick={handleSignOut}
+                >
                   <Text className="text-primary-default py-2 font-bold ">
                     Log out
                   </Text>
                 </Menu.Item>
-                
               </Menu.Dropdown>
             </Menu>
           </Flex>

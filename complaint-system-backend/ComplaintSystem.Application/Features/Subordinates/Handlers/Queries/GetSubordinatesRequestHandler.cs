@@ -2,7 +2,9 @@
 using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.Features.Subordinates.Requests.Queries;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -15,12 +17,18 @@ public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequ
 {
     private readonly ISubordinateRepository _subordinateRepository;
     private readonly IManagerRepository _managerRepository;
+    private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
-    public GetSubordinatesRequestHandler(IManagerRepository managerRepository, IMapper mapper, ISubordinateRepository subordinateRepository)
+    public GetSubordinatesRequestHandler(
+        IManagerRepository managerRepository,
+        IMapper mapper,
+        ISubordinateRepository subordinateRepository,
+        INotificationService notificationService)
     {
         _managerRepository = managerRepository;
         _mapper = mapper;
         _subordinateRepository = subordinateRepository;
+        _notificationService = notificationService;
     }
     public async Task<PaginatedResponseClass> Handle(GetSubordinatesRequest request, CancellationToken cancellationToken)
     {
@@ -41,6 +49,16 @@ public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequ
                 PageNumber = request.PaginationDto.PageNumber,
                 PageSize = request.PaginationDto.PageSize
             };
+
+            // notification
+
+            var notify = new NotificationEntity
+            {
+                Message = "OMG!!! You have new subordinates.",
+                Date = DateTime.Now,
+            };
+            await _notificationService.SendNotificationAsync((manager.Id).ToString(), notify);
+
 
         }
         else
