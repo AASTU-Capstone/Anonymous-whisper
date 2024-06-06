@@ -101,7 +101,7 @@ const CreateComplaint = ({ closeModal }: Props) => {
       />
       <Select
         placeholder="Category"
-        data={["bribe", "corruption", "harassment", "discrimination"]}
+        data={["bribe", "nepotism", "embezzlement", "abuse of discretion", "black mail", "Graft"]}
         value={category}
         onChange={(value) => setCategory(value)}
       />

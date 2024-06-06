@@ -5,12 +5,12 @@ import {
   AddManagerInput,
   UpdateComplaintStatusInputForAdmin,
   UpdateComplaintLogStatusInputForAdmin,
+  EditManagerInput,
 } from "@/types/index";
 import { url } from "inspector";
 
 const AdminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-
     GetAdminProfile : builder.query({
       query:()=> `/Admin/GetProfile`
     }),
@@ -37,7 +37,7 @@ const AdminApi = baseApi.injectEndpoints({
 
     GetComplaintByIdForAdmin: builder.query<any, string>({
       query: (complaintId: string) =>
-        `/Admin/GetComplaintById/ComplaintID=${complaintId}`,
+        `/Admin/GetComplaintById?ComplaintID=${complaintId}`,
     }),
 
     AssignManagerForAdmin: builder.mutation<any, AssignManagerInput>({
@@ -54,6 +54,14 @@ const AdminApi = baseApi.injectEndpoints({
         method: "POST",
         body: addmanager,
       }),
+    }),
+
+    UpdateManagerForAdmin : builder.mutation<any, EditManagerInput>({
+      query:(editManagerInput:EditManagerInput)=>({
+        url: `/Admin/UpdateManager`,
+        method: "PATCH",
+        body:editManagerInput
+      })
     }),
 
     UpdateComplaintStatusForAdmin: builder.mutation<
