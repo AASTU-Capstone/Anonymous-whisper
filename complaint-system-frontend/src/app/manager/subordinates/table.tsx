@@ -1,6 +1,7 @@
 "use client";
 import DataTable from "@/shared/table";
 import {
+  ActionIcon,
   Box,
   Button,
   Flex,
@@ -15,14 +16,16 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconAdjustmentsHorizontal,
   IconChevronDown,
+  IconEdit,
   IconPlus,
   IconSearch,
 } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { Column } from "react-table";
 import { useState } from "react";
-import { useCreateSubordinateMutation } from "@/lib/redux/features/manager";
-import { GetSubordinatesResponse, CreateSubordinateInput } from "@/types";
+import { useCreateSubordinateMutation, useDeleteSubordinateMutation } from "@/lib/redux/features/manager";
+import { GetSubordinatesResponse, CreateSubordinateInput, DeleteSubordinateInput } from "@/types";
+import { modals } from "@mantine/modals";
 
 const SubordinatesList = ({
   data,
@@ -36,6 +39,11 @@ const SubordinatesList = ({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [createSubordinate] = useCreateSubordinateMutation();
+  const[deleteSubordinate] = useDeleteSubordinateMutation();
+  const[subordinateId, setSubordinateId] = useState("")
+
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const filteredData = useMemo(() => {
     return data.filter((item: GetSubordinatesResponse) =>
@@ -44,10 +52,24 @@ const SubordinatesList = ({
   }, [searchQuery, data]);
 
   const handleAddSubordinate = async () => {
-    if (!name || !email) {
-      alert("Please fill in all fields");
-      return;
-    }
+     // Reset error messages
+     setNameError("");
+     setEmailError("");
+ 
+     // Validate inputs
+     let valid = true;
+     if (!name) {
+       setNameError("Please enter a name.");
+       valid = false;
+     }
+     if (!email) {
+       setEmailError("Please enter an email.");
+       valid = false;
+     }
+ 
+     if (!valid) {
+       return;
+     }
 
     const newSubordinate: CreateSubordinateInput = {
       name,
@@ -65,6 +87,35 @@ const SubordinatesList = ({
       alert("Failed to add subordinate");
     }
   };
+
+  const deleteSubordinateHandler = async (value:string)=>{
+    console.log(value)
+    setSubordinateId(value)
+    modals.openConfirmModal({
+      title: "Delete Subordinate",
+      centered: true,
+      children: (
+        <Text size="sm">Are you sure you want to Delete the Subordinate?</Text>
+      ),
+      labels: { confirm: "Delete Subordinate", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      closeOnConfirm: true,
+      onConfirm: async () => {
+        const deleteSubordinateInput : DeleteSubordinateInput = {
+          id:subordinateId,
+        }
+        try{
+          await deleteSubordinate(deleteSubordinateInput)
+          refetchSubordinate();
+          return;
+        }catch(error){
+          console.error("Failed to delete subordinate: ", error);
+        }
+      },
+    });
+
+   
+  }
 
   const columns: Array<Column<GetSubordinatesResponse>> = useMemo(
     () => [
@@ -85,6 +136,24 @@ const SubordinatesList = ({
         accessor: "mitigatedCount",
         Cell: ({ value }) => <div className="pl-12">{value}</div>,
       },
+      {
+        Header: "Action",
+        accessor: 'id',
+        Cell: ({ value }) => {
+          return (
+            <div className="flex space-x-4">
+              <ActionIcon variant="light">
+                <button
+                  onClick={(e)=>deleteSubordinateHandler(value)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <IconEdit className="w-5 h-5" />
+                </button>
+              </ActionIcon>
+            </div>
+          )
+        }
+      }
     ],
     []
   );
@@ -98,11 +167,13 @@ const SubordinatesList = ({
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+        {nameError && <span className="text-red-500 text-sm">{nameError}</span>}
         <TextInput
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        {emailError && <span className="text-red-500 text-sm">{emailError}</span>}
         <Group justify="end" className="mt-7">
           <Button onClick={handleAddSubordinate}>Add</Button>
           <Button variant="light" onClick={close}>

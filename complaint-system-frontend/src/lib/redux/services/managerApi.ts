@@ -2,6 +2,7 @@ import {
   CreateSubordinateInput,
   AssignSubordinateInput,
   UpdateComplaintLogStatusInput,
+  DeleteSubordinateInput,
 } from "@/types";
 import baseApi from "./baseApi";
 
@@ -55,6 +56,14 @@ const managerApi = baseApi.injectEndpoints({
         body: input,
       }),
     }),
+
+    DeleteSubordinate : builder.mutation<any, DeleteSubordinateInput>({
+      query:(deleteSubordinateInput:DeleteSubordinateInput) =>({
+        url:`/Manager/DeleteSubordinate`,
+        method:"DELETE",
+        body:deleteSubordinateInput
+      })
+    })
 
     // SearchSubordinates: builder.query({
     //   query: (keyword) => `/Manager/SearchSubordinates?Keyword=${keyword}`,

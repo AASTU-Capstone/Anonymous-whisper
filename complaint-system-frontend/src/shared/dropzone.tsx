@@ -47,7 +47,7 @@ export function FilePicker({
       documents: documentFiles,
       videos:videoFiles
     });
-  }, [imageFiles, audioFiles, documentFiles]);
+  }, [imageFiles, audioFiles, documentFiles,videoFiles]);
 
   const removeFile = (file: FileWithPath, fileType: string) => {
     switch (fileType) {
@@ -60,6 +60,8 @@ export function FilePicker({
       case "document":
         setDocumentFiles((prevFiles) => prevFiles.filter((f) => file !== f));
         break;
+      case "video":
+        setVideoFiles((prevFiles) => prevFiles.filter((f)=> file !== f))
       default:
         break;
     }
@@ -106,6 +108,20 @@ export function FilePicker({
         </Box>
       );
     }),
+
+    ...videoFiles.map((file, index) => {
+      return (
+        <Box
+          key={index}
+          className="border-2 border-gray-300 cursor-pointer"
+          onClick={() => removeFile(file, "video")}
+        >
+          <IconFile size={rem(48)} />
+          <Text className="text-sm">{file.name}</Text>
+        </Box>
+      );
+    }),
+
   ];
 
   return (
@@ -272,6 +288,62 @@ export function FilePicker({
             </Group>
           </Dropzone>
         </Flex>
+        <Flex className="flex-col w-full">
+          <Text>Upload Video</Text>
+          <Dropzone
+            onDrop={(acceptedFiles) =>
+              setVideoFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
+            }
+            onReject={(files) => console.log("rejected files")}
+            maxSize={200 * 1024 ** 2}
+            accept={{
+              "video/*": [],
+            }}
+            {...props}
+            className="h-28 bg-gray-200 shadow-md"
+          >
+            <Group
+              justify="center"
+              align="center"
+              style={{ pointerEvents: "none" }}
+            >
+              <Dropzone.Accept>
+                <IconUpload
+                  style={{
+                    color: "var(--mantine-color-blue-6)",
+                  }}
+                  stroke={1.5}
+                />
+              </Dropzone.Accept>
+              <Dropzone.Reject>
+                <IconX
+                  style={{
+                    color: "var(--mantine-color-red-6)",
+                  }}
+                  stroke={1.5}
+                />
+              </Dropzone.Reject>
+              <Dropzone.Idle>
+                <IconImageInPicture
+                  style={{
+                    width: rem(52),
+                    height: rem(52),
+                    color: "var(--mantine-color-dimmed)",
+                  }}
+                  stroke={1.5}
+                />
+              </Dropzone.Idle>
+
+              <div className="text-center">
+                <Text size="sm" inline>
+                  Drag or select files here
+                </Text>
+              </div>
+            </Group>
+          </Dropzone>
+        </Flex>
+
+        
       </Group>
 
       <Box className="w-full border border-gray-100">

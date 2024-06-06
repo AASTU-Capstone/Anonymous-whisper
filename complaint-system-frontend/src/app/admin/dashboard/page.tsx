@@ -74,11 +74,12 @@ const Dashboard = () => {
         </Paper>
       </SimpleGrid>
 
-      <Box className="h-52 w-full flex justify-center items-center mt-6 bg-gray-200">
-        <h1 className="text-2xl">Some Analytic Data</h1>
+      <Box className="h-32 w-full flex justify-center items-center mt-6 bg-gray-200">
+        <h1 className="text-2xl">Corruption Statsistics</h1>
       </Box>
-      {<RecentComplaints data={complaintList} />}
       <BarGraph data={bardata}></BarGraph>
+      {<RecentComplaints data={complaintList} />}
+      
     </Box>
    
   );
