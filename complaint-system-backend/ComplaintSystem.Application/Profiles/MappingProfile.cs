@@ -29,6 +29,7 @@ namespace ComplaintSystem.Application.Profiles
 
             //Subordinate
             CreateMap<CreateSubordinateDto, Subordinate>().ReverseMap();
+            CreateMap<DeleteSubordinateDto, Subordinate>().ReverseMap();
             CreateMap<GetSubordinateDto, Subordinate>().ReverseMap();
 
             //Complaint
@@ -46,7 +47,7 @@ namespace ComplaintSystem.Application.Profiles
 
 
             //corruption trend
-            CreateMap<CreateCorruptionTrendDto,  CorruptionTrend>().ReverseMap();
+            CreateMap<CreateCorruptionTrendDto, CorruptionTrend>().ReverseMap();
             CreateMap<GetCorruptionTrendDto, CorruptionTrend>().ReverseMap();
 
         }
