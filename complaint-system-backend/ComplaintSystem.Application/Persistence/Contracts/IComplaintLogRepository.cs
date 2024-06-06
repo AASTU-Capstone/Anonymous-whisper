@@ -18,6 +18,7 @@ public interface IComplaintLogRepository : IGenericRepository<ComplaintLog>
     public Task<List<ComplaintLog>> GetForSubordinate(Guid SubordinateId, string Status, PaginationDto paginationDto);
     public Task<List<ComplaintLog>> GetByStatus(string Status, PaginationDto paginationDto);
     public Task<GetComplaintLogStatisticsDto> GetComplaintLogStatistics(Guid? ManagerId, Guid? SubordinateId);
+    public Task<List<ComplaintLog>> GetComplaintLogsBySubordinateId(Guid SubordinateId);
 
     #endregion
 

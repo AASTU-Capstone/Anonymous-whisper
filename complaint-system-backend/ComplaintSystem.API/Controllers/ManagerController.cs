@@ -122,5 +122,14 @@ namespace ComplaintSystem.API.Controllers
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpDelete]
+        [Route("DeleteSubordinate")]
+        public async Task<ActionResult<BaseResponseClass>> DeleteSubordinate(DeleteSubordinateDto deleteSubordinateDto)
+        {
+            var command = new DeleteSubordinateCommand { DeleteSubordinateDto = deleteSubordinateDto };
+            var response = await _mediator.Send(command);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

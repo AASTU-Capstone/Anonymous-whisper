@@ -71,6 +71,12 @@ namespace ComplaintSystem.Persistence.Repositories
             return complaints;
         }
 
+        public Task<List<ComplaintLog>> GetComplaintLogsBySubordinateId(Guid SubordinateId)
+        {
+            var logs = _complaintSystemAppDbContext.ComplaintLogs.Where(log => log.SubordinateId == SubordinateId).ToListAsync();
+            return logs;
+        }
+
         #endregion
 
 
@@ -110,9 +116,9 @@ namespace ComplaintSystem.Persistence.Repositories
             int PendingComplaintLogCount = 0;
             int ResolvedComplaintLogCount = 0;
             int AssignedComplaintLogCount = 0;
-            if(ManagerId != null)
+            if (ManagerId != null)
             {
-                var manager = await _complaintSystemAppDbContext.Managers.FirstOrDefaultAsync(manage=>manage.UserEntityId == ManagerId);
+                var manager = await _complaintSystemAppDbContext.Managers.FirstOrDefaultAsync(manage => manage.UserEntityId == ManagerId);
                 if (manager != null)
                 {
                     var query = _complaintSystemAppDbContext.ComplaintLogs.Where(complog => complog.ManagerId == manager.Id);
@@ -121,10 +127,10 @@ namespace ComplaintSystem.Persistence.Repositories
                     ResolvedComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "resolved").CountAsync();
                     AssignedComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "processing").CountAsync();
                 }
-                
+
 
             }
-            else if(SubordinateId != null)
+            else if (SubordinateId != null)
             {
                 var subordinate = await _complaintSystemAppDbContext.Subordinates.FirstOrDefaultAsync(sub => sub.UserEntityId == SubordinateId);
                 if (subordinate != null)
@@ -134,7 +140,7 @@ namespace ComplaintSystem.Persistence.Repositories
                     PendingComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "processing").CountAsync();
                     ResolvedComplaintLogCount = await query.Where(comp => comp.Status.ToLower() == "resolved").CountAsync();
                 }
-                
+
             }
 
             GetComplaintLogStatisticsDto getComplaintLogStatisticsDto = new GetComplaintLogStatisticsDto
