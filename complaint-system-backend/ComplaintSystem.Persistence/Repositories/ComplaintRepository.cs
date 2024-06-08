@@ -156,6 +156,7 @@ namespace ComplaintSystem.Persistence.Repositories
         {
             var complaints = await _complaintSystemAppDbContext.Complaints
                 .Where(c => c.UserEntityId == UserId)
+                .OrderByDescending(c=>c.CreatedAt)
                 .Skip((paginationDto.PageNumber - 1) * paginationDto.PageSize)
                 .Take(paginationDto.PageSize)
                 .ToListAsync();
