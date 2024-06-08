@@ -58,10 +58,9 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
                 {
                     Sender = subordinate.Name!,
                     Message = $"Submitted a report for complaint log '{complaintLog.Title}'.",
-                    ReceiverId = complaintLog.ManagerId,
                     Date = DateTime.Now,
                 };
-                await _notificationService.SendNotificationAsync((complaintLog.ManagerId).ToString(), notify);
+                await _notificationService.SendNotificationAsync(request.UserId.ToString(), notify);
             }
             else
             {

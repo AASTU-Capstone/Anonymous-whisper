@@ -67,12 +67,11 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 var notify = new NotificationEntity
                 {
                     Sender = manager.Name!,
-                    Message = $"You've been demoted to a user.",
-                    ReceiverId = subordinate.UserEntityId,
+                    Message = $"Demoted you to User.",
                     Date = DateTime.Now,
                 };
 
-                await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
             }
 
             return response;

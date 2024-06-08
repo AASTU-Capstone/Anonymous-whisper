@@ -136,13 +136,12 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
 
                 var notify = new NotificationEntity
                 {
-                    Sender = "Anonymous user",
+                    Sender = "Anonymous User",
                     Message = $"Submitted a complaint '{complaint.Title}'.",
-                    ReceiverId = Admin.Id,
                     Date = DateTime.Now,
                 };
 
-                await _notificationService.SendNotificationAsync((Admin.Id).ToString(), notify);
+                await _notificationService.SendNotificationAsync(Admin!.Id.ToString(), notify);
             }
 
             return response;

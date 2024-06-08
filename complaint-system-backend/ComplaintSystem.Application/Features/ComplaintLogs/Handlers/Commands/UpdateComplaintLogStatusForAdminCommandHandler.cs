@@ -83,11 +83,10 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                     {
                         Sender = "System",
                         Message = $"Your complaint '{complaint.Title}' has been resolved!",
-                        ReceiverId = complaint.UserEntityId,
                         Date = DateTime.Now,
                     };
 
-                    await _notificationService.SendNotificationAsync((complaint.UserEntityId).ToString(), notify);
+                    await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), notify);
                 }
                 else if (complaintlog.Status.ToLower() == "processing")
                 {
@@ -95,24 +94,12 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                     {
                         Sender = admin.Name!,
                         Message = $"Rejected complaint log '{complaintlog.Title}'. Please review!",
-                        ReceiverId = complaintlog.SubordinateId,
                         Date = DateTime.Now,
                     };
 
-                    await _notificationService.SendNotificationAsync((complaintlog.SubordinateId).ToString(), notify);
+                    await _notificationService.SendNotificationAsync(subordinate!.Id.ToString(), notify);
                 }
-                // else if (complaintlog.Status.ToLower() == "inprogress")
-                // {
-                //     var notify = new NotificationEntity
-                //     {
-                //         Sender = admin.Name!,
-                //         Message = $"Your complaint '{complaint.Title}' is in progress!",
-                //         ReceiverId = complaint.UserEntityId,
-                //         Date = DateTime.Now,
-                //     };
-
-                //     await _notificationService.SendNotificationAsync((complaint.UserEntityId).ToString(), notify);
-                // }
+                
 
                 response = new BaseResponseClass
                 {

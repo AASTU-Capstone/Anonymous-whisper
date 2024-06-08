@@ -43,6 +43,7 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
         {
             var subordinate = await _subordinateRepository.GetSubordinateByUserId(request.ComplaintLogStatus.StatusChangerId);
             var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
+            var manager = await _managerRepository.GetAsync(complaintLog.ManagerId);
 
             if(subordinate.Id == complaintLog.SubordinateId)
             {
@@ -61,11 +62,10 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                 {
                     Sender = subordinate.Name!,
                     Message = $"Submited a report for a complaint log '{complaintLog.Title}'.",
-                    ReceiverId = complaintLog.ManagerId,
                     Date = DateTime.Now,
                 };
 
-                await _notificationService.SendNotificationAsync((complaintLog.ManagerId).ToString(), notify);
+                await _notificationService.SendNotificationAsync(manager.Id.ToString(), notify);
 
             }
             else

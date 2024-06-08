@@ -57,7 +57,7 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
                 response.Message = "Manager Create Failed";
                 response.StatusCode = 400;
             }
-            else if((postManager != null && postManager.Role.ToLower() == request.CreateManagerDto.Role.ToLower()) || (preManager != null && preManager.Role.ToLower() == request.CreateManagerDto.Role.ToLower() ))
+            else if((postManager != null && postManager.Role.ToLower() == request.CreateManagerDto.Role!.ToLower()) || (preManager != null && preManager.Role.ToLower() == request.CreateManagerDto.Role!.ToLower() ))
             {
                 response.Error = ["Manger with the role exists"];
                 response.Success = false;
@@ -66,7 +66,7 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
             }
             else
             {
-                var user = await _userRepository.GetByEmail(request.CreateManagerDto.Email);
+                var user = await _userRepository.GetByEmail(request.CreateManagerDto.Email!);
                 user.User_Type = "manager";
                 await _userRepository.Update(user);
 
@@ -85,10 +85,9 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
                 {
                     Sender = admin.Name!,
                     Message = $"Promoted you to {manager.Role} Manager.",
-                    ReceiverId = user.Id,
                     Date = DateTime.Now,
                 };
-                await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
 
             }
 

@@ -56,6 +56,7 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                 // update the corruption trend by category by 1
                 var admin = await _adminRepository.GetAsync(request.AdminId);
                 var complaint = await _complaintRepository.GetAsync(request.ComplaintLogDto.ComplaintId);
+                var manager = await _managerRepository.GetAsync(request.ComplaintLogDto.ManagerId);
                 var corruptionTrend = await _corruptionTrendRepository.GetCorruptionTrendByName(complaint.Category);
                 if(corruptionTrend != null)
                 {
@@ -101,12 +102,11 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                 var notify = new NotificationEntity
                 {
                     Sender = admin.Name!,
-                    Message = $"Assigned you a complaint log '{complaintLog.Title}'.",
-                    ReceiverId = complaintLog.ManagerId,
+                    Message = $"Assigned you a complaint log '{complaintLog.Title}'.",                    
                     Date = DateTime.Now,
                 };
 
-                await _notificationService.SendNotificationAsync((complaintLog.ManagerId).ToString(), notify);
+                await _notificationService.SendNotificationAsync(manager.UserEntityId.ToString(), notify);
             }
             else
             {

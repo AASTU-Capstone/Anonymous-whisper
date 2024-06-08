@@ -44,6 +44,7 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
             var manager = await _managerRepository.GetManagerByUserId(request.ComplaintLogStatus.StatusChangerId);
             var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
             var admin = await _adminRepository.GetAsync(complaintLog.AdminId);
+            var subordinate = await _subordinateRepository.GetAsync(complaintLog.SubordinateId);
             if(manager.Id == complaintLog.ManagerId)
             {
                 complaintLog.Status = request.ComplaintLogStatus.Status;
@@ -64,11 +65,10 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
                     {
                         Sender = admin.Name!,
                         Message = $"Submitted a complaint log '{complaintLog.Title}'.",
-                        ReceiverId = complaintLog.AdminId,
                         Date = DateTime.Now,
                     };
 
-                    await _notificationService.SendNotificationAsync((complaintLog.AdminId).ToString(), notify);
+                    await _notificationService.SendNotificationAsync(admin.Id.ToString(), notify);
                 }
 
                 //send notification to the subordinate if the status is processing
@@ -78,11 +78,10 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
                     {
                         Sender = manager.Name!,
                         Message = $"Rejected your report for the complaint log '{complaintLog.Title}'. Please review and resubmit.",
-                        ReceiverId = complaintLog.SubordinateId,
                         Date = DateTime.Now,
                     };
 
-                    await _notificationService.SendNotificationAsync((complaintLog.SubordinateId).ToString(), notify);
+                    await _notificationService.SendNotificationAsync(subordinate.Id.ToString(), notify);
                 }
             }
             else

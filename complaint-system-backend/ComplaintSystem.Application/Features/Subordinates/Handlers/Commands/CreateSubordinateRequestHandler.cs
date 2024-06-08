@@ -86,11 +86,10 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 {
                     Sender = manager.Name!,
                     Message = $"Promoted you to Subordinate.",
-                    ReceiverId = user.Id,
                     Date = DateTime.Now
                 };
 
-                await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
 
             }
 

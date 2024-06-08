@@ -45,7 +45,7 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
             }
             else
             {
-                var user = await _userRepository.GetByEmail(request.UpdateManagerDto.Email);
+                var user = await _userRepository.GetByEmail(request.UpdateManagerDto.Email!);
                 var manager = await _managerRepository.GetAsync(request.UpdateManagerDto.Id);
                 var admin = await _adminRepository.GetAsync(request.AdminId);
                 var Prev_user = await _userRepository.GetAsync(manager.UserEntityId);
@@ -70,10 +70,9 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
                 {
                     Sender = admin.Name!,
                     Message = $"Promoted you to {manager.Role} Manager.",
-                    ReceiverId = user.Id,
                     Date = DateTime.Now,
                 };
-                await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
             }
 
             return response;

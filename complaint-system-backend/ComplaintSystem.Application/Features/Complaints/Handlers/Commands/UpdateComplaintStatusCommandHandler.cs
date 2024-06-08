@@ -54,11 +54,10 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
                 {
                     Sender = "System",
                     Message = $"Accepted your complaint '{complaint.Title}'.",
-                    ReceiverId = complaint.UserEntityId,
                     Date = DateTime.Now,
                 };
 
-                await _notificationService.SendNotificationAsync((complaint.UserEntityId).ToString(), notify);
+                await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), notify);
                 // send notification to the admin
             }
             else if (complaint.Status.ToLower() == "rejected")
@@ -68,11 +67,10 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
                 {
                     Sender = "System",
                     Message = $"Rejected your complaint '{complaint.Title}'.",
-                    ReceiverId = complaint.UserEntityId,
                     Date = DateTime.Now,
                 };
 
-                await _notificationService.SendNotificationAsync((complaint.UserEntityId).ToString(), notify);
+                await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), notify);
                 
             }   
         }
