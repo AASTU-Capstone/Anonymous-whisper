@@ -3,6 +3,7 @@ using ComplaintSystem.Application.DTOs.ComplaintDto;
 using ComplaintSystem.Application.DTOs.ComplaintDto.Validators;
 using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Persistence.Contracts.APIs;
 using ComplaintSystem.Application.Persistence.Contracts.Cloudinary;
 using ComplaintSystem.Application.Responses;
@@ -17,6 +18,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
     {
         private readonly IComplaintRepository _complaintRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IAdminRepository _adminRepository;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IImaggaService _imaggaService;
         private readonly IMapper _mapper;
@@ -24,6 +26,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
 
         public CreateComplaintCommandHandler(
             IComplaintRepository complaintRepository, 
+            IAdminRepository adminRepository,
             IMapper mapper, 
             IUserRepository userRepository,
             ICloudinaryService cloudinaryService,
@@ -31,6 +34,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
             INotificationService notificationService)
         {
             _complaintRepository = complaintRepository;
+            _adminRepository = adminRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _cloudinaryService = cloudinaryService;
@@ -126,15 +130,19 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 response.Success = true;
                 response.Message = "Complaint created successfully";
 
+                var admin = await _adminRepository.GetAllAsync();
+                var Admin = admin.FirstOrDefault();
+                
+
                 var notify = new NotificationEntity
                 {
                     Sender = "Anonymous user",
                     Message = $"Submitted a complaint '{complaint.Title}'.",
-                    ReceiverId = complaint.AdminId,
+                    ReceiverId = Admin.Id,
                     Date = DateTime.Now,
                 };
 
-                await _notificationService.SendNotificationAsync((complaint.AdminId).ToString(), notify);
+                await _notificationService.SendNotificationAsync((Admin.Id).ToString(), notify);
             }
 
             return response;

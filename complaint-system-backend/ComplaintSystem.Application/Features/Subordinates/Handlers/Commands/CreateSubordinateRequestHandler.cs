@@ -7,6 +7,7 @@ using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.DTOs.SubordinateDto.Validators;
 using ComplaintSystem.Application.Features.Subordinates.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;

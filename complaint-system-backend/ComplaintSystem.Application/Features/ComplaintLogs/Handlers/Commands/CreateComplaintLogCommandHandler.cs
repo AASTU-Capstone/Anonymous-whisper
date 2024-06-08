@@ -4,6 +4,7 @@ using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.DTOs.CorruptionTrendDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;

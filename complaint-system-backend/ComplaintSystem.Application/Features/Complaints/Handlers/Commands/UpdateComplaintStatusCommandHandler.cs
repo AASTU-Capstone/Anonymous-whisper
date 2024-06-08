@@ -2,7 +2,9 @@
 using ComplaintSystem.Application.DTOs.ComplaintDto.Validators;
 using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -15,10 +17,16 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
 {
     private readonly IComplaintRepository _complaintRepository;
     private readonly IMapper _mapper;
-    public UpdateComplaintStatusCommandHandler(IComplaintRepository complaintRepository, IMapper mapper)
+    private readonly INotificationService _notificationService;
+
+    public UpdateComplaintStatusCommandHandler(
+        IComplaintRepository complaintRepository, 
+        IMapper mapper,
+        INotificationService notificationService)
     {
         _complaintRepository = complaintRepository;
         _mapper = mapper;
+        _notificationService = notificationService;
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintStatusCommand request, CancellationToken cancellationToken)
     {

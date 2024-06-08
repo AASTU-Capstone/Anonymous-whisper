@@ -1,6 +1,7 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
@@ -59,12 +60,12 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                 var notify = new NotificationEntity
                 {
                     Sender = subordinate.Name!,
-                    Message = $"Submited a report for a complaint log '{complaintLog.Tile}'.",
-                    ReceiverId = complaintlog.ManagerId,
+                    Message = $"Submited a report for a complaint log '{complaintLog.Title}'.",
+                    ReceiverId = complaintLog.ManagerId,
                     Date = DateTime.Now,
                 };
 
-                await _notificationService.SendNotificationAsync((complaintlog.ManagerId).ToString(), notify);
+                await _notificationService.SendNotificationAsync((complaintLog.ManagerId).ToString(), notify);
 
             }
             else

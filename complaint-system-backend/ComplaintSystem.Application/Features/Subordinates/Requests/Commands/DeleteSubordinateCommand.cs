@@ -11,5 +11,6 @@ namespace ComplaintSystem.Application.Features.Subordinates.Requests.Commands
     public class DeleteSubordinateCommand : IRequest<BaseResponseClass>
     {
         public DeleteSubordinateDto DeleteSubordinateDto { get; set; }
+        public Guid UserId { get; set; }
     }
 }

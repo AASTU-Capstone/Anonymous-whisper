@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
+using System.Text.Json;
 using System.Text;
 using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Domain.Entities;

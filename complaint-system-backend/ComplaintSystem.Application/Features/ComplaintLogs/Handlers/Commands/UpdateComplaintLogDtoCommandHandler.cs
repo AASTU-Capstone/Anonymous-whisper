@@ -2,7 +2,9 @@
 using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -56,7 +58,7 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
                 {
                     Sender = subordinate.Name!,
                     Message = $"Submitted a report for complaint log '{complaintLog.Title}'.",
-                    ReceiverId = complaintLog.ManagerId
+                    ReceiverId = complaintLog.ManagerId,
                     Date = DateTime.Now,
                 };
                 await _notificationService.SendNotificationAsync((complaintLog.ManagerId).ToString(), notify);

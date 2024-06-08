@@ -125,7 +125,8 @@ namespace ComplaintSystem.API.Controllers
         [Route("UpdateManager")]
         public async Task<ActionResult<BaseResponseClass>> UpdateManager(UpdateManagerDto updateManagerDto)
         {
-            var command = new UpdateManagerCommand { UpdateManagerDto = updateManagerDto };
+            var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
+            var command = new UpdateManagerCommand { UpdateManagerDto = updateManagerDto, AdminId = adminId };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }

@@ -1,6 +1,7 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
@@ -42,6 +43,7 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
         {
             var manager = await _managerRepository.GetManagerByUserId(request.ComplaintLogStatus.StatusChangerId);
             var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
+            var admin = await _adminRepository.GetAsync(complaintLog.AdminId);
             if(manager.Id == complaintLog.ManagerId)
             {
                 complaintLog.Status = request.ComplaintLogStatus.Status;
@@ -60,13 +62,13 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
                 {
                     var notify = new NotificationEntity
                     {
-                        Sender = complaintlog.Admin.Name!,
-                        Message = $"Submitted a complaint log '{complaintlog.Complaint.Title}'.",
-                        ReceiverId = complaintlog.AdminId,
+                        Sender = admin.Name!,
+                        Message = $"Submitted a complaint log '{complaintLog.Title}'.",
+                        ReceiverId = complaintLog.AdminId,
                         Date = DateTime.Now,
                     };
 
-                    await _notificationService.SendNotificationAsync((complaintlog.AdminId).ToString(), notify);
+                    await _notificationService.SendNotificationAsync((complaintLog.AdminId).ToString(), notify);
                 }
 
                 //send notification to the subordinate if the status is processing
@@ -74,13 +76,13 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
                 {
                     var notify = new NotificationEntity
                     {
-                        Sender = complaintlog.Manager.Name!,
-                        Message = $"Rejected your report for the complaint log '{complaintlog.Complaint.Title}'. Please review and resubmit.",
-                        ReceiverId = complaintlog.SubordinateId,
+                        Sender = manager.Name!,
+                        Message = $"Rejected your report for the complaint log '{complaintLog.Title}'. Please review and resubmit.",
+                        ReceiverId = complaintLog.SubordinateId,
                         Date = DateTime.Now,
                     };
 
-                    await _notificationService.SendNotificationAsync((complaintlog.SubordinateId).ToString(), notify);
+                    await _notificationService.SendNotificationAsync((complaintLog.SubordinateId).ToString(), notify);
                 }
             }
             else

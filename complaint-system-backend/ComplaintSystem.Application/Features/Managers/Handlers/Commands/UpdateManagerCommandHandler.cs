@@ -2,7 +2,9 @@ using AutoMapper;
 using ComplaintSystem.Application.DTOs.ManagerDto.Validators;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 
 namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
@@ -13,17 +15,20 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
         private readonly IAdminRepository _adminRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
 
         public UpdateManagerCommandHandler(
             IManagerRepository managerRepository, 
             IMapper mapper, 
             IUserRepository userRepository,
-            IAdminRepository adminRepository)
+            IAdminRepository adminRepository,
+            INotificationService notificationService)
         {
             _managerRepository = managerRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _adminRepository = adminRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponseClass> Handle(UpdateManagerCommand request, CancellationToken cancellationToken)

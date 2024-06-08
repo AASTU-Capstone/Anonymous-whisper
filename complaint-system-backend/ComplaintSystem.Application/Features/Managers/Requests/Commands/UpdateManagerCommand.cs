@@ -7,5 +7,6 @@ namespace ComplaintSystem.Application.Features.Managers.Requests.Commands
     public class UpdateManagerCommand : IRequest<BaseResponseClass>
     {
         public UpdateManagerDto UpdateManagerDto { get; set; }
+        public Guid AdminId { get; set; }
     }
 }

@@ -62,7 +62,7 @@ public class AssignSubordinateCommandHandler : IRequestHandler<AssignSubordinate
                     ReceiverId = complaintLog.SubordinateId,
                     Date = DateTime.Now,
                 };
-                await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);
+                await _notificationService.SendNotificationAsync((request.ComplaintLog.SubordinateId).ToString(), notify);
             }
             else
             {
