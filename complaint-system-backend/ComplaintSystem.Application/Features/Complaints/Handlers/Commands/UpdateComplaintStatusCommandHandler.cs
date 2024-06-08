@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ComplaintSystem.Application.DTOs.ComplaintDto.Validators;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Persistence.Contracts.Notification;
@@ -18,25 +19,28 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
     private readonly IComplaintRepository _complaintRepository;
     private readonly IMapper _mapper;
     private readonly INotificationService _notificationService;
+    private readonly INotificationRepository _notificationRepository;
 
     public UpdateComplaintStatusCommandHandler(
-        IComplaintRepository complaintRepository, 
+        IComplaintRepository complaintRepository,
         IMapper mapper,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        INotificationRepository notificationRepository)
     {
         _complaintRepository = complaintRepository;
         _mapper = mapper;
         _notificationService = notificationService;
+        _notificationRepository = notificationRepository;
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintStatusCommand request, CancellationToken cancellationToken)
     {
         var validator = new UpdateComplaintDtoValidator(_complaintRepository);
         var validated = await validator.ValidateAsync(request.UpdateComplainDto, cancellationToken);
         BaseResponseClass response;
-        if(validated.IsValid)
+        if (validated.IsValid)
         {
             var complaint = await _complaintRepository.GetAsync(request.UpdateComplainDto.ComplaintId);
-            _mapper.Map(request.UpdateComplainDto,complaint);
+            _mapper.Map(request.UpdateComplainDto, complaint);
             await _complaintRepository.Update(complaint);
 
             response = new BaseResponseClass
@@ -50,29 +54,34 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
             if (complaint.Status.ToLower() == "pending")
             {
                 // send notification to the user
-                var notify = new NotificationEntity
+                var notify = new CreateNotificationDto
                 {
                     Sender = "System",
                     Message = $"Accepted your complaint '{complaint.Title}'.",
-                    Date = DateTime.Now,
+                    RecieverId = complaint.UserEntityId,
                 };
 
-                await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), notify);
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+
+                await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), Notification);
                 // send notification to the admin
             }
             else if (complaint.Status.ToLower() == "rejected")
             {
                 // send notification to the user
-                var notify = new NotificationEntity
+                var notify = new CreateNotificationDto
                 {
                     Sender = "System",
                     Message = $"Rejected your complaint '{complaint.Title}'.",
-                    Date = DateTime.Now,
+                    RecieverId = complaint.UserEntityId,
                 };
 
-                await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), notify);
-                
-            }   
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), Notification);
+
+            }
         }
         else
         {

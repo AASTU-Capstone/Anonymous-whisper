@@ -40,4 +40,5 @@ namespace ComplaintSystem.Application.Features.Notifications.Handler.Commands
 
             return response;
         }
+    }
 }

@@ -1,4 +1,6 @@
-﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
+﻿using AutoMapper;
+using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Persistence.Contracts.Notification;
@@ -22,7 +24,8 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
     private readonly IComplaintRepository _complaintRepository;
     private readonly ICorruptionTrendRepository _corruptionTrendRepository;
     private readonly INotificationService _notificationService;
-
+    private readonly INotificationRepository _notificationRepository;
+    private readonly IMapper _mapper;
     public UpdateComplaintLogStatusForAdminCommandHandler(
         IComplaintLogRepository complaintLogRepository,
         ISubordinateRepository subordinateRepository,
@@ -30,7 +33,9 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
         IAdminRepository adminRepository,
         IComplaintRepository complaintRepository,
         ICorruptionTrendRepository corruptionTrendRepository,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        INotificationRepository notificationRepository,
+        IMapper mapper)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
@@ -39,12 +44,14 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
         _complaintRepository = complaintRepository;
         _corruptionTrendRepository = corruptionTrendRepository;
         _notificationService = notificationService;
+        _notificationRepository = notificationRepository;
+        _mapper = mapper;
 
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForAdminCommand request, CancellationToken cancellationToken)
     {
-        
-        var validator = new UpdateComplaintLogStatusDtoValidator(_complaintLogRepository,_subordinateRepository,_managerRepository,_adminRepository);
+
+        var validator = new UpdateComplaintLogStatusDtoValidator(_complaintLogRepository, _subordinateRepository, _managerRepository, _adminRepository);
         var validated = await validator.ValidateAsync(request.ComplaintLogStatus, cancellationToken);
         BaseResponseClass response;
         if (validated.IsValid)
@@ -79,27 +86,31 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
 
                 if (complaintlog.Status.ToLower() == "resolved")
                 {
-                    var notify = new NotificationEntity
+                    var notify = new CreateNotificationDto
                     {
                         Sender = "System",
                         Message = $"Your complaint '{complaint.Title}' has been resolved!",
-                        Date = DateTime.Now,
+                        RecieverId = complaint.UserEntityId,
                     };
 
-                    await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), notify);
+                    var Notification = _mapper.Map<NotificationEntity>(notify);
+                    await _notificationRepository.Add(Notification);
+                    await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), Notification);
                 }
                 else if (complaintlog.Status.ToLower() == "processing")
                 {
-                    var notify = new NotificationEntity
+                    var notify = new CreateNotificationDto
                     {
                         Sender = admin.Name!,
                         Message = $"Rejected complaint log '{complaintlog.Title}'. Please review!",
-                        Date = DateTime.Now,
+                        RecieverId = subordinate!.Id
                     };
 
-                    await _notificationService.SendNotificationAsync(subordinate!.Id.ToString(), notify);
+                    var Notification = _mapper.Map<NotificationEntity>(notify);
+                    await _notificationRepository.Add(Notification);
+                    await _notificationService.SendNotificationAsync(subordinate!.Id.ToString(), Notification);
                 }
-                
+
 
                 response = new BaseResponseClass
                 {
@@ -109,7 +120,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                     Id = complaintlog.Id,
                 };
 
-                
+
             }
             else
             {
@@ -122,9 +133,10 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                 };
             }
 
-            
 
-        }else
+
+        }
+        else
         {
             response = new BaseResponseClass
             {
@@ -135,6 +147,6 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
             };
         }
         return response;
-        
+
     }
 }

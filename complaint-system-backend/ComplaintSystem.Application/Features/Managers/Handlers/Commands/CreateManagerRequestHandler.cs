@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ComplaintSystem.Application.DTOs.ManagerDto.Validators;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Persistence.Contracts.Notification;
@@ -20,19 +21,22 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
         private readonly IUserRepository _userRepository;
         private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
+        private readonly INotificationRepository _notificationRepository;
 
         public CreateManagerRequestHandler(
             IManagerRepository managerRepository,
             IAdminRepository adminRepository,
-            IMapper mapper, 
+            IMapper mapper,
             IUserRepository userRepository,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            INotificationRepository notificationRepository)
         {
             _managerRepository = managerRepository;
             _adminRepository = adminRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<BaseResponseClass> Handle(CreateManagerRequest request, CancellationToken cancellationToken)
@@ -40,7 +44,7 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
             var Validator = new CreateManagerDtoValidator(_userRepository);
             var validationResult = await Validator.ValidateAsync(request.CreateManagerDto, cancellationToken);
             var admin = await _adminRepository.GetAsync(request.AdminId);
-            var preManager = await _managerRepository.GetMananger(request.AdminId,"premitigation");
+            var preManager = await _managerRepository.GetMananger(request.AdminId, "premitigation");
             var postManager = await _managerRepository.GetMananger(request.AdminId, "postmitigation");
             var response = new BaseResponseClass();
 
@@ -50,14 +54,14 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
                 response.Success = false;
                 response.Error = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             }
-            else if(postManager != null && preManager != null)
+            else if (postManager != null && preManager != null)
             {
                 response.Error = ["Manager limit excedeed"];
                 response.Success = false;
                 response.Message = "Manager Create Failed";
                 response.StatusCode = 400;
             }
-            else if((postManager != null && postManager.Role.ToLower() == request.CreateManagerDto.Role!.ToLower()) || (preManager != null && preManager.Role.ToLower() == request.CreateManagerDto.Role!.ToLower() ))
+            else if ((postManager != null && postManager.Role.ToLower() == request.CreateManagerDto.Role!.ToLower()) || (preManager != null && preManager.Role.ToLower() == request.CreateManagerDto.Role!.ToLower()))
             {
                 response.Error = ["Manger with the role exists"];
                 response.Success = false;
@@ -81,13 +85,16 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
 
 
                 // notification
-                var notify = new NotificationEntity
+                var notify = new CreateNotificationDto
                 {
                     Sender = admin.Name!,
                     Message = $"Promoted you to {manager.Role} Manager.",
-                    Date = DateTime.Now,
+                    RecieverId = user.Id,
                 };
-                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
+
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), Notification);
 
             }
 

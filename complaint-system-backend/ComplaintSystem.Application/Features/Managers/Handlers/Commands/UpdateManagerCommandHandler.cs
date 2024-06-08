@@ -1,5 +1,6 @@
 using AutoMapper;
 using ComplaintSystem.Application.DTOs.ManagerDto.Validators;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Persistence.Contracts.Notification;
@@ -16,19 +17,22 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepository;
 
         public UpdateManagerCommandHandler(
-            IManagerRepository managerRepository, 
-            IMapper mapper, 
+            IManagerRepository managerRepository,
+            IMapper mapper,
             IUserRepository userRepository,
             IAdminRepository adminRepository,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            INotificationRepository notificationRepository)
         {
             _managerRepository = managerRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _adminRepository = adminRepository;
             _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<BaseResponseClass> Handle(UpdateManagerCommand request, CancellationToken cancellationToken)
@@ -66,13 +70,16 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
                 response.Success = true;
                 response.Message = "Manager updated successfully";
 
-                var notify = new NotificationEntity
+                var notify = new CreateNotificationDto
                 {
                     Sender = admin.Name!,
                     Message = $"Promoted you to {manager.Role} Manager.",
-                    Date = DateTime.Now,
+                    RecieverId = user.Id,
                 };
-                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
+
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), Notification);
             }
 
             return response;

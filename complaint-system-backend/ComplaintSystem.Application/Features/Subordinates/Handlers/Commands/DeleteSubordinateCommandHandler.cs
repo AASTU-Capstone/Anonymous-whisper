@@ -1,3 +1,5 @@
+using AutoMapper;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.Features.Subordinates.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Persistence.Contracts.Notification;
@@ -14,19 +16,26 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
         private readonly IComplaintLogRepository _complaintLogRepository;
         private readonly IUserRepository _userRepository;
         private readonly INotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepository;
+        private readonly IMapper _mapper;
+
 
         public DeleteSubordinateCommandHandler(
             ISubordinateRepository subordinateRepository,
             IManagerRepository managerRepository,
             IComplaintLogRepository complaintLogRepository,
             IUserRepository userRepository,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            INotificationRepository notificationRepository,
+            IMapper mapper)
         {
             _subordinateRepository = subordinateRepository;
             _managerRepository = managerRepository;
             _complaintLogRepository = complaintLogRepository;
             _userRepository = userRepository;
             _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
+            _mapper = mapper;
         }
 
 
@@ -64,14 +73,16 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 response.Message = "Subordinate deleted successfully";
 
                 // notify
-                var notify = new NotificationEntity
+                var notify = new CreateNotificationDto
                 {
                     Sender = manager.Name!,
                     Message = $"Demoted you to User.",
-                    Date = DateTime.Now,
+                    RecieverId = user.Id
                 };
 
-                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), Notification);
             }
 
             return response;
