@@ -19,7 +19,7 @@ export const WebSocketProvider = ({
     const userId = localStorage.getItem("userId");
     if (userId) {
       const ws = new WebSocket(
-        `ws://localhost:5097/notification?userId=${userId}`
+        `ws://anonymous-whisper.onrender.com/notification?userId=${userId}`
       );
 
       ws.onopen = () => {
