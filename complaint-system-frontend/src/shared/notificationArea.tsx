@@ -4,7 +4,6 @@ import { useState } from "react";
 
 interface Notification {
   Sender: string;
-  RecieverId: string;
   Date: string;
   Message: string;
   unread: boolean;

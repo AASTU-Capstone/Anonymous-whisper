@@ -14,6 +14,13 @@ import { useRouter } from "next/router";
 import { useWebSocket } from "@/providers/WebSocketContext";
 import NotificationArea from "@/shared/notificationArea";
 
+interface Notification {
+  Sender: string;
+  Date: string;
+  Message: string;
+  unread: boolean;
+}
+
 const notify = () => {
   toast.success("Logout Successful", {
     position: "bottom-center",
@@ -73,14 +80,14 @@ const Header = ({ role }: { role: string }) => {
 
   // notification setup
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   
   useEffect(() => {
     if (messages.length > 0) {
       console.log('recieved', messages)
-      // const newNotifications = messages.map((message) => ({ message, unread: true }));
-      setNotifications(messages);
+      const sortedMessages = messages.sort((a: Notification, b: Notification) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
+      setNotifications(sortedMessages);
     }
   }, [messages]);
 
