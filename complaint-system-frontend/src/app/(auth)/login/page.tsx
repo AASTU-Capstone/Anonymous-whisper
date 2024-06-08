@@ -62,22 +62,19 @@ export default function Login({}: Props) {
   const auth = useAuth();
   const router = useRouter();
   const dispatch = useDispatch();
-  // const { sendMessage, logout } = useWebSocket();
+  const { connectWebSocket } = useWebSocket();
 
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
     const res = await auth.loginHandler({ email, password });
-    console.log(res);
 
     if (res && "data" in res) {
       if (res.data.success && res.data.isVerified) {
         const decodedToken: any = jwt.decode(res.data.token);
         const userType = decodedToken.typ;
-
-        console.log(decodedToken);
         const userId = decodedToken.userid;
-
         localStorage.setItem("userId", userId);
+        connectWebSocket(userId);
         notify();
 
         // Redirect based on userType
