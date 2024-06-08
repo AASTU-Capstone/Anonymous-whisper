@@ -7,6 +7,7 @@ using ComplaintSystem.Application.DTOs.AdminDto;
 using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.DTOs.ComplaintDto;
 using ComplaintSystem.Application.DTOs.CorruptionTrendDto;
+using ComplaintSystem.Application.DTOs.ResourceDto;
 
 
 namespace ComplaintSystem.Application.Profiles
@@ -49,6 +50,11 @@ namespace ComplaintSystem.Application.Profiles
             //corruption trend
             CreateMap<CreateCorruptionTrendDto, CorruptionTrend>().ReverseMap();
             CreateMap<GetCorruptionTrendDto, CorruptionTrend>().ReverseMap();
+
+            //Resource
+            CreateMap<CreateResourceDto, Resource>().ReverseMap();
+            CreateMap<GetResourceDto,  Resource>().ReverseMap();
+            CreateMap<GetResourcesDto, Resource>().ReverseMap();
 
         }
     }
