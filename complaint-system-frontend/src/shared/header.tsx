@@ -13,12 +13,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
 import { useWebSocket } from "@/providers/WebSocketContext";
 import NotificationArea from "@/shared/notificationArea";
+import { useMarkNotificationsMutation, useGetUnreadNotificationsQuery } from "@/lib/redux/features/notification";
 
 interface Notification {
   Sender: string;
-  Date: string;
   Message: string;
-  unread: boolean;
+  isRead: boolean;
+  CreatedAt: string;
 }
 
 const notify = () => {
@@ -81,19 +82,30 @@ const Header = ({ role }: { role: string }) => {
   // notification setup
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const {data: res, isLoading, isSuccess, refetch} = useGetUnreadNotificationsQuery({});
+  
+  const UnreadNotification = res?.data?.map((item: Notification)=>{
+    return {
+      ...item,
+    }
+  }) || []
 
   
   useEffect(() => {
+
+    if (UnreadNotification.length > 0){
+      setNotifications(UnreadNotification);
+    }
     if (messages.length > 0) {
       console.log('recieved', messages)
-      const sortedMessages = messages.sort((a: Notification, b: Notification) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
+      const sortedMessages = messages.sort((a: Notification, b: Notification) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
       setNotifications(sortedMessages);
     }
   }, [messages]);
 
   const toggleNotifications = () => {
     setShowNotifications((prev) => !prev);
-    if (!showNotifications && notifications.some((notification) => notification.unread)) {
+    if (!showNotifications && notifications.some((notification) => !notification.isRead)) {
       setNotifications((prevNotifications) =>
         prevNotifications.map((notification) => ({
           ...notification
@@ -144,8 +156,8 @@ const Header = ({ role }: { role: string }) => {
             >
               <IconBell />
             </ActionIcon>
-            {!showNotifications && notifications.some((notification) => notification.unread) && (
-              <Badge badgeContent={notifications.filter((notification) => notification.unread).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
+            {!showNotifications && notifications.some((notification) => !notification.isRead) && (
+              <Badge badgeContent={notifications.filter((notification) => !notification.isRead).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
                 {/* Place content here if needed */}
               </Badge>
             )}

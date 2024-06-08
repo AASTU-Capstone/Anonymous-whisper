@@ -4,9 +4,9 @@ import { useState } from "react";
 
 interface Notification {
   Sender: string;
-  Date: string;
   Message: string;
-  unread: boolean;
+  isRead: boolean;
+  CreatedAt: string;
 }
 
 interface NotificationAreaProps {
@@ -23,7 +23,7 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
 
   const handleNotificationClick = (index: any) => {
     const updatedNotifications = [...displayedNotifications];
-    updatedNotifications[index].unread = false;
+    updatedNotifications[index].isRead = true;
     setDisplayedNotifications(updatedNotifications);
   };
 
@@ -46,7 +46,7 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
           notifications.map((notification, index) => (
             <Box key={index} my="sm" onClick={() => handleNotificationClick(index)} style={{
                 cursor: "pointer",
-                backgroundColor: notification.unread ? "#f5f6f7" : "transparent",
+                backgroundColor: !notification.isRead ? "#f5f6f7" : "transparent",
                 padding: "11px",
                 borderRadius: "4px"
               }}>
@@ -57,13 +57,13 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
                     {notification.Sender}
                   </Text>
                   <Text size="xs" color="dimmed">
-                    {formatDate(notification.Date)}
+                    {formatDate(notification.CreatedAt)}
                   </Text>
                   <Text size="md" color="dark">
                     {notification.Message}
                   </Text>
                 </Box>
-                {notification.unread && 
+                {!notification.isRead && 
                 // <Badge color="blue" variant="dot" />}
                 <Indicator
     size={8} // Adjust the size as needed
