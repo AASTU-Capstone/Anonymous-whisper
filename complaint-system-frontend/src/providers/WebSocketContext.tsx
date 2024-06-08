@@ -27,8 +27,13 @@ export const WebSocketProvider = ({
       };
 
       ws.onmessage = (event) => {
-        const message = event.data;
-        setMessages((prevMessages) => [...prevMessages, message]);
+        try {
+          const message = JSON.parse(event.data);
+          const messageWithUnread = { ...message, unread: true };
+          setMessages((prevMessages) => [...prevMessages, messageWithUnread]);
+        } catch (error) {
+          console.error("Error parsing WebSocket message:", error);
+        }
       };
 
       ws.onclose = () => {
@@ -63,4 +68,10 @@ export const WebSocketProvider = ({
   );
 };
 
-export const useWebSocket = () => useContext(WebSocketContext);
+export const useWebSocket = () => {
+  const context = useContext(WebSocketContext);
+  if (!context) {
+    throw new Error("useWebSocket must be used within a WebSocketProvider");
+  }
+  return context;
+};

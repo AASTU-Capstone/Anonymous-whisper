@@ -24,6 +24,7 @@ namespace ComplaintSystem.Infrastructure.services
         public static void AddSocket(string userId, WebSocket socket)
         {
             _sockets[userId] = socket;
+            Console.WriteLine($"new user: {userId}");
         }
 
         public static async Task RemoveSocket(string userId)

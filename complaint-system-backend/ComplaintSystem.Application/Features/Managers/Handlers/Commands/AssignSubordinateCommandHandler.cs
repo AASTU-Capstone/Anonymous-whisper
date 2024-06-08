@@ -35,6 +35,7 @@ public class AssignSubordinateCommandHandler : IRequestHandler<AssignSubordinate
         var validator = new AssignSubordinateComplaintLogDtoValidator(_complaintLogRepository, _subordinateRepository, _managerRepository);
         var validated = await validator.ValidateAsync(request.ComplaintLog, cancellationToken);
         var manager = await _managerRepository.GetManagerByUserId(request.UserId);
+    
         BaseResponseClass response;
         if(validated.IsValid)
         {
@@ -53,16 +54,18 @@ public class AssignSubordinateCommandHandler : IRequestHandler<AssignSubordinate
                     Id = complaintLog.Id
                 };
 
+                var subordinate = await _subordinateRepository.GetAsync(complaintLog.SubordinateId);
+
                 // notification
 
                 var notify = new NotificationEntity
                 {
                     Sender = manager.Name!,
                     Message = $"Assigned you a complaint log '{complaintLog.Title}'.",
-                    ReceiverId = complaintLog.SubordinateId,
+                    ReceiverId = subordinate.UserEntityId,
                     Date = DateTime.Now,
                 };
-                await _notificationService.SendNotificationAsync((request.ComplaintLog.SubordinateId).ToString(), notify);
+                await _notificationService.SendNotificationAsync((subordinate.UserEntityId).ToString(), notify);
             }
             else
             {

@@ -1,6 +1,7 @@
 "use client";
 import { ActionIcon, Avatar, Box, Divider, Flex, Menu, Text } from "@mantine/core";
-import Badge,  from '@mui/material/Badge';
+import Badge from '@mui/material/Badge';
+import {IconBell, IconChevronDown} from "@tabler/icons-react";
 import { useGetAdminProfileQuery } from "@/lib/redux/features/admin";
 import { useGetManagerProfileQuery } from "@/lib/redux/features/manager";
 import { useGetSubordinateProfileQuery } from "@/lib/redux/features/subordinate";
@@ -33,7 +34,7 @@ const notify = () => {
 
 const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
-  const { messages, sendMessage, logout } = useWebSocket();
+  const { messages, logout } = useWebSocket();
   const handleSignOut = () => {
     logoutHandler();
     logout();
@@ -72,13 +73,14 @@ const Header = ({ role }: { role: string }) => {
 
   // notification setup
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<string[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
   
   useEffect(() => {
     if (messages.length > 0) {
-      const newNotifications = messages.map((message) => ({ message, unread: true }));
-      setNotifications(newNotifications);
+      console.log('recieved', messages)
+      // const newNotifications = messages.map((message) => ({ message, unread: true }));
+      setNotifications(messages);
     }
   }, [messages]);
 
@@ -87,18 +89,17 @@ const Header = ({ role }: { role: string }) => {
     if (!showNotifications && notifications.some((notification) => notification.unread)) {
       setNotifications((prevNotifications) =>
         prevNotifications.map((notification) => ({
-          ...notification,
-          unread: true
+          ...notification
         }))
       );
     }
   };
 
   
-  const notificationRef = useRef(null);
+  const notificationRef = useRef<HTMLDivElement>(null);
 
-  const handleClickOutside = (event) => {
-    if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
       setShowNotifications(false);
     }
   };

@@ -1,5 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
+interface ErrorData {
+  success: boolean;
+  isVerified: boolean;
+}
+interface ErrorResponse {
+  data: ErrorData;
+}
+
 import {
   MdOutlinePassword,
   MdOutlineMailOutline,
@@ -54,7 +62,7 @@ export default function Login({}: Props) {
   const auth = useAuth();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { sendMessage, logout } = useWebSocket();
+  // const { sendMessage, logout } = useWebSocket();
 
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
@@ -92,8 +100,8 @@ export default function Login({}: Props) {
         }
       }
     } else if (res && res.error && "data" in res.error) {
-      if (res.error.data?.success && res.error.data?.isVerified == false) {
-        //await auth.createOTPHandler(email);
+      const errorData = res.error.data as ErrorResponse['data'];
+      if (errorData.success && !errorData.isVerified) {
         router.push("/signup/verify-otp?email=" + email);
       }
     }

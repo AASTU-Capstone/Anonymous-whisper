@@ -1,10 +1,28 @@
-import { Box, Text, Divider, ScrollArea, Flex, Badge, Indicator } from "@mantine/core";
+import { Box, Text, Divider, ScrollArea, Flex, Avatar, Indicator } from "@mantine/core";
+import { formatDistanceToNow, parseISO } from 'date-fns';
 import { useState } from "react";
 
-const NotificationArea = ({ notifications }) => {
-    const [displayedNotifications, setDisplayedNotifications] = useState(notifications);
+interface Notification {
+  Sender: string;
+  RecieverId: string;
+  Date: string;
+  Message: string;
+  unread: boolean;
+}
 
-  const handleNotificationClick = (index) => {
+interface NotificationAreaProps {
+  notifications: Notification[];
+}
+
+const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
+  const [displayedNotifications, setDisplayedNotifications] = useState(notifications);
+
+  const formatDate = (dateString: any) => {
+    const date = parseISO(dateString);
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
+  const handleNotificationClick = (index: any) => {
     const updatedNotifications = [...displayedNotifications];
     updatedNotifications[index].unread = false;
     setDisplayedNotifications(updatedNotifications);
@@ -21,7 +39,7 @@ const NotificationArea = ({ notifications }) => {
       }}
     >
       <Flex align="center" justify="space-between" mb="sm">
-        <Text weight={700} size="lg">Notifications</Text>
+        <Text size="lg">Notifications</Text>
       </Flex>
       <Divider my="sm" />
       <ScrollArea style={{ height: "250px" }}>
@@ -34,9 +52,18 @@ const NotificationArea = ({ notifications }) => {
                 borderRadius: "4px"
               }}>
               <Flex align="center" justify="space-between">
-                <Text size="md" color="dark">
-                  {notification.message}
-                </Text>
+                <Avatar alt={notification.Sender} size="sm" />
+                <Box ml="sm" style={{ flex: 1 }}>
+                  <Text size="sm">
+                    {notification.Sender}
+                  </Text>
+                  <Text size="xs" color="dimmed">
+                    {formatDate(notification.Date)}
+                  </Text>
+                  <Text size="md" color="dark">
+                    {notification.Message}
+                  </Text>
+                </Box>
                 {notification.unread && 
                 // <Badge color="blue" variant="dot" />}
                 <Indicator
