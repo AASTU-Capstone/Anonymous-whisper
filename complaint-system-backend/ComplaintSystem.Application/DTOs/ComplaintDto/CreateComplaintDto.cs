@@ -13,6 +13,7 @@ public class CreateComplaintDto
     public List<string>? ImageEvidences { get; set; }
     public List<string>? SoundTracks { get; set; }
     public List<string>? Documents { get; set; }
+    public List<string>? Videos { get; set; }
     public string Category { get; set; }
     public List<string>? Tag { get; set; }
     public string Status { get; set; }

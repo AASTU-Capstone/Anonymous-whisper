@@ -116,6 +116,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                     Status = "recieved",
                     Category = request.CreateComplaintDto.Category,
                     Content = request.CreateComplaintDto.Content,
+                    Videos = videos,
                     Documents = documents,
                     ImageEvidences = imageEvidences,
                     UserEntityId = request.UserId,

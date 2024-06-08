@@ -1,6 +1,7 @@
 "use client";
 import DataTable from "@/shared/table";
 import {
+  ActionIcon,
   Box,
   Button,
   Flex,
@@ -16,26 +17,53 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconAdjustmentsHorizontal,
   IconChevronDown,
+  IconEdit,
   IconPlus,
   IconSearch,
 } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { Column } from "react-table";
-import { ManagerResponse,AddManagerInput } from "@/types";
-import {useAddManagerForAdminMutation} from "@/lib/redux/features/admin";
+import { ManagerResponse, AddManagerInput, EditManagerInput } from "@/types";
+import { useAddManagerForAdminMutation,useUpdateManagerForAdminMutation } from "@/lib/redux/features/admin";
+import Link from "next/link";
 
 const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refetchManagers: () => void; }) => {
   const [opened, { open, close }] = useDisclosure(false);
+  const [editOpened, {open:editOpen, close:editClose}] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const[role, setRole] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [createManager] = useAddManagerForAdminMutation();
+  const [updateManager] = useUpdateManagerForAdminMutation();
+  const[managerId, setManagerId] = useState("")
 
-  
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [roleError, setRoleError] = useState("");
+
   const handleAddManager = async () => {
-    if (!name || !email || !role) {
-      alert("Please fill in all fields");
+    // Reset error messages
+    setNameError("");
+    setEmailError("");
+    setRoleError("");
+
+    // Validate inputs
+    let valid = true;
+    if (!name) {
+      setNameError("Please enter a name.");
+      valid = false;
+    }
+    if (!email) {
+      setEmailError("Please enter an email.");
+      valid = false;
+    }
+    if (!role) {
+      setRoleError("Please select a role.");
+      valid = false;
+    }
+
+    if (!valid) {
       return;
     }
 
@@ -50,13 +78,60 @@ const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refe
       refetchManagers();
       setName("");
       setEmail("");
-      setRole("");
+      setRole(null);
       close();
     } catch (error) {
       console.error("Failed to add manager: ", error);
-      // alert("Failed to add manager");
+      // Handle specific errors if needed
     }
   };
+  const resetValues = ()=>{
+    setNameError("");
+    setEmailError("");
+    setRoleError("");
+    close()
+    editClose()
+  }
+
+  const editManagerHandler = async ()=>{
+    setNameError("");
+    setEmailError("");
+    let valid = true;
+    if (!name) {
+      setNameError("Please enter a name.");
+      valid = false;
+    }
+    if (!email) {
+      setEmailError("Please enter an email.");
+      valid = false;
+    }
+    const editManager : EditManagerInput = {
+      id:managerId,
+      name:name,
+      email:email
+    }
+
+    if (!valid) {
+      return;
+    }
+
+    try{
+      await updateManager(editManager)
+      refetchManagers();
+      setName("");
+      setEmail("");
+      setRole(null);
+      editClose();
+    }catch(error){
+      console.error("Failed to Update manager: ", error);
+    }
+  }
+
+  const assignId = (id:string)=>{
+    editOpen()
+    setManagerId(id)
+    return
+  }
 
   const columns: Array<Column<ManagerResponse>> = useMemo(
     () => [
@@ -92,28 +167,95 @@ const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refe
         Header: "Email",
         accessor: "email",
       },
+      {
+        Header: "Action",
+        accessor: 'id',
+        Cell: ({ value }) => {
+          return (
+            <div className="flex space-x-4">
+              <ActionIcon variant="light">
+                <button
+                  onClick={(e)=>assignId(value)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <IconEdit className="w-5 h-5" />
+                </button>
+              </ActionIcon>
+            </div>
+          )
+        }
+      }
     ],
     []
   );
 
   return (
     <>
-      <Modal centered opened={opened} onClose={close} title="Add Managers">
+    {/* {add manager modal} */}
+      <Modal centered opened={opened} onClose={resetValues} title="Add Managers">
         <Flex className="flex-col my-5 gap-7">
-          <TextInput placeholder="Full Name" required value={name}
-          onChange={(e) => setName(e.target.value)}/>
-          <TextInput placeholder="Email" required value={email}
-          onChange={(e) => setEmail(e.target.value)}/>
-          <Select
-            placeholder="Select Role Type"
-            data={["premitigation", "postmitigation"]}
-            value={role}
-            onChange={(value) => setRole(value)}
-          />
+          <div>
+            <TextInput
+              placeholder="Full Name"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            {nameError && <span className="text-red-500 text-sm">{nameError}</span>}
+          </div>
+          <div>
+            <TextInput
+              placeholder="Email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {emailError && <span className="text-red-500 text-sm">{emailError}</span>}
+          </div>
+          <div>
+            <Select
+              placeholder="Select Role Type"
+              data={["premitigation", "postmitigation"]}
+              value={role}
+              onChange={(value) => setRole(value)}
+            />
+            {roleError && <span className="text-red-500 text-sm">{roleError}</span>}
+          </div>
         </Flex>
         <Group justify="end">
           <Button onClick={handleAddManager}>Add Manager</Button>
-          <Button variant="light" onClick={close}>
+          <Button variant="light" onClick={resetValues}>
+            Cancel
+          </Button>
+        </Group>
+      </Modal>
+
+
+     {/* edit manager modal */}
+      <Modal centered opened={editOpened} onClose={resetValues} title="Edit Managers">
+        <Flex className="flex-col my-5 gap-7">
+          <div>
+            <TextInput
+              placeholder="Full Name"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            {nameError && <span className="text-red-500 text-sm">{nameError}</span>}
+          </div>
+          <div>
+            <TextInput
+              placeholder="Email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {emailError && <span className="text-red-500 text-sm">{emailError}</span>}
+          </div>
+        </Flex>
+        <Group justify="end">
+          <Button onClick={editManagerHandler}>Edit Manager</Button>
+          <Button variant="light" onClick={resetValues}>
             Cancel
           </Button>
         </Group>

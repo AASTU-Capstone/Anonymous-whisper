@@ -6,5 +6,6 @@ export const {
   useGetComplaintLogToAssignForManagerQuery,
   useGetComplaintLogToUpdateForManagerQuery,
   useAssignSubordinateMutation,
-  useGetManagerProfileQuery
+  useGetManagerProfileQuery,
+  useDeleteSubordinateMutation
 } = managerApi;

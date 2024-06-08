@@ -1,7 +1,7 @@
 "use client";
 import DataTable from "@/shared/table";
 import ViewComplaint from "@/shared/view-complaint";
-import { Box, Modal, Text } from "@mantine/core";
+import { ActionIcon, Box, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import { IconEye, IconSquareCheck, IconSquareX } from "@tabler/icons-react";
@@ -10,6 +10,7 @@ import { Column } from "react-table";
 import { Data } from "./page";
 import { UpdateComplaintStatusInputForAdmin } from "@/types";
 import { useUpdateComplaintStatusForAdminMutation } from "@/lib/redux/features/admin";
+import ViewComplaintById from "./viewmodal";
 
 const Complaints = ({
   data,
@@ -21,6 +22,7 @@ const Complaints = ({
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
     useDisclosure(false);
   const [useUpdateComplaintStatus] = useUpdateComplaintStatusForAdminMutation();
+  const [id, setId] = useState("")
 
   const handleAccept = (id: string) => {
     modals.openConfirmModal({
@@ -57,7 +59,7 @@ const Complaints = ({
       onConfirm: async () => {
         const input: UpdateComplaintStatusInputForAdmin = {
           complaintId: id,
-          status: "progressing",
+          status: "rejected",
         };
         await useUpdateComplaintStatus(input).unwrap();
         refetchComplaints();
@@ -66,12 +68,6 @@ const Complaints = ({
     });
   };
 
-  const handleView = (id: string) => {
-    // fetch the complaint using the id
-    // set to setComplaint after fetching the complaint
-    // the open the modal by calling open()
-    openViewModal();
-  };
 
   const columns: Array<Column<Data>> = useMemo(
     () => [
@@ -115,24 +111,27 @@ const Complaints = ({
         Header: "Action",
         Cell: ({ row }) => (
           <div className="flex space-x-4">
-            <button
-              onClick={() => handleView(row.original.id)}
+            <ActionIcon variant="light"
+            onClick={()=>{
+              setId(row.original.id)
+            }}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconEye className="w-5 h-5" />
-            </button>
-            <button
+            </ActionIcon>
+            
+            <ActionIcon variant="light"
               onClick={() => handleAccept(row.original.id)}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconSquareCheck color="green" className="w-5 h-5" />
-            </button>
-            <button
+            </ActionIcon>
+            <ActionIcon variant="light"
               onClick={() => handleReject(row.original.id)}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconSquareX color="red" className="w-5 h-5" />
-            </button>
+            </ActionIcon>
           </div>
         ),
       },
@@ -142,21 +141,13 @@ const Complaints = ({
 
   return (
     <>
-      <Modal
-        size="70%"
-        centered
-        opened={isViewModalOpened}
-        onClose={closeViewModal}
-        title="Complaint"
-      >
-        <ViewComplaint complaint={data} />
-      </Modal>
       <Box className="w-full bg-primary-body">
         <Box className="px-2 py-5">
           <Text className="text-xl">Complaints</Text>
         </Box>
 
         <DataTable columns={columns} data={data} pageSize={10} />
+        <ViewComplaintById id = {id} openViewModal={openViewModal} closeViewModal= {closeViewModal} isViewModalOpened = {isViewModalOpened}/>
       </Box>
     </>
   );

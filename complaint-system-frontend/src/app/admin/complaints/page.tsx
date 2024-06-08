@@ -21,6 +21,7 @@ const page = () => {
     res?.data.map((item: any) => {
       return {
         ...item,
+        status:"received"
       };
     }) || [];
 

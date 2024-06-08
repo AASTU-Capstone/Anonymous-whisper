@@ -159,6 +159,10 @@ export interface UpdateComplaintLogStatusInput {
   status: string;
 }
 
+export interface DeleteSubordinateInput{
+  id:string
+}
+
 /////////////////////////////////////////////
 
 
@@ -178,6 +182,12 @@ export interface AddManagerInput {
   name: string;
   email: string;
   role: string | null;
+}
+
+export interface EditManagerInput{
+  id:string;
+  name:string;
+  email:string;
 }
 
 export interface UpdateComplaintStatusInputForAdmin {
@@ -222,3 +232,12 @@ export interface updateComplaintLogReport {
 }
 
 /////////////////////////////////////////////
+
+/////////////////////////////////////////////////////
+//////////////////// Resource //////////////////////
+////////////////////////////////////////////////////
+
+export interface CreateResourceInput{
+  title: string;
+  description: string;
+}
