@@ -2,6 +2,7 @@
 using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
@@ -17,14 +18,17 @@ public class AssignSubordinateCommandHandler : IRequestHandler<AssignSubordinate
     private readonly IManagerRepository _managerRepository;
     private readonly ISubordinateRepository _subordinateRepository;
     private readonly IComplaintLogRepository _complaintLogRepository;
+    private readonly INotificationService _notificationService;
     public AssignSubordinateCommandHandler(
         IComplaintLogRepository complaintLogRepository, 
         ISubordinateRepository subordinateRepository, 
-        IManagerRepository managerRepository)
+        IManagerRepository managerRepository,
+        INotificationService notificationService)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
         _managerRepository = managerRepository;
+        _notificationService = notificationService;
     }
     public async Task<BaseResponseClass> Handle(AssignSubordinateCommand request, CancellationToken cancellationToken)
     {
@@ -48,6 +52,16 @@ public class AssignSubordinateCommandHandler : IRequestHandler<AssignSubordinate
                     Message = "Subordinate Assigned Successfully",
                     Id = complaintLog.Id
                 };
+
+                // notification
+
+                var notify = new NotificationEntity
+                {
+                    Sender = manager.Name!,
+                    Message = $"Assigned a complaint",
+                    Date = DateTime.Now,
+                };
+                await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);
             }
             else
             {
