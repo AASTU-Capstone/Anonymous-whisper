@@ -11,6 +11,7 @@ namespace ComplaintSystem.Domain.Entities
     {
         public string Sender {get; set;}
         public string Message { get; set; }
+        public Guid ReceiverId { get; set; }
         public DateTime Date { get; set; }
     }
 }

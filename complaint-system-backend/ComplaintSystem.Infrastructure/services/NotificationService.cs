@@ -14,7 +14,8 @@ namespace ComplaintSystem.Infrastructure.services
         {
             if (_sockets.TryGetValue(userId, out var socket))
             {
-                var messageBytes = Encoding.UTF8.GetBytes(notification.Message);
+                var messageJson = JsonSerializer.Serialize(notification);
+                var messageBytes = Encoding.UTF8.GetBytes(messageJson);
                 await socket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true, CancellationToken.None);
             }
         }

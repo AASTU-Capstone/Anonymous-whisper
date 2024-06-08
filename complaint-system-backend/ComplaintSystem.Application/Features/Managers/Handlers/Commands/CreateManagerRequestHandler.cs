@@ -85,6 +85,7 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
                 {
                     Sender = admin.Name!,
                     Message = $"Promoted you to {manager.Role} Manager.",
+                    ReceiverId = user.Id,
                     Date = DateTime.Now,
                 };
                 await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);

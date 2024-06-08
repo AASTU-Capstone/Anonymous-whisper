@@ -10,15 +10,18 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
         private readonly ISubordinateRepository _subordinateRepository;
         private readonly IComplaintLogRepository _complaintLogRepository;
         private readonly IUserRepository _userRepository;
+        private readonly INotificationService _notificationService;
 
         public DeleteSubordinateCommandHandler(
             ISubordinateRepository subordinateRepository,
             IComplaintLogRepository complaintLogRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            INotificationService notificationService)
         {
             _subordinateRepository = subordinateRepository;
             _complaintLogRepository = complaintLogRepository;
             _userRepository = userRepository;
+            _notificationService = notificationService;
         }
 
 
@@ -53,6 +56,17 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 response.Success = true;
                 response.StatusCode = 204;
                 response.Message = "Subordinate deleted successfully";
+
+                // notify
+                var notify = new NotificationEntity
+                {
+                    Sender = manager.Name!,
+                    Message = $"You've been demoted to a user.",
+                    ReceiverId = subordinate.UserEntityId,
+                    Date = DateTime.Now,
+                };
+
+                await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);
             }
 
             return response;

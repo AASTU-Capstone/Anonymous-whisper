@@ -68,7 +68,44 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                     //set subordinate mitigated count to + 1
                     subordinate.MitigatedCount += 1;
                     await _subordinateRepository.Update(subordinate);
+                }
 
+
+                if (complaintLog.Status.ToLower() == "resolved")
+                {
+                    var notify = new NotificationEntity
+                    {
+                        Sender = complaintlog.Admin.Name!,
+                        Message = $"Your complaint '{complaint.Title}' has been resolved!",
+                        ReceiverId = complaint.UserEntityId,
+                        Date = DateTime.Now,
+                    };
+
+                    await _notificationService.SendNotificationAsync((complaint.UserEntityId).ToString(), notify);
+                }
+                else if (complaintLog.Status.ToLower() == "pending")
+                {
+                    var notify = new NotificationEntity
+                    {
+                        Sender = complaintlog.Admin.Name!,
+                        Message = $"Rejected complaint log '{complaintlog.Title}'. Please review!",
+                        ReceiverId = complaintlog.SubordinateId,
+                        Date = DateTime.Now,
+                    };
+
+                    await _notificationService.SendNotificationAsync((complaintlog.SubordinateId).ToString(), notify);
+                }
+                else if (complaintLog.Status.ToLower() == "inprogress")
+                {
+                    var notify = new NotificationEntity
+                    {
+                        Sender = complaintlog.Admin.Name!,
+                        Message = $"Your complaint '{complaint.Title}' is in progress!",
+                        ReceiverId = complaint.UserEntityId,
+                        Date = DateTime.Now,
+                    };
+
+                    await _notificationService.SendNotificationAsync((complaint.UserEntityId).ToString(), notify);
                 }
 
                 response = new BaseResponseClass
@@ -78,6 +115,8 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                     Message = "Status Updated Successfully",
                     Id = complaintlog.Id,
                 };
+
+                
             }
             else
             {

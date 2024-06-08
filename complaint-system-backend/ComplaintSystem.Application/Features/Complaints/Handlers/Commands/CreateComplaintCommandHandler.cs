@@ -20,19 +20,22 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IImaggaService _imaggaService;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
 
         public CreateComplaintCommandHandler(
             IComplaintRepository complaintRepository, 
             IMapper mapper, 
             IUserRepository userRepository,
             ICloudinaryService cloudinaryService,
-            IImaggaService imaggaService)
+            IImaggaService imaggaService,
+            INotificationService notificationService)
         {
             _complaintRepository = complaintRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _cloudinaryService = cloudinaryService;
             _imaggaService = imaggaService;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponseClass> Handle(CreateComplaintCommand request, CancellationToken cancellationToken)
@@ -123,6 +126,15 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 response.Success = true;
                 response.Message = "Complaint created successfully";
 
+                var notify = new NotificationEntity
+                {
+                    Sender = "Anonymous user",
+                    Message = $"Submitted a complaint '{complaint.Title}'.",
+                    ReceiverId = complaint.AdminId,
+                    Date = DateTime.Now,
+                };
+
+                await _notificationService.SendNotificationAsync((complaint.AdminId).ToString(), notify);
             }
 
             return response;

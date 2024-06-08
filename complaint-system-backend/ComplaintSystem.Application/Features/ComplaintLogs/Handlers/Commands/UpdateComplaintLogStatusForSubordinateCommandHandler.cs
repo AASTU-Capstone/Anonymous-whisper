@@ -18,16 +18,20 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
     private readonly IAdminRepository _adminRepository;
     private readonly IManagerRepository _managerRepository;
     private readonly ISubordinateRepository _subordinateRepository;
+    private readonly INotificationService _notificationService;
+    
     public UpdateComplaintLogStatusForSubordinateCommandHandler(
         IComplaintLogRepository complaintLogRepository,
         ISubordinateRepository subordinateRepository,
         IManagerRepository managerRepository,
-        IAdminRepository adminRepository)
+        IAdminRepository adminRepository,
+        INotificationService notificationService)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
         _managerRepository = managerRepository;
         _adminRepository = adminRepository;
+        _notificationService = notificationService;
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForSubordinateCommand request, CancellationToken cancellationToken)
     {
@@ -50,6 +54,17 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                     Message = "Status Updated Successfully",
                     Id = complaintLog.Id,
                 };
+
+                // send notification to the 
+                var notify = new NotificationEntity
+                {
+                    Sender = subordinate.Name!,
+                    Message = $"Submited a report for a complaint log '{complaintLog.Tile}'.",
+                    ReceiverId = complaintlog.ManagerId,
+                    Date = DateTime.Now,
+                };
+
+                await _notificationService.SendNotificationAsync((complaintlog.ManagerId).ToString(), notify);
 
             }
             else

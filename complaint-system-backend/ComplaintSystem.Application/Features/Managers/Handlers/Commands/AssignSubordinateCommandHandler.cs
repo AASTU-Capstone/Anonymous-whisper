@@ -58,7 +58,8 @@ public class AssignSubordinateCommandHandler : IRequestHandler<AssignSubordinate
                 var notify = new NotificationEntity
                 {
                     Sender = manager.Name!,
-                    Message = $"Assigned a complaint",
+                    Message = $"Assigned you a complaint log '{complaintLog.Title}'.",
+                    ReceiverId = complaintLog.SubordinateId,
                     Date = DateTime.Now,
                 };
                 await _notificationService.SendNotificationAsync((user.Id).ToString(), notify);

@@ -17,16 +17,20 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
     private readonly IAdminRepository _adminRepository;
     private readonly IManagerRepository _managerRepository;
     private readonly ISubordinateRepository _subordinateRepository;
+    private readonly INotificationService _notificationService;
+
     public UpdateComplaintLogStatusForManagerCommandHandler(
         IComplaintLogRepository complaintLogRepository,
         ISubordinateRepository subordinateRepository,
         IManagerRepository managerRepository,
-        IAdminRepository adminRepository)
+        IAdminRepository adminRepository,
+        INotificationService notificationService)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
         _managerRepository = managerRepository;
         _adminRepository = adminRepository; 
+        _notificationService = notificationService;
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForManagerCommand request, CancellationToken cancellationToken)
     {
@@ -50,6 +54,34 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
                     Message = "Status Updated Successfully",
                     Id = complaintLog.Id,
                 };
+
+                //send notification to the admin if the status is submitted
+                if (request.ComplaintLogStatus.Status.ToLower() == "submitted")
+                {
+                    var notify = new NotificationEntity
+                    {
+                        Sender = complaintlog.Admin.Name!,
+                        Message = $"Submitted a complaint log '{complaintlog.Complaint.Title}'.",
+                        ReceiverId = complaintlog.AdminId,
+                        Date = DateTime.Now,
+                    };
+
+                    await _notificationService.SendNotificationAsync((complaintlog.AdminId).ToString(), notify);
+                }
+
+                //send notification to the subordinate if the status is processing
+                else if (request.ComplaintLogStatus.Status.ToLower() == "processing")
+                {
+                    var notify = new NotificationEntity
+                    {
+                        Sender = complaintlog.Manager.Name!,
+                        Message = $"Rejected your report for the complaint log '{complaintlog.Complaint.Title}'. Please review and resubmit.",
+                        ReceiverId = complaintlog.SubordinateId,
+                        Date = DateTime.Now,
+                    };
+
+                    await _notificationService.SendNotificationAsync((complaintlog.SubordinateId).ToString(), notify);
+                }
             }
             else
             {

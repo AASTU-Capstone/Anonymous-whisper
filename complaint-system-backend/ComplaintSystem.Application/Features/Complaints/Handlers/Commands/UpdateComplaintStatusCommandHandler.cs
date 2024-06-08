@@ -38,6 +38,35 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
                 Id = complaint.Id,
                 Message = "Complaint Updated Successfully"
             };
+
+            if (complaint.Status.ToLower() == "pending")
+            {
+                // send notification to the user
+                var notify = new NotificationEntity
+                {
+                    Sender = "System",
+                    Message = $"Accepted your complaint '{complaint.Title}'.",
+                    ReceiverId = complaint.UserEntityId,
+                    Date = DateTime.Now,
+                };
+
+                await _notificationService.SendNotificationAsync((complaint.UserEntityId).ToString(), notify);
+                // send notification to the admin
+            }
+            else if (complaint.Status.ToLower() == "rejected")
+            {
+                // send notification to the user
+                var notify = new NotificationEntity
+                {
+                    Sender = "System",
+                    Message = $"Rejected your complaint '{complaint.Title}'.",
+                    ReceiverId = complaint.UserEntityId,
+                    Date = DateTime.Now,
+                };
+
+                await _notificationService.SendNotificationAsync((complaint.UserEntityId).ToString(), notify);
+                
+            }   
         }
         else
         {
