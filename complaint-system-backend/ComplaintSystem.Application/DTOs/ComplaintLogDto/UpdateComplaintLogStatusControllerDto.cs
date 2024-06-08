@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace ComplaintSystem.Application.DTOs.ComplaintLogDto;
 public class UpdateComplaintLogStatusControllerDto
 {
-    public Guid ComplainLogId { get; set; }
+    public Guid ComplaintLogId { get; set; }
     public string Status { get; set; }
 }
