@@ -56,13 +56,12 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                     Name = request.CreateSubordinateDto.Name,
                     ManagerId = manager.Id,
                     Email = request.CreateSubordinateDto.Email,
-                    UserEntityId = request.UserId,
-                    
 
                 };
 
                 var user = await _userRepository.GetByEmail(request.CreateSubordinateDto.Email);
                 var subordinate = _mapper.Map<Subordinate>(createSubordinateDto);
+                subordinate.UserEntityId = user.Id;
                 await _subordinateRepository.Add(subordinate);
 
                 user.User_Type = "subordinate";
