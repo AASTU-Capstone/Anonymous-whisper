@@ -92,6 +92,10 @@ namespace ComplaintSystem.Persistence.Repositories
             return await _complaintSystemAppDbContext.Complaints.CountAsync(c => c.UserEntityId == UserId && c.Status.ToLower() != "rejected");
         }
 
+        public async Task<int> GetAllUserComplaintsCount(Guid UserId)
+        {
+            return await _complaintSystemAppDbContext.Complaints.CountAsync(c => c.UserEntityId == UserId);
+        }
 
         // Get the count of complaints of a user that are rejected
         public async Task<int> GetUserRejectedComplaintsCount(Guid UserId)
