@@ -9,8 +9,9 @@ namespace ComplaintSystem.Domain.Entities
 {
     public class NotificationEntity : BaseEntity
     {
-        public string? Sender {get; set;}
+        public string? Sender {get; set; }
         public string? Message { get; set; }
-        public DateTime Date { get; set; }
+        public Guid RecieverId { get; set; }
+        public bool isRead { get; set; } = false;
     }
 }
