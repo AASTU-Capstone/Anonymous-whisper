@@ -17,6 +17,10 @@ const Page: React.FC = () => {
     refetch();
   }, [pageNumber, pageSize, refetch]);
 
+  useEffect(() => {
+    
+  }, [res, isSuccess]);
+
   const data = res?.data || [];
   const totalCount = res?.totalCount || 0;
 
@@ -26,6 +30,7 @@ const Page: React.FC = () => {
         <Text className="text-xl font-bold">My Complaints</Text>
       </Box>
 
+      {isLoading && <Text>Loading...</Text>}
       {isSuccess && (
         <MyComplaints
           data={data}
@@ -36,6 +41,7 @@ const Page: React.FC = () => {
           setPageNumber={setPageNumber}
         />
       )}
+      {!isLoading && !isSuccess && <Text>Failed to load data.</Text>}
     </Box>
   );
 };

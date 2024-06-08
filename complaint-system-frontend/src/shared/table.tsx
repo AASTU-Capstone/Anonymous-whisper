@@ -22,13 +22,9 @@ function DataTable<T>({
   setPageNumber,
 }: DataTableProps<T>) {
   const pageCount = Math.ceil(totalCount / pageSize);
-  const currentPageData = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return data.slice(startIndex, startIndex + pageSize);
-  }, [currentPage, pageSize, data]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data: currentPageData });
+    useTable({ columns, data });
 
   const handlePreviousPage = () => {
     setPageNumber((old) => Math.max(1, old - 1));

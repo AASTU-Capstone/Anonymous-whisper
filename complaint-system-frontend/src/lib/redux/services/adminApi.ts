@@ -15,12 +15,17 @@ const AdminApi = baseApi.injectEndpoints({
       query:()=> `/Admin/GetProfile`
     }),
 
-    GetComplaintLogsToUpdateForAdmin: builder.query({
-      query: () => `/Admin/GetComplaintLogsToUpdate`,
+    GetComplaintLogsToUpdateForAdmin: builder.query<any,{pageNumber:any,pageSize:any}>({
+      query: ({pageNumber, pageSize}) => ({
+        url: `/Admin/GetComplaintLogsToUpdate?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        method:"GET"
+      })
     }),
 
-    GetRecievedComplaintsForAdmin: builder.query({
-      query: () => `/Admin/GetRecievedComplaints`,
+    GetRecievedComplaintsForAdmin: builder.query<any,{pageNumber:any,pageSize:any}>({
+      query: ({pageNumber, pageSize}) => ({
+        url: `/Admin/GetRecievedComplaints?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+      })
     }),
 
     GetAcceptedComplaintsForAdmin: builder.query({
