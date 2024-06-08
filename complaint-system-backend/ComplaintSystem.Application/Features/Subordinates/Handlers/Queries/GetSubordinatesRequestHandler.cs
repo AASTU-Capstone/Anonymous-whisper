@@ -57,7 +57,7 @@ public class GetSubordinatesRequestHandler : IRequestHandler<GetSubordinatesRequ
                 Message = "OMG!!! You have new subordinates.",
                 Date = DateTime.Now,
             };
-            await _notificationService.SendNotificationAsync((manager.Id).ToString(), notify);
+            await _notificationService.SendNotificationAsync((request.ManagerId).ToString(), notify);
 
 
         }
