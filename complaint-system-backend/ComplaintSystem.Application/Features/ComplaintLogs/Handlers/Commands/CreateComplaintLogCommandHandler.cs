@@ -4,6 +4,7 @@ using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.DTOs.CorruptionTrendDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
@@ -18,22 +19,30 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
     public class CreateComplaintLogCommandHandler : IRequestHandler<CreateComplaintLogCommand, BaseResponseClass>
     {
         private readonly IComplaintLogRepository _complaintLogRepository;
+        private readonly IAdminRepository _adminRepository;
         private readonly IComplaintRepository _complaintRepository;
         private readonly IManagerRepository _managerRepository;
         private readonly ICorruptionTrendRepository _corruptionTrendRepository;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
+
+
         public CreateComplaintLogCommandHandler(
             IComplaintRepository complaintRepository, 
             IComplaintLogRepository complaintLogRepository,
+            IAdminRepository adminRepository,
             IManagerRepository managerRepository,
             IMapper mapper,
-            ICorruptionTrendRepository corruptionTrendRepository)
+            ICorruptionTrendRepository corruptionTrendRepository,
+            INotificationService notificationService)
         {
             _complaintLogRepository = complaintLogRepository;
             _complaintRepository = complaintRepository;
+            _adminRepository = adminRepository;
             _managerRepository = managerRepository;
             _mapper = mapper;
             _corruptionTrendRepository = corruptionTrendRepository;
+            _notificationService = notificationService;
 
         }
         public async Task<BaseResponseClass> Handle(CreateComplaintLogCommand request, CancellationToken cancellationToken)
@@ -45,7 +54,9 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
             if (validated.IsValid)
             {
                 // update the corruption trend by category by 1
+                var admin = await _adminRepository.GetAsync(request.AdminId);
                 var complaint = await _complaintRepository.GetAsync(request.ComplaintLogDto.ComplaintId);
+                var manager = await _managerRepository.GetAsync(request.ComplaintLogDto.ManagerId);
                 var corruptionTrend = await _corruptionTrendRepository.GetCorruptionTrendByName(complaint.Category);
                 if(corruptionTrend != null)
                 {
@@ -86,6 +97,16 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                     StatusCode = 201,
                     Id = complaintLog.Id
                 };
+
+                // notify
+                var notify = new NotificationEntity
+                {
+                    Sender = admin.Name!,
+                    Message = $"Assigned you a complaint log '{complaintLog.Title}'.",                    
+                    Date = DateTime.Now,
+                };
+
+                await _notificationService.SendNotificationAsync(manager.UserEntityId.ToString(), notify);
             }
             else
             {

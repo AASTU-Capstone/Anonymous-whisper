@@ -11,4 +11,5 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 public class UpdateComplaintLogStatusForAdminCommand : IRequest<BaseResponseClass>
 {
     public UpdateComplaintLogStatusDto ComplaintLogStatus { get; set;}
+    public Guid AdminId { get; set; }
 }

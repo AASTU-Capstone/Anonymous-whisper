@@ -1,7 +1,9 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
     private readonly ISubordinateRepository _subordinateRepository;
     private readonly IComplaintRepository _complaintRepository;
     private readonly ICorruptionTrendRepository _corruptionTrendRepository;
+    private readonly INotificationService _notificationService;
 
     public UpdateComplaintLogStatusForAdminCommandHandler(
         IComplaintLogRepository complaintLogRepository,
@@ -26,7 +29,8 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
         IManagerRepository managerRepository,
         IAdminRepository adminRepository,
         IComplaintRepository complaintRepository,
-        ICorruptionTrendRepository corruptionTrendRepository)
+        ICorruptionTrendRepository corruptionTrendRepository,
+        INotificationService notificationService)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
@@ -34,6 +38,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
         _adminRepository = adminRepository;
         _complaintRepository = complaintRepository;
         _corruptionTrendRepository = corruptionTrendRepository;
+        _notificationService = notificationService;
 
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForAdminCommand request, CancellationToken cancellationToken)
@@ -46,6 +51,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
         {
             var complaintlog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
             var complaint = await _complaintRepository.GetAsync(complaintlog.ComplaintId);
+            var admin = await _adminRepository.GetAsync(request.AdminId);
             if (complaintlog.AdminId == request.ComplaintLogStatus.StatusChangerId)
             {
                 complaintlog.Status = request.ComplaintLogStatus.Status;
@@ -68,8 +74,32 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                     //set subordinate mitigated count to + 1
                     subordinate.MitigatedCount += 1;
                     await _subordinateRepository.Update(subordinate);
-
                 }
+
+
+                if (complaintlog.Status.ToLower() == "resolved")
+                {
+                    var notify = new NotificationEntity
+                    {
+                        Sender = "System",
+                        Message = $"Your complaint '{complaint.Title}' has been resolved!",
+                        Date = DateTime.Now,
+                    };
+
+                    await _notificationService.SendNotificationAsync(complaint.UserEntityId.ToString(), notify);
+                }
+                else if (complaintlog.Status.ToLower() == "processing")
+                {
+                    var notify = new NotificationEntity
+                    {
+                        Sender = admin.Name!,
+                        Message = $"Rejected complaint log '{complaintlog.Title}'. Please review!",
+                        Date = DateTime.Now,
+                    };
+
+                    await _notificationService.SendNotificationAsync(subordinate!.Id.ToString(), notify);
+                }
+                
 
                 response = new BaseResponseClass
                 {
@@ -78,6 +108,8 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                     Message = "Status Updated Successfully",
                     Id = complaintlog.Id,
                 };
+
+                
             }
             else
             {

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Notification</title>
+</head>
+<body>
+    <script type="text/javascript">
+        const userId = "825526c4-beff-43c2-a2a6-ff3a6c5f3de6";
+        const socket = new WebSocket(`ws://localhost:5097/notification?userId=${userId}`);
+
+        socket.onopen = () => {
+            console.log("WebSocket connected successfully");
+        };
+
+        socket.onmessage = function (event) {
+            const notification = event.data;
+            console.log("Received notification:", notification);
+            // Display the notification in the UI
+        };
+
+        socket.onclose = function (event) {
+            console.log("WebSocket is closed now.");
+        };
+
+        socket.onerror = function (error) {
+            console.log("WebSocket error:", error);
+        };
+    </script>
+</body>
+</html>

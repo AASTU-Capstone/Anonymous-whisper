@@ -1,6 +1,7 @@
 ﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
@@ -18,16 +19,20 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
     private readonly IAdminRepository _adminRepository;
     private readonly IManagerRepository _managerRepository;
     private readonly ISubordinateRepository _subordinateRepository;
+    private readonly INotificationService _notificationService;
+    
     public UpdateComplaintLogStatusForSubordinateCommandHandler(
         IComplaintLogRepository complaintLogRepository,
         ISubordinateRepository subordinateRepository,
         IManagerRepository managerRepository,
-        IAdminRepository adminRepository)
+        IAdminRepository adminRepository,
+        INotificationService notificationService)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
         _managerRepository = managerRepository;
         _adminRepository = adminRepository;
+        _notificationService = notificationService;
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForSubordinateCommand request, CancellationToken cancellationToken)
     {
@@ -38,6 +43,7 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
         {
             var subordinate = await _subordinateRepository.GetSubordinateByUserId(request.ComplaintLogStatus.StatusChangerId);
             var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
+            var manager = await _managerRepository.GetAsync(complaintLog.ManagerId);
 
             if(subordinate.Id == complaintLog.SubordinateId)
             {
@@ -50,6 +56,16 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                     Message = "Status Updated Successfully",
                     Id = complaintLog.Id,
                 };
+
+                // send notification to the 
+                var notify = new NotificationEntity
+                {
+                    Sender = subordinate.Name!,
+                    Message = $"Submited a report for a complaint log '{complaintLog.Title}'.",
+                    Date = DateTime.Now,
+                };
+
+                await _notificationService.SendNotificationAsync(manager.Id.ToString(), notify);
 
             }
             else

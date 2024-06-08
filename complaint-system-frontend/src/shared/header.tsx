@@ -1,15 +1,25 @@
 "use client";
-import { Avatar, Box, Divider, Flex, Menu, Text } from "@mantine/core";
-import { IconBell, IconBellPlus, IconChevronDown } from "@tabler/icons-react";
+import { ActionIcon, Avatar, Box, Divider, Flex, Menu, Text } from "@mantine/core";
+import Badge from '@mui/material/Badge';
+import {IconBell, IconChevronDown} from "@tabler/icons-react";
 import { useGetAdminProfileQuery } from "@/lib/redux/features/admin";
 import { useGetManagerProfileQuery } from "@/lib/redux/features/manager";
 import { useGetSubordinateProfileQuery } from "@/lib/redux/features/subordinate";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import jwt from "jsonwebtoken";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
+import { useWebSocket } from "@/providers/WebSocketContext";
+import NotificationArea from "@/shared/notificationArea";
+
+interface Notification {
+  Sender: string;
+  Date: string;
+  Message: string;
+  unread: boolean;
+}
 
 const notify = () => {
   toast.success("Logout Successful", {
@@ -31,13 +41,17 @@ const notify = () => {
 
 const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
+  const { messages, logout } = useWebSocket();
   const handleSignOut = () => {
     logoutHandler();
+    logout();
     notify();
   };
 
   const notification = true;
-  const token = decodeURIComponent(typeof window !== "undefined" ? document.cookie : "")
+  const token = decodeURIComponent(
+    typeof window !== "undefined" ? document.cookie : ""
+  )
     .split(";")
     .find((c) => c.trim().startsWith("token="))
     ?.split("=")[1];
@@ -63,6 +77,51 @@ const Header = ({ role }: { role: string }) => {
     firstName = username?.split(" ")[0];
   }
 
+
+  // notification setup
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  
+  useEffect(() => {
+    if (messages.length > 0) {
+      console.log('recieved', messages)
+      const sortedMessages = messages.sort((a: Notification, b: Notification) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
+      setNotifications(sortedMessages);
+    }
+  }, [messages]);
+
+  const toggleNotifications = () => {
+    setShowNotifications((prev) => !prev);
+    if (!showNotifications && notifications.some((notification) => notification.unread)) {
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) => ({
+          ...notification
+        }))
+      );
+    }
+  };
+
+  
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+      setShowNotifications(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifications]);
+
   return (
     <header>
       <Flex className="justify-between w-full">
@@ -72,10 +131,25 @@ const Header = ({ role }: { role: string }) => {
             Have a nice day
           </Text>
         </Box>
-        <Flex className="items-center gap-3 justify-center">
-          <Box className="relative">
-            {notification ? <IconBellPlus /> : <IconBell />}
-          </Box>
+          <Flex className="items-center gap-3 justify-center relative" ref={notificationRef}>
+            <ActionIcon
+              onClick={toggleNotifications}
+              size="lg"
+              style={{
+                color: "#757575",
+                backgroundColor: "#fff",
+                borderRadius: "50%",
+                position: "relative"
+              }}
+            >
+              <IconBell />
+            </ActionIcon>
+            {!showNotifications && notifications.some((notification) => notification.unread) && (
+              <Badge badgeContent={notifications.filter((notification) => notification.unread).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
+                {/* Place content here if needed */}
+              </Badge>
+            )}
+            {showNotifications && <NotificationArea notifications={notifications} />}
           <Divider orientation="vertical" />
           <Flex className="items-center gap-3 justify-center">
             <Avatar />
@@ -91,17 +165,25 @@ const Header = ({ role }: { role: string }) => {
               </Menu.Target>
 
               <Menu.Dropdown>
-              <Menu.Item component={Link} href="/reset-password/change" className="menu-item-hover-blue">
+                <Menu.Item
+                  component={Link}
+                  href="/reset-password/change"
+                  className="menu-item-hover-blue"
+                >
                   <Text className="text-primary-default py-2 font-bold ">
                     Reset Password
                   </Text>
                 </Menu.Item>
-                <Menu.Item component={Link} href="/login" className="menu-item-hover-alert" onClick={handleSignOut}>
+                <Menu.Item
+                  component={Link}
+                  href="/login"
+                  className="menu-item-hover-alert"
+                  onClick={handleSignOut}
+                >
                   <Text className="text-primary-default py-2 font-bold ">
                     Log out
                   </Text>
                 </Menu.Item>
-                
               </Menu.Dropdown>
             </Menu>
           </Flex>

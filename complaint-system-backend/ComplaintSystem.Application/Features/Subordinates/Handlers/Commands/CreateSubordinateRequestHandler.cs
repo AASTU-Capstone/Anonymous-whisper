@@ -7,6 +7,7 @@ using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.DTOs.SubordinateDto.Validators;
 using ComplaintSystem.Application.Features.Subordinates.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
@@ -18,14 +19,21 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
         private readonly ISubordinateRepository _subordinateRepository;
         private readonly IUserRepository _userRepository;
         private readonly IManagerRepository _managerRepository;
+        private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
 
-        public CreateSubordinateRequestHandler(ISubordinateRepository subordinateRepository, IMapper mapper, IUserRepository userRepository, IManagerRepository managerRepository)
+        public CreateSubordinateRequestHandler(
+            ISubordinateRepository subordinateRepository, 
+            IMapper mapper, 
+            IUserRepository userRepository, 
+            IManagerRepository managerRepository,
+            INotificationService notificationService)
         {
             _subordinateRepository = subordinateRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _managerRepository = managerRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<BaseResponseClass> Handle(CreateSubordinateRequest request, CancellationToken cancellationToken)
@@ -70,6 +78,17 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 response.StatusCode = 201;
                 response.Success = true;
                 response.Message = "Subordinate created successfully";
+
+
+                // notification
+                var notify = new NotificationEntity
+                {
+                    Sender = manager.Name!,
+                    Message = $"Promoted you to Subordinate.",
+                    Date = DateTime.Now
+                };
+
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
 
             }
 

@@ -1,6 +1,8 @@
 using ComplaintSystem.Application.Features.Subordinates.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 
 namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
@@ -8,23 +10,30 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
     public class DeleteSubordinateCommandHandler : IRequestHandler<DeleteSubordinateCommand, BaseResponseClass>
     {
         private readonly ISubordinateRepository _subordinateRepository;
+        private readonly IManagerRepository _managerRepository;
         private readonly IComplaintLogRepository _complaintLogRepository;
         private readonly IUserRepository _userRepository;
+        private readonly INotificationService _notificationService;
 
         public DeleteSubordinateCommandHandler(
             ISubordinateRepository subordinateRepository,
+            IManagerRepository managerRepository,
             IComplaintLogRepository complaintLogRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            INotificationService notificationService)
         {
             _subordinateRepository = subordinateRepository;
+            _managerRepository = managerRepository;
             _complaintLogRepository = complaintLogRepository;
             _userRepository = userRepository;
+            _notificationService = notificationService;
         }
 
 
         public async Task<BaseResponseClass> Handle(DeleteSubordinateCommand request, CancellationToken cancellationToken)
         {
             var subordinate = await _subordinateRepository.GetAsync(request.DeleteSubordinateDto.Id);
+            var manager = await _managerRepository.GetManagerByUserId(request.UserId);
             var response = new BaseResponseClass();
 
             if (subordinate == null)
@@ -53,6 +62,16 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 response.Success = true;
                 response.StatusCode = 204;
                 response.Message = "Subordinate deleted successfully";
+
+                // notify
+                var notify = new NotificationEntity
+                {
+                    Sender = manager.Name!,
+                    Message = $"Demoted you to User.",
+                    Date = DateTime.Now,
+                };
+
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), notify);
             }
 
             return response;

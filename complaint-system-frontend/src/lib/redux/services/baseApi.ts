@@ -13,7 +13,8 @@ import { browser } from "process";
 const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://anonymous-whisper.onrender.com/api/",
+    // baseUrl: "https://anonymous-whisper.onrender.com/api/",
+    baseUrl: "http://localhost:5097/api/",
     prepareHeaders: (headers, { getState }) => {
       // const cookieStore = cookies()
       // console.log((typeof window !== "undefined") ? "client" : "server")

@@ -7,6 +7,7 @@ interface ErrorData {
 interface ErrorResponse {
   data: ErrorData;
 }
+
 import {
   MdOutlinePassword,
   MdOutlineMailOutline,
@@ -30,9 +31,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
 import { AiOutlineMail } from "react-icons/ai";
 import { set } from "react-hook-form";
+import { useWebSocket } from "@/providers/WebSocketContext";
 
 const notify = () => {
-  toast.success("Login Successful", {
+  toast.success("Logged in Successfully", {
     position: "bottom-center",
     autoClose: 7000,
     hideProgressBar: true,
@@ -60,6 +62,7 @@ export default function Login({}: Props) {
   const auth = useAuth();
   const router = useRouter();
   const dispatch = useDispatch();
+  // const { sendMessage, logout } = useWebSocket();
 
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
@@ -68,9 +71,14 @@ export default function Login({}: Props) {
 
     if (res && "data" in res) {
       if (res.data.success && res.data.isVerified) {
-        notify();
         const decodedToken: any = jwt.decode(res.data.token);
         const userType = decodedToken.typ;
+
+        console.log(decodedToken);
+        const userId = decodedToken.userid;
+
+        localStorage.setItem("userId", userId);
+        notify();
 
         // Redirect based on userType
         switch (userType) {
@@ -96,7 +104,6 @@ export default function Login({}: Props) {
       if (errorData.success && !errorData.isVerified) {
         router.push("/signup/verify-otp?email=" + email);
       }
-      
     }
   };
 

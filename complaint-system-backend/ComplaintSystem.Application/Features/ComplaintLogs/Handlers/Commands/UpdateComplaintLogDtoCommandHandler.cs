@@ -2,7 +2,9 @@
 using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -16,11 +18,18 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
     private readonly IComplaintLogRepository _complaintLogRepository;
     private readonly ISubordinateRepository _subordinateRepository;
     private readonly IMapper _mapper;
-    public UpdateComplaintLogDtoCommandHandler(IMapper mapper, IComplaintLogRepository complaintLogRepository, ISubordinateRepository subordinateRepository)
+    private readonly INotificationService _notificationService;
+
+    public UpdateComplaintLogDtoCommandHandler(
+        IMapper mapper, 
+        IComplaintLogRepository complaintLogRepository, 
+        ISubordinateRepository subordinateRepository,
+        INotificationService notificationService)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
         _mapper = mapper;
+        _notificationService = notificationService;
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogDtoCommand request, CancellationToken cancellationToken)
     {
@@ -43,6 +52,15 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
                     Message = "Complaint Log Updated Successfully",
                     Id = request.UpdateComplaintLogDto.Id,
                 };
+
+                // notify
+                var notify = new NotificationEntity
+                {
+                    Sender = subordinate.Name!,
+                    Message = $"Submitted a report for complaint log '{complaintLog.Title}'.",
+                    Date = DateTime.Now,
+                };
+                await _notificationService.SendNotificationAsync(request.UserId.ToString(), notify);
             }
             else
             {

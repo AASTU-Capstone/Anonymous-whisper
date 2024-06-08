@@ -1,10 +1,12 @@
-using  ComplaintSystem.Application;
-using  ComplaintSystem.Persistence;
-using  ComplaintSystem.Infrastructure;
+using ComplaintSystem.Application;
+using ComplaintSystem.Persistence;
+using ComplaintSystem.Infrastructure;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using ComplaintSystem.Infrastructure.services;
+using System.Net.WebSockets;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,7 +26,7 @@ builder.Configuration.AddEnvironmentVariables();
 DotNetEnv.Env.Load("../.env");
 
 // initialize firebase service
-if(FirebaseApp.DefaultInstance == null)
+if (FirebaseApp.DefaultInstance == null)
 {
     FirebaseApp.Create(new AppOptions()
     {
@@ -73,19 +75,77 @@ builder.Services.AddAuthorization(options =>
 //for user and admin
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Usin", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "user","admin"));
+    options.AddPolicy("Usin", policy => policy.RequireClaim(JwtRegisteredClaimNames.Typ, "user", "admin"));
 });
 
 //Date now works with this for east african time
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+
+var app = builder.Build();
+// var app = builder.Build();
+
+app.UseRouting();
+app.UseWebSockets();
+
+// Top-level route registration for "/notification"
+// app.Map("/notification", async context =>
+// {
+//     if (context.WebSockets.IsWebSocketRequest)
+//     {
+//         var socket = await context.WebSockets.AcceptWebSocketAsync();
+//         var userId = context.Request.Query["userId"];
+//         NotificationService.AddSocket(userId, socket);
+
+//         var buffer = new byte[1024 * 4];
+//         WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+//         while (!result.CloseStatus.HasValue)
+//         {
+//             result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+//         }
+
+//         await NotificationService.RemoveSocket(userId);
+//     }
+//     else
+//     {
+//         context.Response.StatusCode = 400;
+//     }
+// });
+
+// app.Run();
+
+// app.UseRouting();
+// app.UseWebSockets();
+
+// app.UseEndpoints(endpoints =>
+// {
+//     endpoints.Map("/notification", async context =>
+//             {
+//                 if (context.WebSockets.IsWebSocketRequest)
+//                 {
+//                     var socket = await context.WebSockets.AcceptWebSocketAsync();
+//                     var userId = context.Request.Query["userId"];
+//                     NotificationService.AddSocket(userId, socket);
+
+//                     var buffer = new byte[1024 * 4];
+//                     var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+//                     while (!result.CloseStatus.HasValue)
+//                     {
+//                         result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+//                     }
+
+//                     await NotificationService.RemoveSocket(userId);
+//                 }
+//                 else
+//                 {
+//                     context.Response.StatusCode = 400;
+//                 }
+//             });
+// });
+
+app.UseSwagger();
+app.UseSwaggerUI();
 //}
 app.UseCors("frontend");
 app.UseHttpsRedirection();
@@ -93,7 +153,40 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllers();
+        endpoints.Map("/notification", async context =>
+        {
+            if (context.WebSockets.IsWebSocketRequest)
+            {
+                var socket = await context.WebSockets.AcceptWebSocketAsync();
+                var userId = context.Request.Query["userId"].ToString();
+                NotificationService.AddSocket(userId, socket);
+
+                await Echo(socket, userId);
+            }
+            else
+            {
+                context.Response.StatusCode = 400;
+            }
+        });
+    });
+    // }
+
+async Task Echo(WebSocket socket, string userId)
+{
+    var buffer = new byte[1024 * 4];
+    WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+    while (!result.CloseStatus.HasValue)
+    {
+        result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+    }
+    await NotificationService.RemoveSocket(userId);
+}
+// }
+// app.MapControllers();
+
 
 app.Run();
 
