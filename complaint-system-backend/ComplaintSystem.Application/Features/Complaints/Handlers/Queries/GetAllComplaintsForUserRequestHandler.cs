@@ -23,6 +23,7 @@ public class GetAllComplaintsForUserRequestHandler : IRequestHandler<GetAllCompl
     public async Task<PaginatedResponseClass> Handle(GetAllComplaintsForUserRequest request, CancellationToken cancellationToken)
     {
         var complaints = await _complaintRepository.GetAllComplaintsForUser(request.UserId, request.PaginationDto);
+        var totalCount = await _complaintRepository.GetAllUserComplaintsCount(request.UserId);
         var viewComplaints = _mapper.Map<List<ViewComplaintDto>>(complaints);
         PaginatedResponseClass response = new PaginatedResponseClass
         {
@@ -30,7 +31,7 @@ public class GetAllComplaintsForUserRequestHandler : IRequestHandler<GetAllCompl
             StatusCode = 200,
             Success = true,
             Message = "All Complaints Fetched Successfully",
-            TotalCount = complaints.Count(),
+            TotalCount = totalCount,
             PageNumber = request.PaginationDto.PageNumber,
             PageSize = request.PaginationDto.PageSize
         };
