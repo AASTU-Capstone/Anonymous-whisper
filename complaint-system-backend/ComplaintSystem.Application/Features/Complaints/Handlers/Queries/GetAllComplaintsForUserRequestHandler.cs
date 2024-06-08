@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Queries;
-public class GetAllComplaintsForUserRequestHandler : IRequestHandler<GetAllComplaintsForUserRequest, BaseResponseClass>
+public class GetAllComplaintsForUserRequestHandler : IRequestHandler<GetAllComplaintsForUserRequest, PaginatedResponseClass>
 {
     private readonly IMapper _mapper;
     private readonly IComplaintRepository _complaintRepository;
@@ -20,16 +20,19 @@ public class GetAllComplaintsForUserRequestHandler : IRequestHandler<GetAllCompl
         _complaintRepository = complaintRepository;
         _mapper = mapper;
     }
-    public async Task<BaseResponseClass> Handle(GetAllComplaintsForUserRequest request, CancellationToken cancellationToken)
+    public async Task<PaginatedResponseClass> Handle(GetAllComplaintsForUserRequest request, CancellationToken cancellationToken)
     {
         var complaints = await _complaintRepository.GetAllComplaintsForUser(request.UserId, request.PaginationDto);
         var viewComplaints = _mapper.Map<List<ViewComplaintDto>>(complaints);
-        BaseResponseClass response = new BaseResponseClass
+        PaginatedResponseClass response = new PaginatedResponseClass
         {
             Data = viewComplaints,
             StatusCode = 200,
             Success = true,
-            Message = "All Complaints Fetched Successfully"
+            Message = "All Complaints Fetched Successfully",
+            TotalCount = complaints.Count(),
+            PageNumber = request.PaginationDto.PageNumber,
+            PageSize = request.PaginationDto.PageSize
         };
 
         return response;

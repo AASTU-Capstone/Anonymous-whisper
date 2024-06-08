@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ComplaintSystem.Application.Features.Complaints.Requests.Queries;
-public class GetAllComplaintsForUserRequest : IRequest<BaseResponseClass>
+public class GetAllComplaintsForUserRequest : IRequest<PaginatedResponseClass>
 {
     public Guid UserId { get; set; }
     public PaginationDto PaginationDto { get; set; }
