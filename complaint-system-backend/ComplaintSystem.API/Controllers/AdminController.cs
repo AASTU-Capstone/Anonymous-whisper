@@ -157,7 +157,7 @@ namespace ComplaintSystem.API.Controllers
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
             UpdateComplaintLogStatusDto updateComplaintLogStatusDto = new UpdateComplaintLogStatusDto
             {
-                ComplaintLogId = updateComplaintLogStatusControllerDto.ComplainLogId,
+                ComplaintLogId = updateComplaintLogStatusControllerDto.ComplaintLogId,
                 StatusChangerId = userId,
                 Status = updateComplaintLogStatusControllerDto.Status,
                 Role = "admin"
