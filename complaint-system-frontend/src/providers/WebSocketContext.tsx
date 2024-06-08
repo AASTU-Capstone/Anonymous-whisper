@@ -23,7 +23,7 @@ export const WebSocketProvider = ({
       );
 
       ws.onopen = () => {
-        console.log("WebSocket connection opened");
+        console.log("WebSocket connected successfully!");
       };
 
       ws.onmessage = (event) => {

@@ -1,16 +1,17 @@
 "use client";
-import { Avatar, Box, Divider, Flex, Menu, Text } from "@mantine/core";
-import { IconBell, IconBellPlus, IconChevronDown } from "@tabler/icons-react";
+import { ActionIcon, Avatar, Box, Divider, Flex, Menu, Text } from "@mantine/core";
+import Badge,  from '@mui/material/Badge';
 import { useGetAdminProfileQuery } from "@/lib/redux/features/admin";
 import { useGetManagerProfileQuery } from "@/lib/redux/features/manager";
 import { useGetSubordinateProfileQuery } from "@/lib/redux/features/subordinate";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import jwt from "jsonwebtoken";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
 import { useWebSocket } from "@/providers/WebSocketContext";
+import NotificationArea from "@/shared/notificationArea";
 
 const notify = () => {
   toast.success("Logout Successful", {
@@ -32,11 +33,10 @@ const notify = () => {
 
 const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
-  const { logout } = useWebSocket();
+  const { messages, sendMessage, logout } = useWebSocket();
   const handleSignOut = () => {
     logoutHandler();
     logout();
-
     notify();
   };
 
@@ -69,6 +69,51 @@ const Header = ({ role }: { role: string }) => {
     firstName = username?.split(" ")[0];
   }
 
+
+  // notification setup
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<string[]>([]);
+
+  
+  useEffect(() => {
+    if (messages.length > 0) {
+      const newNotifications = messages.map((message) => ({ message, unread: true }));
+      setNotifications(newNotifications);
+    }
+  }, [messages]);
+
+  const toggleNotifications = () => {
+    setShowNotifications((prev) => !prev);
+    if (!showNotifications && notifications.some((notification) => notification.unread)) {
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) => ({
+          ...notification,
+          unread: true
+        }))
+      );
+    }
+  };
+
+  
+  const notificationRef = useRef(null);
+
+  const handleClickOutside = (event) => {
+    if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+      setShowNotifications(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifications]);
+
   return (
     <header>
       <Flex className="justify-between w-full">
@@ -78,10 +123,25 @@ const Header = ({ role }: { role: string }) => {
             Have a nice day
           </Text>
         </Box>
-        <Flex className="items-center gap-3 justify-center">
-          <Box className="relative">
-            {notification ? <IconBellPlus /> : <IconBell />}
-          </Box>
+          <Flex className="items-center gap-3 justify-center relative" ref={notificationRef}>
+            <ActionIcon
+              onClick={toggleNotifications}
+              size="lg"
+              style={{
+                color: "#757575",
+                backgroundColor: "#fff",
+                borderRadius: "50%",
+                position: "relative"
+              }}
+            >
+              <IconBell />
+            </ActionIcon>
+            {!showNotifications && notifications.some((notification) => notification.unread) && (
+              <Badge badgeContent={notifications.filter((notification) => notification.unread).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
+                {/* Place content here if needed */}
+              </Badge>
+            )}
+            {showNotifications && <NotificationArea notifications={notifications} />}
           <Divider orientation="vertical" />
           <Flex className="items-center gap-3 justify-center">
             <Avatar />
