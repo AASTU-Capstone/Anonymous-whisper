@@ -7,6 +7,9 @@ import {
   IconLayoutDashboard,
   IconPlus,
 } from "@tabler/icons-react";
+import { GoHubot } from "react-icons/go";
+import { RiRobot2Line } from "react-icons/ri";
+import { SiChatbot } from "react-icons/si";
 import Link from "next/link";
 import { useState } from "react";
 import CreateComplaint from "./create-complaint";
@@ -15,6 +18,7 @@ const data = [
   { link: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard },
   { link: "/complaints", label: "Complaints", icon: IconAlignBoxLeftTop },
   { link: "/resources", label: "Resources", icon: IconFiles },
+  {link: "/chats",label: "ChatBot", icon: SiChatbot },
 ];
 
 function Sidebar() {

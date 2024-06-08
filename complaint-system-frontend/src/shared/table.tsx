@@ -1,19 +1,29 @@
-import React, { useMemo, useState } from "react";
+"use client";
+import React, { useMemo } from "react";
 import { useTable, Column } from "react-table";
 
 type DataTableProps<T> = {
-  columns: any;
-  data: any;
+  columns: Column<T>[];
+  data: T[];
+  totalCount: number;
   pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
 };
 
-function DataTable<T>({ columns, data, pageSize: size }: DataTableProps<T>) {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(size);
-
-  const pageCount = Math.ceil(data.length / pageSize);
+function DataTable<T>({
+  columns,
+  data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
+}: DataTableProps<T>) {
+  const pageCount = Math.ceil(totalCount / pageSize);
   const currentPageData = useMemo(() => {
-    const startIndex = currentPage * pageSize;
+    const startIndex = (currentPage - 1) * pageSize;
     return data.slice(startIndex, startIndex + pageSize);
   }, [currentPage, pageSize, data]);
 
@@ -21,26 +31,23 @@ function DataTable<T>({ columns, data, pageSize: size }: DataTableProps<T>) {
     useTable({ columns, data: currentPageData });
 
   const handlePreviousPage = () => {
-    setCurrentPage((old) => Math.max(0, old - 1));
+    setPageNumber((old) => Math.max(1, old - 1));
   };
 
   const handleNextPage = () => {
-    setCurrentPage((old) => Math.min(pageCount - 1, old + 1));
+    setPageNumber((old) => Math.min(pageCount, old + 1));
   };
 
   const handlePageSizeChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setPageSize(Number(event.target.value));
-    setCurrentPage(0); // Reset to first page
+    setPageNumber(1); // Reset to first page
   };
 
   return (
     <div className="overflow-x-auto">
-      <table
-        {...getTableProps()}
-        className="min-w-full divide-y divide-gray-200"
-      >
+      <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
         <thead className="bg-[#f1f7ff]">
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -55,10 +62,7 @@ function DataTable<T>({ columns, data, pageSize: size }: DataTableProps<T>) {
             </tr>
           ))}
         </thead>
-        <tbody
-          {...getTableBodyProps()}
-          className="bg-white divide-y divide-gray-200"
-        >
+        <tbody {...getTableBodyProps()} className="bg-white divide-y divide-gray-200">
           {rows.map((row) => {
             prepareRow(row);
             return (
@@ -93,22 +97,21 @@ function DataTable<T>({ columns, data, pageSize: size }: DataTableProps<T>) {
         </div>
         <div className="flex items-center text-sm text-gray-700">
           <span>
-            {currentPage * pageSize + 1}-
-            {Math.min((currentPage + 1) * pageSize, data.length)} of{" "}
-            {data.length}
+            {(currentPage - 1) * pageSize + 1}-
+            {Math.min(currentPage * pageSize, totalCount)} of {totalCount}
           </span>
         </div>
         <div className="flex items-center">
           <button
             onClick={handlePreviousPage}
-            disabled={currentPage === 0}
+            disabled={currentPage === 1}
             className="px-2 py-1 mx-1 border border-gray-300 rounded disabled:opacity-50"
           >
             &larr;
           </button>
           <button
             onClick={handleNextPage}
-            disabled={currentPage === pageCount - 1}
+            disabled={currentPage === pageCount}
             className="px-2 py-1 mx-1 border border-gray-300 rounded disabled:opacity-50"
           >
             &rarr;
