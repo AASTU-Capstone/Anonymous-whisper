@@ -2,17 +2,14 @@
 using ComplaintSystem.Application.DTOs.ComplaintDto.Validators;
 using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
 using ComplaintSystem.Application.DTOs.CorruptionTrendDto;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
 {
@@ -25,16 +22,18 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
         private readonly ICorruptionTrendRepository _corruptionTrendRepository;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepository;
 
 
         public CreateComplaintLogCommandHandler(
-            IComplaintRepository complaintRepository, 
+            IComplaintRepository complaintRepository,
             IComplaintLogRepository complaintLogRepository,
             IAdminRepository adminRepository,
             IManagerRepository managerRepository,
             IMapper mapper,
             ICorruptionTrendRepository corruptionTrendRepository,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            INotificationRepository notificationRepository)
         {
             _complaintLogRepository = complaintLogRepository;
             _complaintRepository = complaintRepository;
@@ -43,13 +42,14 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
             _mapper = mapper;
             _corruptionTrendRepository = corruptionTrendRepository;
             _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
 
         }
         public async Task<BaseResponseClass> Handle(CreateComplaintLogCommand request, CancellationToken cancellationToken)
         {
             var validator = new CreateComplaintLogDtoValidator(_managerRepository, _complaintRepository);
             var validated = await validator.ValidateAsync(request.ComplaintLogDto, cancellationToken);
-            
+
             BaseResponseClass response;
             if (validated.IsValid)
             {
@@ -58,7 +58,7 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                 var complaint = await _complaintRepository.GetAsync(request.ComplaintLogDto.ComplaintId);
                 var manager = await _managerRepository.GetAsync(request.ComplaintLogDto.ManagerId);
                 var corruptionTrend = await _corruptionTrendRepository.GetCorruptionTrendByName(complaint.Category);
-                if(corruptionTrend != null)
+                if (corruptionTrend != null)
                 {
                     corruptionTrend.TotalCount += 1;
                     await _corruptionTrendRepository.Update(corruptionTrend);
@@ -71,7 +71,7 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                         MitigatedCount = 0,
                         TotalCount = 1
                     };
-                    var trend =  _mapper.Map<CorruptionTrend>(createCorruptionTrendDto);
+                    var trend = _mapper.Map<CorruptionTrend>(createCorruptionTrendDto);
 
                     await _corruptionTrendRepository.Add(trend);
                 }
@@ -99,14 +99,16 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                 };
 
                 // notify
-                var notify = new NotificationEntity
+                var notify = new CreateNotificationDto
                 {
                     Sender = admin.Name!,
-                    Message = $"Assigned you a complaint log '{complaintLog.Title}'.",                    
-                    Date = DateTime.Now,
+                    Message = $"Assigned you a complaint log '{complaintLog.Title}'.",
+                    RecieverId = manager.UserEntityId,
                 };
 
-                await _notificationService.SendNotificationAsync(manager.UserEntityId.ToString(), notify);
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(manager.UserEntityId.ToString(), Notification);
             }
             else
             {

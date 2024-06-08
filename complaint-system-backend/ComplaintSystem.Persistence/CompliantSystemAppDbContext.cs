@@ -42,5 +42,6 @@ public class ComplaintSystemAppDbContext : DbContext
     public DbSet<Subordinate> Subordinates { get; set; }
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<Resource> Resources { get; set; }
+    public DbSet<NotificationEntity> Notifications { get; set; }
 
 }

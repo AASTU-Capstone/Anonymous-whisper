@@ -11,6 +11,7 @@ using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
 {
@@ -23,15 +24,17 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
         private readonly IImaggaService _imaggaService;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepository;
 
         public CreateComplaintCommandHandler(
-            IComplaintRepository complaintRepository, 
+            IComplaintRepository complaintRepository,
             IAdminRepository adminRepository,
-            IMapper mapper, 
+            IMapper mapper,
             IUserRepository userRepository,
             ICloudinaryService cloudinaryService,
             IImaggaService imaggaService,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            INotificationRepository notificationRepository)
         {
             _complaintRepository = complaintRepository;
             _adminRepository = adminRepository;
@@ -40,6 +43,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
             _cloudinaryService = cloudinaryService;
             _imaggaService = imaggaService;
             _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<BaseResponseClass> Handle(CreateComplaintCommand request, CancellationToken cancellationToken)
@@ -55,7 +59,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 response.Success = false;
                 response.Error = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             }
-            else if(user == null)
+            else if (user == null)
             {
                 response.StatusCode = 404;
                 response.Success = false;
@@ -69,7 +73,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 List<string> documents = new List<string>();
                 List<string> audios = new List<string>();
                 HashSet<string> tags = new HashSet<string>();
-                if (request.CreateComplaintDto.ImageEvidence!= null)
+                if (request.CreateComplaintDto.ImageEvidence != null)
                 {
                     foreach (var image in request.CreateComplaintDto.ImageEvidence)
                     {
@@ -80,7 +84,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                     }
                 }
 
-                if(request.CreateComplaintDto.Videos!= null)
+                if (request.CreateComplaintDto.Videos != null)
                 {
                     foreach (var video in request.CreateComplaintDto.Videos)
                     {
@@ -89,8 +93,8 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                     }
 
                 }
-                
-                if(request.CreateComplaintDto.Documents!= null)
+
+                if (request.CreateComplaintDto.Documents != null)
                 {
                     foreach (var doc in request.CreateComplaintDto.Documents)
                     {
@@ -98,8 +102,8 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                         documents.Add(currDoc.Link);
                     }
                 }
-                
-                if(request.CreateComplaintDto.SoundTrack!= null)
+
+                if (request.CreateComplaintDto.SoundTrack != null)
                 {
                     foreach (var audio in request.CreateComplaintDto.SoundTrack)
                     {
@@ -133,16 +137,18 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
 
                 var admin = await _adminRepository.GetAllAsync();
                 var Admin = admin.FirstOrDefault();
-                
 
-                var notify = new NotificationEntity
+
+                var notify = new CreateNotificationDto
                 {
                     Sender = "Anonymous User",
                     Message = $"Submitted a complaint '{complaint.Title}'.",
-                    Date = DateTime.Now,
+                    RecieverId = Admin!.Id,
                 };
 
-                await _notificationService.SendNotificationAsync(Admin!.Id.ToString(), notify);
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(Admin!.Id.ToString(), Notification);
             }
 
             return response;
