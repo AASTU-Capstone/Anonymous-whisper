@@ -49,7 +49,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
         BaseResponseClass response;
         if (validated.IsValid)
         {
-            var complaintlog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
+            var complaintlog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplaintLogId);
             var complaint = await _complaintRepository.GetAsync(complaintlog.ComplaintId);
             var admin = await _adminRepository.GetAsync(request.AdminId);
             if (complaintlog.AdminId == request.ComplaintLogStatus.StatusChangerId)

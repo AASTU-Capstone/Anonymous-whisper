@@ -42,7 +42,7 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
         if(validated.IsValid)
         {
             var subordinate = await _subordinateRepository.GetSubordinateByUserId(request.ComplaintLogStatus.StatusChangerId);
-            var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
+            var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplaintLogId);
             var manager = await _managerRepository.GetAsync(complaintLog.ManagerId);
 
             if(subordinate.Id == complaintLog.SubordinateId)

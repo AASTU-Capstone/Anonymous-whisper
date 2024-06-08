@@ -8,7 +8,7 @@ namespace ComplaintSystem.Application.DTOs.ComplaintLogDto;
 
 public class UpdateComplaintLogStatusDto
 {
-    public Guid ComplainLogId { get; set; }
+    public Guid ComplaintLogId { get; set; }
     public Guid StatusChangerId {  get; set; }
     public string Role {  get; set; }
     public string Status { get; set; }
