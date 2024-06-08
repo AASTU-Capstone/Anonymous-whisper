@@ -4,6 +4,7 @@ import SubordinatesTable from "./table";
 import { useGetSubordinatesQuery } from "@/lib/redux/features/manager";
 import { GetSubordinatesResponse } from "@/types";
 import { useWebSocket } from "@/providers/WebSocketContext";
+import { useEffect } from "react";
 
 const page = () => {
   const {
@@ -13,8 +14,19 @@ const page = () => {
     refetch,
   } = useGetSubordinatesQuery({});
 
-  const { messages, sendMessage, logout } = useWebSocket();
-  console.log("here we go", messages);
+  const webSocketContext = useWebSocket();
+
+  // Check if webSocketContext is available
+  if (!webSocketContext) {
+    return <div>Loading...</div>;
+  }
+
+  const { messages, sendMessage, logout } = webSocketContext;
+
+  useEffect(() => {
+    // console.log("WebSocket Messages: ", messages);
+    console.log("here we go: ", messages);
+  }, [messages]);
 
   const data =
     res?.data?.map((item: GetSubordinatesResponse) => {

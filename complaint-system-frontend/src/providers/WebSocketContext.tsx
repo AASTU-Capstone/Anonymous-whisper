@@ -37,9 +37,9 @@ export const WebSocketProvider = ({
 
       setSocket(ws);
 
-      return () => {
-        ws.close();
-      };
+      // return () => {
+      //   ws.close();
+      // };
     }
   }, []);
 
