@@ -52,7 +52,7 @@ const ComplaintsLogBody = ({
       onConfirm: async () => {
         const input: UpdateComplaintLogStatusInputForAdmin = {
           complaintLogId: id,
-          status: "submitted",
+          status: "resolved",
         };
         await UpdateComplaintLogForAdmin(input).unwrap();
         refetchComplaintLogs();
