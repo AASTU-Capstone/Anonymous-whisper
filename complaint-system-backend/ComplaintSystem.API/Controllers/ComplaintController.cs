@@ -24,7 +24,7 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("GetAllComplaintsForUser")]
-        public async Task<ActionResult<BaseResponseClass>> GetAllComplaintsForUser([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<PaginatedResponseClass>> GetAllComplaintsForUser([FromQuery] PaginationDto pagination)
         {
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userid"));
             var request = new GetAllComplaintsForUserRequest { UserId = userId, PaginationDto = pagination };

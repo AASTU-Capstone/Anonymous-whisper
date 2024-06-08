@@ -65,7 +65,7 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("GetRecievedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints([FromQuery] PaginationDto PaginationDto)
+        public async Task<ActionResult<PaginatedResponseClass>> GetRecievedComplaints([FromQuery] PaginationDto PaginationDto)
         {
             var request = new GetRecievedComplaintForAdminRequest { Status = "recieved", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
@@ -74,7 +74,7 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpGet]
         [Route("GetAcceptedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints([FromQuery] PaginationDto PaginationDto)
+        public async Task<ActionResult<PaginatedResponseClass>> GetAcceptedComplaints([FromQuery] PaginationDto PaginationDto)
         {
             var request = new GetRecievedComplaintForAdminRequest { Status = "accepted", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
