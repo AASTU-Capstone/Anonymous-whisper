@@ -16,7 +16,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconAdjustmentsHorizontal,
   IconChevronDown,
-  IconEdit,
+  IconSquareX,
   IconPlus,
   IconSearch,
 } from "@tabler/icons-react";
@@ -84,7 +84,6 @@ const SubordinatesList = ({
       close();
     } catch (error) {
       console.error("Failed to add subordinate: ", error);
-      alert("Failed to add subordinate");
     }
   };
 
@@ -102,7 +101,7 @@ const SubordinatesList = ({
       closeOnConfirm: true,
       onConfirm: async () => {
         const deleteSubordinateInput : DeleteSubordinateInput = {
-          id:subordinateId,
+          id:value,
         }
         try{
           await deleteSubordinate(deleteSubordinateInput)
@@ -147,7 +146,7 @@ const SubordinatesList = ({
                   onClick={(e)=>deleteSubordinateHandler(value)}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  <IconEdit className="w-5 h-5" />
+                  <IconSquareX color= "red" className="w-5 h-5" />
                 </button>
               </ActionIcon>
             </div>
