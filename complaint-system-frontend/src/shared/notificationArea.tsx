@@ -4,17 +4,20 @@ import { useState } from "react";
 
 interface Notification {
   Sender: string;
-  Date: string;
   Message: string;
-  unread: boolean;
+  isRead: boolean;
+  CreatedAt: string;
+  RecieverId: string;
 }
 
 interface NotificationAreaProps {
   notifications: Notification[];
+  onNotificationRead: (ids: string[]) => void;
 }
 
-const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
+const NotificationArea = ({ notifications, onNotificationRead}: NotificationAreaProps ) => {
   const [displayedNotifications, setDisplayedNotifications] = useState(notifications);
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
 
   const formatDate = (dateString: any) => {
     const date = parseISO(dateString);
@@ -23,10 +26,18 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
 
   const handleNotificationClick = (index: any) => {
     const updatedNotifications = [...displayedNotifications];
-    updatedNotifications[index].unread = false;
+    if (!updatedNotifications[index].isRead) {
+      updatedNotifications[index].isRead = true;
+      setReadNotificationIds((prev) => [...prev, updatedNotifications[index].RecieverId]);
+    }
     setDisplayedNotifications(updatedNotifications);
   };
 
+  // Notify parent component of read notifications when the notification area is closed
+  const handleNotificationAreaClose = () => {
+    onNotificationRead(readNotificationIds);
+    setReadNotificationIds([]);
+  };
 
   return (
     <Box
@@ -36,6 +47,7 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
         border: "1px solid #e0e0e0",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
       }}
+      onBlur={handleNotificationAreaClose}
     >
       <Flex align="center" justify="space-between" mb="sm">
         <Text size="lg">Notifications</Text>
@@ -46,7 +58,7 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
           notifications.map((notification, index) => (
             <Box key={index} my="sm" onClick={() => handleNotificationClick(index)} style={{
                 cursor: "pointer",
-                backgroundColor: notification.unread ? "#f5f6f7" : "transparent",
+                backgroundColor: !notification.isRead ? "#f5f6f7" : "transparent",
                 padding: "11px",
                 borderRadius: "4px"
               }}>
@@ -57,13 +69,13 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
                     {notification.Sender}
                   </Text>
                   <Text size="xs" color="dimmed">
-                    {formatDate(notification.Date)}
+                    {formatDate(notification.CreatedAt)}
                   </Text>
                   <Text size="md" color="dark">
                     {notification.Message}
                   </Text>
                 </Box>
-                {notification.unread && 
+                {!notification.isRead && 
                 // <Badge color="blue" variant="dot" />}
                 <Indicator
     size={8} // Adjust the size as needed

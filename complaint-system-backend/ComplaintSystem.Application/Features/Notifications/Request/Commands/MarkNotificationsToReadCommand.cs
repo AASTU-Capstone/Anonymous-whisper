@@ -9,6 +9,6 @@ namespace ComplaintSystem.Application.Features.Notifications.Request.Commands
 {
     public class MarkNotificationsToReadCommand : IRequest<BaseResponseClass>
     {
-        public List<Guid> NotificationIds { get; set; }
+        public List<string> NotificationIds { get; set; }
     }
 }
