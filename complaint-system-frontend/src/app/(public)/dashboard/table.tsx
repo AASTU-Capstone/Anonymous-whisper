@@ -1,12 +1,25 @@
 "use client";
 import DataTable from "@/shared/table";
-import { Box, Flex, Paper, SimpleGrid, Text } from "@mantine/core";
-import { IconCheck, IconTrash } from "@tabler/icons-react";
+import { Box, Text } from "@mantine/core";
 import { useMemo } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
 
-const RecentComplaints = ({ data }: { data: Data[] }) => {
+const RecentComplaints = ({
+  data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
+}: {
+  data: Data[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const columns: Array<Column<Data>> = useMemo(
     () => [
       {
@@ -20,9 +33,7 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
         Header: "Category",
         accessor: "category",
         Cell: ({ value }) => (
-          <span
-            className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full`}
-          >
+          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full`}>
             {value}
           </span>
         ),
@@ -31,9 +42,7 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
         Header: "Status",
         accessor: "status",
         Cell: ({ value }) => (
-          <span
-            className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full`}
-          >
+          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full`}>
             {value}
           </span>
         ),
@@ -42,7 +51,6 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
         Header: "Created Date",
         accessor: "createdAt",
       },
-      
     ],
     []
   );
@@ -50,12 +58,17 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
   return (
     <Box className="w-full mt-7">
       <Box>
-        <Text className="text-xl px-5 py-4 bg-primarykey-body">
-          Recent Complaints
-        </Text>
+        <Text className="text-xl px-5 py-4 bg-primarykey-body">Recent Complaints</Text>
       </Box>
-
-      <DataTable columns={columns} data={data} pageSize={5} />
+      <DataTable
+        columns={columns}
+        data={data}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        setPageSize={setPageSize}
+        setPageNumber={setPageNumber}
+      />
     </Box>
   );
 };

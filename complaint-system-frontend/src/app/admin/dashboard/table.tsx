@@ -68,12 +68,12 @@ const RecentComplaints = ({
       <DataTable
         columns={columns}
         data={data}
+        totalCount={totalCount}
         pageSize={pageSize}
         currentPage={currentPage}
-        totalCount={totalCount}
-        onPageChange={(page) => setPageNumber(page)}
-        onPageSizeChange={(size) => setPageSize(size)}
-      />
+        setPageSize={setPageSize}
+        setPageNumber={setPageNumber}
+        />
     </Box>
   );
 };

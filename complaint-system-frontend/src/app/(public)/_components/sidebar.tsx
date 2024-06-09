@@ -33,7 +33,7 @@ function Sidebar() {
         }}
         className={`flex min-h-11 w-full items-center gap-4 ${active === item.label ? "text-primary-default border-r-4 border-primary-default" : "opacity-55"} `}
       >
-        <item.icon className="" stroke={1.5} />
+        <item.icon stroke={String(1.5)} />
         {item.label}
       </Text>
     </Link>

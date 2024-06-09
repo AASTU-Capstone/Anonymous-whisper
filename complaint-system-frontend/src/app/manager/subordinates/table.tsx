@@ -29,9 +29,19 @@ import { modals } from "@mantine/modals";
 
 const SubordinatesList = ({
   data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
   refetchSubordinate,
 }: {
   data: GetSubordinatesResponse[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
   refetchSubordinate: () => void;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -39,8 +49,8 @@ const SubordinatesList = ({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [createSubordinate] = useCreateSubordinateMutation();
-  const[deleteSubordinate] = useDeleteSubordinateMutation();
-  const[subordinateId, setSubordinateId] = useState("")
+  const [deleteSubordinate] = useDeleteSubordinateMutation();
+  const [subordinateId, setSubordinateId] = useState("");
 
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -52,24 +62,24 @@ const SubordinatesList = ({
   }, [searchQuery, data]);
 
   const handleAddSubordinate = async () => {
-     // Reset error messages
-     setNameError("");
-     setEmailError("");
- 
-     // Validate inputs
-     let valid = true;
-     if (!name) {
-       setNameError("Please enter a name.");
-       valid = false;
-     }
-     if (!email) {
-       setEmailError("Please enter an email.");
-       valid = false;
-     }
- 
-     if (!valid) {
-       return;
-     }
+    // Reset error messages
+    setNameError("");
+    setEmailError("");
+
+    // Validate inputs
+    let valid = true;
+    if (!name) {
+      setNameError("Please enter a name.");
+      valid = false;
+    }
+    if (!email) {
+      setEmailError("Please enter an email.");
+      valid = false;
+    }
+
+    if (!valid) {
+      return;
+    }
 
     const newSubordinate: CreateSubordinateInput = {
       name,
@@ -87,34 +97,30 @@ const SubordinatesList = ({
     }
   };
 
-  const deleteSubordinateHandler = async (value:string)=>{
-    console.log(value)
-    setSubordinateId(value)
+  const deleteSubordinateHandler = async (value: string) => {
+    setSubordinateId(value);
     modals.openConfirmModal({
       title: "Delete Subordinate",
       centered: true,
       children: (
-        <Text size="sm">Are you sure you want to Delete the Subordinate?</Text>
+        <Text size="sm">Are you sure you want to delete the subordinate?</Text>
       ),
       labels: { confirm: "Delete Subordinate", cancel: "Cancel" },
       confirmProps: { color: "red" },
       closeOnConfirm: true,
       onConfirm: async () => {
-        const deleteSubordinateInput : DeleteSubordinateInput = {
-          id:value,
-        }
-        try{
-          await deleteSubordinate(deleteSubordinateInput)
+        const deleteSubordinateInput: DeleteSubordinateInput = {
+          id: value,
+        };
+        try {
+          await deleteSubordinate(deleteSubordinateInput).unwrap();
           refetchSubordinate();
-          return;
-        }catch(error){
+        } catch (error) {
           console.error("Failed to delete subordinate: ", error);
         }
       },
     });
-
-   
-  }
+  };
 
   const columns: Array<Column<GetSubordinatesResponse>> = useMemo(
     () => [
@@ -129,7 +135,6 @@ const SubordinatesList = ({
         Header: "Email",
         accessor: "email",
       },
-
       {
         Header: "Mitigated Count",
         accessor: "mitigatedCount",
@@ -137,22 +142,22 @@ const SubordinatesList = ({
       },
       {
         Header: "Action",
-        accessor: 'id',
+        accessor: "id",
         Cell: ({ value }) => {
           return (
             <div className="flex space-x-4">
               <ActionIcon variant="light">
                 <button
-                  onClick={(e)=>deleteSubordinateHandler(value)}
+                  onClick={() => deleteSubordinateHandler(value)}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  <IconSquareX color= "red" className="w-5 h-5" />
+                  <IconSquareX color="red" className="w-5 h-5" />
                 </button>
               </ActionIcon>
             </div>
-          )
-        }
-      }
+          );
+        },
+      },
     ],
     []
   );
@@ -192,11 +197,9 @@ const SubordinatesList = ({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-
         <Button rightSection={<IconPlus />} onClick={open}>
           Add Subordinate
         </Button>
-
         <Menu>
           <Menu.Target>
             <Button
@@ -207,7 +210,6 @@ const SubordinatesList = ({
               Sort by
             </Button>
           </Menu.Target>
-
           <Menu.Dropdown>
             <Menu.Item>Items</Menu.Item>
           </Menu.Dropdown>
@@ -222,7 +224,6 @@ const SubordinatesList = ({
               Saved Search
             </Button>
           </Menu.Target>
-
           <Menu.Dropdown>
             <Menu.Item>Items</Menu.Item>
           </Menu.Dropdown>
@@ -235,8 +236,15 @@ const SubordinatesList = ({
             Subordinates List
           </Text>
         </Box>
-
-        <DataTable columns={columns} data={filteredData} pageSize={5} />
+        <DataTable
+          columns={columns}
+          data={data}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          setPageSize={setPageSize}
+          setPageNumber={setPageNumber}
+        />
       </Box>
     </>
   );

@@ -155,7 +155,7 @@ export interface GetComplaintLogToUpdateForManagerResponse {
 }
 
 export interface UpdateComplaintLogStatusInput {
-  complainLogId: string;
+  complaintLogId: string;
   status: string;
 }
 
@@ -223,7 +223,7 @@ export interface AssignSubordinateInput {
 }
 
 export interface UpdateComplaintLogStatusForSubordinate {
-  complainLogId: string;
+  complaintLogId: string;
   status: string;
 }
 export interface updateComplaintLogReport {

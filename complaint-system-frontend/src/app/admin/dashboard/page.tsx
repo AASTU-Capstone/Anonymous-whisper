@@ -47,7 +47,7 @@ const Dashboard = () => {
       };
     }) || [];
 
-  const totalCount = complaintResponse?.totalCount || 0;
+  const totalCount = 5;
   console.log(totalCount)
   const { data: corruptionResponse, isLoading: corruptionLoading, isSuccess: corruptionSuccess } = useGetCorruptionTrendStatisticsQuery({});
   

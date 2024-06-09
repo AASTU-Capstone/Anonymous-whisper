@@ -63,8 +63,8 @@ const Dashboard = () => {
         
       </SimpleGrid>
 
-      <Box className="h-52 w-full flex justify-center items-center mt-6 bg-gray-200">
-        <h1 className="text-2xl">Some Analytic Data</h1>
+      <Box className="h-32 w-full flex justify-center items-center mt-6 bg-gray-200">
+        <h1 className="text-2xl">Corruption Trends</h1>
       </Box>
       <BarGraph data={bardata}></BarGraph>
     </Box>

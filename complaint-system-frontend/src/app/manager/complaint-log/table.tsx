@@ -1,13 +1,11 @@
 "use client";
 import DataTable from "@/shared/table";
-import ViewComplaintResponse from "@/shared/view-complaint-reponse";
 import { ActionIcon, Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import {
   IconAdjustmentsHorizontal,
   IconChevronDown,
-  IconEdit,
   IconEye,
   IconSearch,
   IconSquareCheck,
@@ -20,25 +18,30 @@ import {
   UpdateComplaintLogStatusInput,
 } from "@/types/";
 import { useUpdateComplaintLogStatusMutation } from "@/lib/redux/features/manager";
-import Link from "next/link";
 import ViewComplaintLogById from "./viewmodal";
 
 const ComplaintsLogBody = ({
   data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
   refetchComplaintLogs,
 }: {
   data: GetComplaintLogToUpdateForManagerResponse[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
   refetchComplaintLogs: () => void;
 }) => {
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
     useDisclosure(false);
   const [updateComplaintLogStatus] = useUpdateComplaintLogStatusMutation();
-  console.log(data)
-  const [complaint, setComplaint] = useState();
-  const [rejecting, isRejecting] = useState(false);
-  const [id, setId] = useState("")
-
   const [searchQuery, setSearchQuery] = useState("");
+  const [id, setId] = useState("");
 
   const filteredData = useMemo(() => {
     return data.filter((item: GetComplaintLogToUpdateForManagerResponse) =>
@@ -58,12 +61,11 @@ const ComplaintsLogBody = ({
       closeOnConfirm: true,
       onConfirm: async () => {
         const input: UpdateComplaintLogStatusInput = {
-          complainLogId: id,
+          complaintLogId: id,
           status: "submitted",
         };
         await updateComplaintLogStatus(input).unwrap();
         refetchComplaintLogs();
-        return;
       },
     });
   };
@@ -80,21 +82,17 @@ const ComplaintsLogBody = ({
       closeOnConfirm: true,
       onConfirm: async () => {
         const input: UpdateComplaintLogStatusInput = {
-          complainLogId: id,
+          complaintLogId: id,
           status: "processing",
         };
-        console.log(input)
-        await updateComplaintLogStatus(input)
+        await updateComplaintLogStatus(input);
         refetchComplaintLogs();
-        return;
       },
     });
   };
 
   const handleView = (id: string) => {
-    // fetch the complaint using the id
-    // set to setComplaint after fetching the complaint
-    // the open the modal by calling open()
+    setId(id);
     openViewModal();
   };
 
@@ -113,9 +111,9 @@ const ComplaintsLogBody = ({
           accessor: "priority",
           Cell: ({ value }) => {
             const statusClass =
-              value === "high"
+              value.toLowerCase() === "high"
                 ? "bg-red-200 text-red-800"
-                : value === "medium"
+                : value.toLowerCase() === "medium"
                   ? "bg-blue-200 text-blue-800"
                   : "bg-gray-200 text-gray-800";
             return (
@@ -131,37 +129,33 @@ const ComplaintsLogBody = ({
           Header: "Created Date",
           accessor: "createdAt",
         },
-        // {
-        //   Header: "Subordinate",
-        //   accessor: "subordinate",
-        // },
         {
           Header: "Action",
           accessor: 'id',
           Cell: ({ value }) => (
             <div className="flex space-x-4">
-            <ActionIcon variant="light"
-            onClick={()=>{
-              setId(value)
-            }}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <IconEye className="w-5 h-5" />
-            </ActionIcon>
-            
-            <ActionIcon variant="light"
-              onClick={() => handleAccept(value)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <IconSquareCheck color="green" className="w-5 h-5" />
-            </ActionIcon>
-            <ActionIcon variant="light"
-              onClick={() => handleReject(value)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <IconSquareX color="red" className="w-5 h-5" />
-            </ActionIcon>
-          </div>
+              <ActionIcon
+                variant="light"
+                onClick={() => handleView(value)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <IconEye className="w-5 h-5" />
+              </ActionIcon>
+              <ActionIcon
+                variant="light"
+                onClick={() => handleAccept(value)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <IconSquareCheck color="green" className="w-5 h-5" />
+              </ActionIcon>
+              <ActionIcon
+                variant="light"
+                onClick={() => handleReject(value)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <IconSquareX color="red" className="w-5 h-5" />
+              </ActionIcon>
+            </div>
           ),
         },
       ],
@@ -170,7 +164,7 @@ const ComplaintsLogBody = ({
 
   return (
     <>
-      <Text className="text-primary-default  font-bold text-2xl mb-5">
+      <Text className="text-primary-default font-bold text-2xl mb-5">
         Complaints
       </Text>
       <Flex className="gap-3 items-center">
@@ -182,9 +176,7 @@ const ComplaintsLogBody = ({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-
         <Button>Search</Button>
-
         <Menu>
           <Menu.Target>
             <Button
@@ -195,7 +187,6 @@ const ComplaintsLogBody = ({
               Sort by
             </Button>
           </Menu.Target>
-
           <Menu.Dropdown>
             <Menu.Item>Items</Menu.Item>
           </Menu.Dropdown>
@@ -210,7 +201,6 @@ const ComplaintsLogBody = ({
               Saved Search
             </Button>
           </Menu.Target>
-
           <Menu.Dropdown>
             <Menu.Item>Items</Menu.Item>
           </Menu.Dropdown>
@@ -223,9 +213,21 @@ const ComplaintsLogBody = ({
             My Complaints
           </Text>
         </Box>
-
-        <DataTable columns={columns} data={filteredData} pageSize={5} />
-        <ViewComplaintLogById id = {id} openViewModal={openViewModal} closeViewModal= {closeViewModal} isViewModalOpened = {isViewModalOpened}/>
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          setPageSize={setPageSize}
+          setPageNumber={setPageNumber}
+        />
+        <ViewComplaintLogById
+          id={id}
+          openViewModal={openViewModal}
+          closeViewModal={closeViewModal}
+          isViewModalOpened={isViewModalOpened}
+        />
       </Box>
     </>
   );

@@ -2,7 +2,7 @@
 import { Box } from "@mantine/core";
 import RecentComplaints from "./table";
 import { useGetComplaintLogsToUpdateForSubordinateQuery } from "@/lib/redux/features/subordinate";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
 
 export interface Data {
@@ -14,20 +14,43 @@ export interface Data {
 }
 
 const ComplaintsLog = () => {
-  const {data:res,isLoading,isSuccess,refetch} = useGetComplaintLogsToUpdateForSubordinateQuery({})
-  const [id, setId] = useState("")
-  const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
-    useDisclosure(false);
-  const data = res?.data?.map((item:any)=>{
-    return {
-      ...item,
-    }
-  }) || []
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  
+  const {
+    data: res,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useGetComplaintLogsToUpdateForSubordinateQuery({
+    pageNumber,
+    pageSize
+  });
 
+  useEffect(() => {
+    refetch();
+  }, [pageNumber, pageSize, refetch]);
+
+  const data =
+    res?.data?.map((item: any) => {
+      return {
+        ...item,
+      };
+    }) || [];
+
+  const totalCount = res?.totalCount || 0;
 
   return (
     <Box className="w-full bg-primary-background">
-      <RecentComplaints data={data} refetchComplaintLogs={refetch} />
+      <RecentComplaints
+        data={data}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={pageNumber}
+        setPageSize={setPageSize}
+        setPageNumber={setPageNumber}
+        refetchComplaintLogs={refetch}
+      />
     </Box>
   );
 };

@@ -138,7 +138,7 @@ const AssignComplaintTable = ({
           />
           <Select
             placeholder="Priority"
-            data={["High", "Medium", "Low"]}
+            data={["high", "medium", "low"]}
             value={priority}
             onChange={(value) => setPriority(value)}
           />
