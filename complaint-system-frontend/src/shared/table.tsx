@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { useTable, Column } from "react-table";
 
-type DataTableProps<T> = {
+type DataTableProps<T extends object> = {
   columns: Column<T>[];
   data: T[];
   totalCount: number;
@@ -12,7 +12,7 @@ type DataTableProps<T> = {
   setPageNumber: React.Dispatch<React.SetStateAction<number>>;
 };
 
-function DataTable<T>({
+function DataTable<T extends object>({
   columns,
   data,
   totalCount,
@@ -21,7 +21,7 @@ function DataTable<T>({
   setPageSize,
   setPageNumber,
 }: DataTableProps<T>) {
-  const pageCount = Math.ceil(totalCount / pageSize);
+  const pageCount = useMemo(() => Math.ceil(totalCount / pageSize), [totalCount, pageSize]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data });

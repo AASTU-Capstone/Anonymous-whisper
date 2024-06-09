@@ -7,8 +7,10 @@ const ResoureApi = baseApi.injectEndpoints({
             query:(resourceId:string)=>`/Resource/GetResourceById?ResourceId=${resourceId}`
         }),
 
-        GetAllResources: builder.query({
-            query: () =>`/Resource/GetAllResources`
+        GetAllResources: builder.query<any,{pageNumber:any,pageSize:any}>({
+            query: ({pageNumber, pageSize}) => ({
+              url:`/Resource/GetAllResources?PageNumber=${pageNumber}&PageSize=${pageSize}`
+            })
         }),
 
         CreateResource : builder.query<any, CreateResourceInput>({

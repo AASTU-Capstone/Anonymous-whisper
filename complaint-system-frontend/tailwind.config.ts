@@ -81,7 +81,7 @@ const config: Config = {
           "7": "var(--primary-color-7)",
           "8": "var(--primary-color-8)",
           "9": "var(--primary-color-9)",
-          default: "var(--primary-color-default)",
+          //default: "var(--primary-color-default)",
           text: "var(--primary-color-text)",
           body: "var(--primary-color-body)",
           background: "var(--primary-color-background)",

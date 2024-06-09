@@ -12,6 +12,7 @@ export interface Data {
   title: string;
   category: string;
   status: string;
+  priority:string;
   tags: string;
   createdAt: string;
 }

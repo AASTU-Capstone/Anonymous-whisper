@@ -2,7 +2,6 @@
 import { Box, Paper, SimpleGrid, Text } from "@mantine/core";
 import RecentComplaints from "./table";
 import { useGetComplaintLogStatisticsQuery,useGetCorruptionTrendStatisticsQuery } from "@/lib/redux/features/statistics";
-import { useGetAllComplaintsForAdminQuery } from "@/lib/redux/features/admin";
 import jwt from "jsonwebtoken"
 import BarGraph from "@/shared/bargraph";
 export interface Data {
