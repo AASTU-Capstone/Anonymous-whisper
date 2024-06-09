@@ -1,6 +1,7 @@
 ﻿using ComplaintSystem.Application.DTOs.PaginationDto;
 using ComplaintSystem.Application.Persistence.Contracts;
 using ComplaintSystem.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +19,8 @@ public class ResourceRepository : GenericRepository<Resource>, IResourceReposito
 
     public async Task<List<Resource>> GetAllResources(PaginationDto paginationDto)
     {
-        var resources = await _context.Resources.Skip((criteria.PageNumber - 1) * criteria.PageSize)
-                .Take(criteria.PageSize)
+        var resources = await _context.Resources.Skip((paginationDto.PageNumber - 1) * paginationDto.PageSize)
+                .Take(paginationDto.PageSize)
                 .ToListAsync();
 
         return resources;
