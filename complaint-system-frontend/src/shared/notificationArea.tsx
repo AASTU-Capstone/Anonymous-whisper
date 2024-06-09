@@ -14,18 +14,17 @@ interface Notification {
 interface NotificationAreaProps {
   notifications: Notification[];
   onNotificationRead: (ids: string[]) => void;
-  refetchDb: () => void;
 }
 
-const NotificationArea = ({ notifications, onNotificationRead, refetchDb}: NotificationAreaProps ) => {
+const NotificationArea = ({ notifications, onNotificationRead}: NotificationAreaProps ) => {
   const [displayedNotifications, setDisplayedNotifications] = useState(notifications);
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
 
-  // useEffect(() => {
-  //   setDisplayedNotifications(notifications);
-  // }, [notifications]);
-  
   const formatDate = (date: any) => {
+    if (typeof date === 'string')
+      date = new Date(date);
+  
+    // Validate that date is now a Date object and check for invalid dates
     if (!(date instanceof Date) || isNaN(date.getTime())) {
       return 'Invalid date';
     }
@@ -34,27 +33,18 @@ const NotificationArea = ({ notifications, onNotificationRead, refetchDb}: Notif
   };
 
   const handleNotificationClick = (index: any) => {
-    // const updatedNotifications = [...displayedNotifications];
-    // if (!updatedNotifications[index].isRead) {
-      //   // updatedNotifications[index].isRead = true;
-      //   setReadNotificationIds((prev) => [...prev, updatedNotifications[index].id]);
-      // }
-      // setDisplayedNotifications(updatedNotifications);
-      const updatedNotification = { ...displayedNotifications[index], isRead: true };
-      const updatedNotifications = [...displayedNotifications];
-      updatedNotifications[index] = updatedNotification;
-      console.log("curr id", updatedNotifications[index].id)
-    setDisplayedNotifications(updatedNotifications);
-    setReadNotificationIds((prev) => [...prev, updatedNotification.id]);
-    console.log("total", readNotificationIds)
+    const updatedNotifications = [...displayedNotifications];
+    if (!updatedNotifications[index].isRead) {
+        updatedNotifications[index].isRead = true;
+        setReadNotificationIds((prev) => [...prev, updatedNotifications[index].id]);
+      }
+      setDisplayedNotifications(updatedNotifications);
   };
 
   // Notify parent component of read notifications when the notification area is closed
   const handleNotificationAreaClose = () => {
-    console.log("area out")
     onNotificationRead(readNotificationIds);
     setReadNotificationIds([]);
-    refetchDb();
   };
 
   return (
@@ -86,11 +76,10 @@ const NotificationArea = ({ notifications, onNotificationRead, refetchDb}: Notif
                   <Text size="sm">
                     {notification.sender}
                   </Text>
-                  <Text size="xs" color="dimmed">
-                    {/* {formatDate(notification.CreatedAt)} */}
+                  <Text size="xs" c="dimmed">
                     {formatDate(notification.createdAt)}
                   </Text>
-                  <Text size="md" color="dark">
+                  <Text size="md" c="dark">
                     {notification.message}
                   </Text>
                 </Box>

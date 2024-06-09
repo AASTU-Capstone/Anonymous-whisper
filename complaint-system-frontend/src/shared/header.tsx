@@ -88,20 +88,14 @@ const Header = ({ role }: { role: string }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { data: res, isLoading, isSuccess, refetch } = useGetUnreadNotificationsQuery({});
   
-  // const UnreadNotification = res?.data?.map((item: Notification) => ({
-  //     ...item,
-  // })) || [];
-
-  // console.log("data", notifications)
-  
   useEffect(() => {
     const UnreadNotification = res?.data?.map((item: Notification) => ({
       ...item,
   })) || [];
     if (UnreadNotification.length > 0) {
       setNotifications(UnreadNotification);
+      // console.log("fetched", UnreadNotification);
     }
-    // console.log(`backend notifications ${notification}`)
   }, [res]);
 
   useEffect(() => {
@@ -117,8 +111,8 @@ const Header = ({ role }: { role: string }) => {
   };
 
   const handleNotificationRead = (ids: string[]) => {
-    console.log("so far", unreadNotificationIds);
-    setUnreadNotificationIds(ids);
+    // console.log("so far", unreadNotificationIds);
+    setUnreadNotificationIds((prev) => [...prev, ...ids]);
   };
   
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -126,7 +120,7 @@ const Header = ({ role }: { role: string }) => {
   const handleClickOutside = (event: MouseEvent) => {
     if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
       setShowNotifications(false);
-      console.log("Mouse out", unreadNotificationIds)      
+      // console.log("Mouse out", unreadNotificationIds)    
     }
   };
 
@@ -173,7 +167,7 @@ const Header = ({ role }: { role: string }) => {
               {/* Place content here if needed */}
             </Badge>
             )}
-            {showNotifications && <NotificationArea notifications={notifications} onNotificationRead={handleNotificationRead} refetchDb={refetch} />}
+            {showNotifications && <NotificationArea notifications={notifications} onNotificationRead={handleNotificationRead} />}
           <Divider orientation="vertical" />
           <Flex className="items-center gap-3 justify-center">
             <Avatar />
