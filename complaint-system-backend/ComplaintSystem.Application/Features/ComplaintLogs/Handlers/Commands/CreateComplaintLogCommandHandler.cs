@@ -101,9 +101,9 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                 // notify
                 var notify = new CreateNotificationDto
                 {
-                    Sender = admin.Name!,
-                    Message = $"Assigned you a complaint log '{complaintLog.Title}'.",
-                    RecieverId = manager.UserEntityId,
+                    sender = admin.Name!,
+                    message = $"Assigned you a complaint log '{complaintLog.Title}'.",
+                    recieverId = manager.UserEntityId,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);

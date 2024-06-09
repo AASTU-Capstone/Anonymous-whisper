@@ -68,9 +68,9 @@ public class AssignSubordinateCommandHandler : IRequestHandler<AssignSubordinate
 
                 var notify = new CreateNotificationDto
                 {
-                    Sender = manager.Name!,
-                    Message = $"Assigned you a complaint log '{complaintLog.Title}'.",
-                    RecieverId = subordinate.UserEntityId
+                    sender = manager.Name!,
+                    message = $"Assigned you a complaint log '{complaintLog.Title}'.",
+                    recieverId = subordinate.UserEntityId
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);

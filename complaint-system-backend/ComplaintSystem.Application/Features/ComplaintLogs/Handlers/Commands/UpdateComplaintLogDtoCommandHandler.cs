@@ -60,9 +60,9 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
                 // notify
                 var notify = new CreateNotificationDto
                 {
-                    Sender = subordinate.Name!,
-                    Message = $"Submitted a report for complaint log '{complaintLog.Title}'.",
-                    RecieverId = request.UserId,
+                    sender = subordinate.Name!,
+                    message = $"Submitted a report for complaint log '{complaintLog.Title}'.",
+                    recieverId = request.UserId,
                 };
                 var Notification = _mapper.Map<NotificationEntity>(notify);
                 await _notificationRepository.Add(Notification);

@@ -72,9 +72,9 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
 
                 var notify = new CreateNotificationDto
                 {
-                    Sender = admin.Name!,
-                    Message = $"Promoted you to {manager.Role} Manager.",
-                    RecieverId = user.Id,
+                    sender = admin.Name!,
+                    message = $"Promoted you to {manager.Role} Manager.",
+                    recieverId = user.Id,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);

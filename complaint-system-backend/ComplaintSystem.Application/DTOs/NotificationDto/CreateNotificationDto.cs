@@ -8,8 +8,8 @@ namespace ComplaintSystem.Application.DTOs.NotificationDto
 {
     public class CreateNotificationDto
     {
-        public string? Sender { get; set; }
-        public string? Message { get; set; }
-        public Guid RecieverId { get; set; }
+        public string? sender { get; set; }
+        public string? message { get; set; }
+        public Guid recieverId { get; set; }
     }
 }

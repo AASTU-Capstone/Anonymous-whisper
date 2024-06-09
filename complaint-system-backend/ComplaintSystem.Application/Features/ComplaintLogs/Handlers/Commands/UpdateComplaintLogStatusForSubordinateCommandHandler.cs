@@ -68,9 +68,9 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                 // send notification to the 
                 var notify = new CreateNotificationDto
                 {
-                    Sender = subordinate.Name!,
-                    Message = $"Submited a report for a complaint log '{complaintLog.Title}'.",
-                    RecieverId = manager.Id,
+                    sender = subordinate.Name!,
+                    message = $"Submited a report for a complaint log '{complaintLog.Title}'.",
+                    recieverId = manager.Id,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);
