@@ -61,6 +61,7 @@ const Header = ({ role }: { role: string }) => {
     .split(";")
     .find((c) => c.trim().startsWith("token="))
     ?.split("=")[1];
+  
   const decodedToken: any = jwt.decode(token || "");
   const usernameFromEmail = decodedToken?.useremail?.split("@")[0];
   const usertype = decodedToken?.typ;
@@ -94,13 +95,11 @@ const Header = ({ role }: { role: string }) => {
   })) || [];
     if (UnreadNotification.length > 0) {
       setNotifications(UnreadNotification);
-      // console.log("fetched", UnreadNotification);
     }
   }, [res]);
 
   useEffect(() => {
     if (messages.length > 0) {
-      console.log('received', messages);
       const sortedMessages = messages.map((item: Notification) => ({...item}));
       setNotifications((prev) => [...prev, ...sortedMessages].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
     }
@@ -111,7 +110,6 @@ const Header = ({ role }: { role: string }) => {
   };
 
   const handleNotificationRead = (ids: string[]) => {
-    // console.log("so far", unreadNotificationIds);
     setUnreadNotificationIds((prev) => [...prev, ...ids]);
   };
   
@@ -119,24 +117,22 @@ const Header = ({ role }: { role: string }) => {
 
   const handleClickOutside = (event: MouseEvent) => {
     if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
-      setShowNotifications(false);
-      // console.log("Mouse out", unreadNotificationIds)    
+      setShowNotifications(false);    
     }
   };
 
   useEffect(() => {
     if (showNotifications) {
-      document.addEventListener('mouseover', handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     } else {
       if (unreadNotificationIds.length > 0) {
-        // console.log("setting notification read")
         markNotifications({ notificationIds: unreadNotificationIds }).unwrap();
         setUnreadNotificationIds([]);   
       }
-      document.removeEventListener("mouseover", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     }
     return () => {
-      document.removeEventListener("mouseover", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showNotifications, unreadNotificationIds]);
 
@@ -164,7 +160,6 @@ const Header = ({ role }: { role: string }) => {
             </ActionIcon>
             {!showNotifications && notifications.some((notification) => !notification.isRead) && (
             <Badge badgeContent={notifications.filter((notification) => !notification.isRead).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
-              {/* Place content here if needed */}
             </Badge>
             )}
             {showNotifications && <NotificationArea notifications={notifications} onNotificationRead={handleNotificationRead} />}
