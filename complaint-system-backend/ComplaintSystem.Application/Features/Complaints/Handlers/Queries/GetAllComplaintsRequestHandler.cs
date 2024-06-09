@@ -24,7 +24,7 @@ public class GetAllComplaintsRequestHandler : IRequestHandler<GetAllComplaintsRe
     {
         var complaints = await _complaintRepository.GetAllComplaintsForAdmin(request.PaginationDto);
         var viewComplaints = _mapper.Map<List<ViewComplaintDto>>(complaints);
-        var totalCount = await _complaintRepository.GetAllComplaintsForAdminCount()
+        var totalCount = await _complaintRepository.GetAllComplaintsForAdminCount();
         PaginatedResponseClass response = new PaginatedResponseClass
         {
             Data = viewComplaints,
