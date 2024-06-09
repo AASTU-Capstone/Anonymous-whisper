@@ -101,6 +101,7 @@ namespace ComplaintSystem.Application.Features.ComplaintLogs.Handlers.Commands
                 // notify
                 var notify = new CreateNotificationDto
                 {
+                    createdAt = DateTime.Now, 
                     sender = admin.Name!,
                     message = $"Assigned you a complaint log '{complaintLog.Title}'.",
                     recieverId = manager.UserEntityId,

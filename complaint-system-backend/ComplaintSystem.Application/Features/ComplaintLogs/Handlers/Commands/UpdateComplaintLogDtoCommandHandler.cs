@@ -60,6 +60,7 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
                 // notify
                 var notify = new CreateNotificationDto
                 {
+                    createdAt = DateTime.Now, 
                     sender = subordinate.Name!,
                     message = $"Submitted a report for complaint log '{complaintLog.Title}'.",
                     recieverId = request.UserId,

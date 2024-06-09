@@ -75,6 +75,7 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 // notify
                 var notify = new CreateNotificationDto
                 {
+                    createdAt = DateTime.Now, 
                     sender = manager.Name!,
                     message = $"Demoted you to User.",
                     recieverId = user.Id

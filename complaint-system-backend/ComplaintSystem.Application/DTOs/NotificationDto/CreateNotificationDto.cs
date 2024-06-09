@@ -11,5 +11,6 @@ namespace ComplaintSystem.Application.DTOs.NotificationDto
         public string? sender { get; set; }
         public string? message { get; set; }
         public Guid recieverId { get; set; }
+        public DateTime? createdAt {get; set; }
     }
 }

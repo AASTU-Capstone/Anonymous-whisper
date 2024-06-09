@@ -87,6 +87,7 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 // notification
                 var notify = new CreateNotificationDto
                 {
+                    createdAt = DateTime.Now, 
                     sender = manager.Name!,
                     message = $"Promoted you to Subordinate.",
                     recieverId = user.Id,

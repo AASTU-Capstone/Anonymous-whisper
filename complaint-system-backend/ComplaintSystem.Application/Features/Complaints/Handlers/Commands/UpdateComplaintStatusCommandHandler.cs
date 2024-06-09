@@ -56,6 +56,7 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
                 // send notification to the user
                 var notify = new CreateNotificationDto
                 {
+                    createdAt = DateTime.Now, 
                     sender = "System",
                     message = $"Accepted your complaint '{complaint.Title}'.",
                     recieverId = complaint.UserEntityId,
@@ -72,6 +73,7 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
                 // send notification to the user
                 var notify = new CreateNotificationDto
                 {
+                    createdAt = DateTime.Now, 
                     sender = "System",
                     message = $"Rejected your complaint '{complaint.Title}'.",
                     recieverId = complaint.UserEntityId,
