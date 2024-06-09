@@ -44,7 +44,7 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
       onConfirm: async () => {
         // delete from the db
         const complaintLogStatus : UpdateComplaintLogStatusForSubordinate = {
-          complainLogId:id,
+          complaintLogId:id,
           status:"progressing"
         };
         await updateComplaintLogStatus(complaintLogStatus)

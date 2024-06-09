@@ -223,7 +223,7 @@ export interface AssignSubordinateInput {
 }
 
 export interface UpdateComplaintLogStatusForSubordinate {
-  complainLogId: string;
+  complaintLogId: string;
   status: string;
 }
 export interface updateComplaintLogReport {
@@ -248,4 +248,6 @@ export interface CreateResourceInput{
 //////////////////// Notification //////////////////////
 ///////////////////////////////////////////////////////
 
-// export interface Get
+export interface MarkNotificationInput {
+  NotificationIds: string[];
+}

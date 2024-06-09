@@ -1,27 +1,32 @@
 import { Box, Text, Divider, ScrollArea, Flex, Avatar, Indicator } from "@mantine/core";
 import { formatDistanceToNow, parseISO } from 'date-fns';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Notification {
-  Sender: string;
-  Message: string;
+  id: string;
+  sender: string;
+  message: string;
   isRead: boolean;
-  CreatedAt: Date;
-  RecieverId: string;
+  recieverId: string;
+  createdAt: Date;
 }
 
 interface NotificationAreaProps {
   notifications: Notification[];
   onNotificationRead: (ids: string[]) => void;
+  refetchDb: () => void;
 }
 
-const NotificationArea = ({ notifications, onNotificationRead}: NotificationAreaProps ) => {
+const NotificationArea = ({ notifications, onNotificationRead, refetchDb}: NotificationAreaProps ) => {
   const [displayedNotifications, setDisplayedNotifications] = useState(notifications);
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
 
+  // useEffect(() => {
+  //   setDisplayedNotifications(notifications);
+  // }, [notifications]);
+  
   const formatDate = (date: any) => {
     if (!(date instanceof Date) || isNaN(date.getTime())) {
-      // console.error('Invalid date');
       return 'Invalid date';
     }
   
@@ -29,19 +34,28 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
   };
 
   const handleNotificationClick = (index: any) => {
-    const updatedNotifications = [...displayedNotifications];
-    if (!updatedNotifications[index].isRead) {
-      updatedNotifications[index].isRead = true;
-      setReadNotificationIds((prev) => [...prev, updatedNotifications[index].RecieverId]);
-    }
+    // const updatedNotifications = [...displayedNotifications];
+    // if (!updatedNotifications[index].isRead) {
+      //   // updatedNotifications[index].isRead = true;
+      //   setReadNotificationIds((prev) => [...prev, updatedNotifications[index].id]);
+      // }
+      // setDisplayedNotifications(updatedNotifications);
+      const updatedNotification = { ...displayedNotifications[index], isRead: true };
+      const updatedNotifications = [...displayedNotifications];
+      updatedNotifications[index] = updatedNotification;
+      console.log("curr id", updatedNotifications[index].id)
     setDisplayedNotifications(updatedNotifications);
+    setReadNotificationIds((prev) => [...prev, updatedNotification.id]);
+    console.log("total", readNotificationIds)
   };
 
   // Notify parent component of read notifications when the notification area is closed
-  // const handleNotificationAreaClose = () => {
-  //   onNotificationRead(readNotificationIds);
-  //   setReadNotificationIds([]);
-  // };
+  const handleNotificationAreaClose = () => {
+    console.log("area out")
+    onNotificationRead(readNotificationIds);
+    setReadNotificationIds([]);
+    refetchDb();
+  };
 
   return (
     <Box
@@ -51,7 +65,7 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
         border: "1px solid #e0e0e0",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
       }}
-      // onBlur={handleNotificationAreaClose}
+      onMouseLeave={handleNotificationAreaClose}
     >
       <Flex align="center" justify="space-between" mb="sm">
         <Text size="lg">Notifications</Text>
@@ -67,16 +81,17 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
                 borderRadius: "4px"
               }}>
               <Flex align="center" justify="space-between">
-                <Avatar alt={notification.Sender} size="sm" />
+                <Avatar alt={notification.sender} size="sm" />
                 <Box ml="sm" style={{ flex: 1 }}>
                   <Text size="sm">
-                    {notification.Sender}
+                    {notification.sender}
                   </Text>
                   <Text size="xs" color="dimmed">
-                    {formatDate(notification.CreatedAt)}
+                    {/* {formatDate(notification.CreatedAt)} */}
+                    {formatDate(notification.createdAt)}
                   </Text>
                   <Text size="md" color="dark">
-                    {notification.Message}
+                    {notification.message}
                   </Text>
                 </Box>
                 {!notification.isRead && 
