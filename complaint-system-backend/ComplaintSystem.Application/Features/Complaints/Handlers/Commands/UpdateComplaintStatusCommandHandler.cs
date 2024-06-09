@@ -56,9 +56,9 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
                 // send notification to the user
                 var notify = new CreateNotificationDto
                 {
-                    Sender = "System",
-                    Message = $"Accepted your complaint '{complaint.Title}'.",
-                    RecieverId = complaint.UserEntityId,
+                    sender = "System",
+                    message = $"Accepted your complaint '{complaint.Title}'.",
+                    recieverId = complaint.UserEntityId,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);
@@ -72,9 +72,9 @@ public class UpdateComplaintStatusCommandHandler : IRequestHandler<UpdateComplai
                 // send notification to the user
                 var notify = new CreateNotificationDto
                 {
-                    Sender = "System",
-                    Message = $"Rejected your complaint '{complaint.Title}'.",
-                    RecieverId = complaint.UserEntityId,
+                    sender = "System",
+                    message = $"Rejected your complaint '{complaint.Title}'.",
+                    recieverId = complaint.UserEntityId,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);

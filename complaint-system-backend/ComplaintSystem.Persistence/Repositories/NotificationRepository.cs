@@ -15,8 +15,8 @@ namespace ComplaintSystem.Persistence.Repositories
         public async Task<List<NotificationEntity>> GetNotificationByRecieverId(Guid userId)
         {
             var notification = await _complaintSystemAppDbContext.Notifications
-                .Where(c => c.RecieverId == userId && c.isRead == false)
-                .OrderByDescending(c => c.CreatedAt)
+                .Where(c => c.recieverId == userId && c.isRead == false)
+                .OrderByDescending(c => c.createdAt)
                 .ToListAsync();
 
             return notification;
@@ -27,7 +27,7 @@ namespace ComplaintSystem.Persistence.Repositories
             foreach (var notificationId in notificationIds)
             {
                 var Nid = new Guid(notificationId);
-                var notification = await _complaintSystemAppDbContext.Notifications.FirstOrDefaultAsync(c => c.Id == Nid);
+                var notification = await _complaintSystemAppDbContext.Notifications.FirstOrDefaultAsync(c => c.id == Nid);
 
                 if (notification != null)
                 {

@@ -75,9 +75,9 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 // notify
                 var notify = new CreateNotificationDto
                 {
-                    Sender = manager.Name!,
-                    Message = $"Demoted you to User.",
-                    RecieverId = user.Id
+                    sender = manager.Name!,
+                    message = $"Demoted you to User.",
+                    recieverId = user.Id
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);

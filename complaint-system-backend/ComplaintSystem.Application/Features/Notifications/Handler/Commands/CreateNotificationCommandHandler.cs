@@ -32,7 +32,7 @@ namespace ComplaintSystem.Application.Features.Notifications.Handler.Commands
 
             response = new BaseResponseClass
             {
-                Id = notification.Id,
+                Id = notification.id,
                 Message = "Notification Created Successfully",
                 Success = true,
                 StatusCode = 201,

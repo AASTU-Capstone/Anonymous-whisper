@@ -87,9 +87,9 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 // notification
                 var notify = new CreateNotificationDto
                 {
-                    Sender = manager.Name!,
-                    Message = $"Promoted you to Subordinate.",
-                    RecieverId = user.Id,
+                    sender = manager.Name!,
+                    message = $"Promoted you to Subordinate.",
+                    recieverId = user.Id,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);

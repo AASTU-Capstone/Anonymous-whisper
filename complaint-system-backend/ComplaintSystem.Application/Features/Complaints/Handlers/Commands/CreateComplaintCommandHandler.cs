@@ -141,9 +141,9 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
 
                 var notify = new CreateNotificationDto
                 {
-                    Sender = "Anonymous User",
-                    Message = $"Submitted a complaint '{complaint.Title}'.",
-                    RecieverId = Admin!.Id,
+                    sender = "Anonymous User",
+                    message = $"Submitted a complaint '{complaint.Title}'.",
+                    recieverId = Admin!.Id,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);
