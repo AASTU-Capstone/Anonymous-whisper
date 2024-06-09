@@ -249,5 +249,5 @@ export interface CreateResourceInput{
 ///////////////////////////////////////////////////////
 
 export interface MarkNotificationInput {
-  NotificationIds: string[];
+  notificationIds: string[];
 }

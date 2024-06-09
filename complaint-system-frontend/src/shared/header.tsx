@@ -100,9 +100,9 @@ const Header = ({ role }: { role: string }) => {
 
   useEffect(() => {
     if (messages.length > 0) {
-      // console.log('received', messages);
+      console.log('received', messages);
       const sortedMessages = messages.map((item: Notification) => ({...item}));
-      setNotifications((prev) => [...prev, ...sortedMessages].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      setNotifications((prev) => [...prev, ...sortedMessages].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
     }
   }, [messages]);
 
@@ -130,7 +130,7 @@ const Header = ({ role }: { role: string }) => {
     } else {
       if (unreadNotificationIds.length > 0) {
         // console.log("setting notification read")
-        markNotifications({ NotificationIds: unreadNotificationIds }).unwrap();
+        markNotifications({ notificationIds: unreadNotificationIds }).unwrap();
         setUnreadNotificationIds([]);   
       }
       document.removeEventListener("mouseover", handleClickOutside);
