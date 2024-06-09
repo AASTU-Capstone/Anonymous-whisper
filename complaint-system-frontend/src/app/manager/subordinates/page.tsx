@@ -4,13 +4,13 @@ import SubordinatesList from "./table";
 import { useGetSubordinatesQuery } from "@/lib/redux/features/manager";
 import { GetSubordinatesResponse } from "@/types";
 import { useState, useEffect } from "react";
+import { useWebSocket } from "@/providers/WebSocketContext";
+
 
 const Page = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  import { useWebSocket } from "@/providers/WebSocketContext";
-  import { useEffect } from "react";
-
+  
   const {
     data: res,
     isLoading,
