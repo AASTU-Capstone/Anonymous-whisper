@@ -24,31 +24,44 @@ import {
 import { useMemo, useState } from "react";
 import { Column } from "react-table";
 import { ManagerResponse, AddManagerInput, EditManagerInput } from "@/types";
-import { useAddManagerForAdminMutation,useUpdateManagerForAdminMutation } from "@/lib/redux/features/admin";
-import Link from "next/link";
+import { useAddManagerForAdminMutation, useUpdateManagerForAdminMutation } from "@/lib/redux/features/admin";
 
-const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refetchManagers: () => void; }) => {
+const ManagersList = ({
+  data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
+  refetchManagers,
+}: {
+  data: ManagerResponse[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
+  refetchManagers: () => void;
+}) => {
   const [opened, { open, close }] = useDisclosure(false);
-  const [editOpened, {open:editOpen, close:editClose}] = useDisclosure(false);
+  const [editOpened, { open: editOpen, close: editClose }] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<string | null>(null);
   const [createManager] = useAddManagerForAdminMutation();
   const [updateManager] = useUpdateManagerForAdminMutation();
-  const[managerId, setManagerId] = useState("")
+  const [managerId, setManagerId] = useState("");
 
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [roleError, setRoleError] = useState("");
 
   const handleAddManager = async () => {
-    // Reset error messages
     setNameError("");
     setEmailError("");
     setRoleError("");
 
-    // Validate inputs
     let valid = true;
     if (!name) {
       setNameError("Please enter a name.");
@@ -82,20 +95,21 @@ const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refe
       close();
     } catch (error) {
       console.error("Failed to add manager: ", error);
-      // Handle specific errors if needed
     }
   };
-  const resetValues = ()=>{
+
+  const resetValues = () => {
     setNameError("");
     setEmailError("");
     setRoleError("");
-    close()
-    editClose()
-  }
+    close();
+    editClose();
+  };
 
-  const editManagerHandler = async ()=>{
+  const editManagerHandler = async () => {
     setNameError("");
     setEmailError("");
+
     let valid = true;
     if (!name) {
       setNameError("Please enter a name.");
@@ -105,33 +119,34 @@ const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refe
       setEmailError("Please enter an email.");
       valid = false;
     }
-    const editManager : EditManagerInput = {
-      id:managerId,
-      name:name,
-      email:email
-    }
 
     if (!valid) {
       return;
     }
 
-    try{
-      await updateManager(editManager)
+    const editManager: EditManagerInput = {
+      id: managerId,
+      name,
+      email,
+    };
+
+    try {
+      await updateManager(editManager);
       refetchManagers();
       setName("");
       setEmail("");
       setRole(null);
       editClose();
-    }catch(error){
-      console.error("Failed to Update manager: ", error);
+    } catch (error) {
+      console.error("Failed to update manager: ", error);
     }
-  }
+  };
 
-  const assignId = (id:string)=>{
-    editOpen()
-    setManagerId(id)
-    return
-  }
+  const assignId = (id: string) => {
+    editOpen();
+    setManagerId(id);
+    return;
+  };
 
   const columns: Array<Column<ManagerResponse>> = useMemo(
     () => [
@@ -175,23 +190,23 @@ const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refe
             <div className="flex space-x-4">
               <ActionIcon variant="light">
                 <button
-                  onClick={(e)=>assignId(value)}
+                  onClick={(e) => assignId(value)}
                   className="text-gray-500 hover:text-gray-700"
                 >
                   <IconEdit className="w-5 h-5" />
                 </button>
               </ActionIcon>
             </div>
-          )
-        }
-      }
+          );
+        },
+      },
     ],
     []
   );
 
   return (
     <>
-    {/* {add manager modal} */}
+      {/* Add Manager Modal */}
       <Modal centered opened={opened} onClose={resetValues} title="Add Managers">
         <Flex className="flex-col my-5 gap-7">
           <div>
@@ -230,8 +245,7 @@ const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refe
         </Group>
       </Modal>
 
-
-     {/* edit manager modal */}
+      {/* Edit Manager Modal */}
       <Modal centered opened={editOpened} onClose={resetValues} title="Edit Managers">
         <Flex className="flex-col my-5 gap-7">
           <div>
@@ -317,7 +331,15 @@ const ManagersList = ({ data, refetchManagers }: { data: ManagerResponse[]; refe
           </Text>
         </Box>
 
-        <DataTable columns={columns} data={data} pageSize={5} />
+        <DataTable
+          columns={columns}
+          data={data}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          setPageSize={setPageSize}
+          setPageNumber={setPageNumber}
+        />
       </Box>
     </>
   );

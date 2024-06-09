@@ -57,7 +57,7 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
         </Text>
       </Box>
 
-      <DataTable columns={columns} data={data} pageSize={5} />
+      {/* <DataTable columns={columns} data={data} pageSize={5} /> */}
     </Box>
   );
 };

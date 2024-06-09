@@ -4,6 +4,7 @@ import RecentComplaints from "./table";
 import { useGetComplaintStatitisticsQuery, useGetCorruptionTrendStatisticsQuery } from "@/lib/redux/features/statistics";
 import { useGetAllComplaintsForAdminQuery } from "@/lib/redux/features/admin";
 import BarGraph from "@/shared/bargraph";
+import { useState, useEffect } from "react";
 
 export interface Data {
   id: string;
@@ -15,16 +16,29 @@ export interface Data {
 }
 
 const Dashboard = () => {
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
   const {
     data: res,
     isLoading,
     isSuccess,
   } = useGetComplaintStatitisticsQuery("");
+  
   const {
     data: complaintResponse,
     isLoading: loading,
     isSuccess: success,
-  } = useGetAllComplaintsForAdminQuery({});
+    refetch
+  } = useGetAllComplaintsForAdminQuery({
+    pageNumber,
+    pageSize
+  });
+  
+  useEffect(() => {
+    refetch();
+  }, [pageNumber, pageSize, refetch]);
+
   const complaintData = res?.data;
   const complaintList =
     complaintResponse?.data?.map((item: any) => {
@@ -32,14 +46,18 @@ const Dashboard = () => {
         ...item,
       };
     }) || [];
-  const {data:corruptionResponse, isLoading:corruptionLoading, isSuccess:corruptionSuccess} = useGetCorruptionTrendStatisticsQuery({})
+
+  const totalCount = 5;
+  console.log(totalCount)
+  const { data: corruptionResponse, isLoading: corruptionLoading, isSuccess: corruptionSuccess } = useGetCorruptionTrendStatisticsQuery({});
   
-  const corruptionData = corruptionResponse?.data
-  const bardata = corruptionData?.map((item:any) => ({
+  const corruptionData = corruptionResponse?.data;
+  const bardata = corruptionData?.map((item: any) => ({
     name: item.name,
     mitigatedCount: item.mitigatedCount,
     totalCount: item.totalCount,
   }));
+
   return (
     <Box className="py-6 w-full bg-primarykey-background">
       <SimpleGrid
@@ -75,13 +93,18 @@ const Dashboard = () => {
       </SimpleGrid>
 
       <Box className="h-32 w-full flex justify-center items-center mt-6 bg-gray-200">
-        <h1 className="text-2xl">Corruption Statsistics</h1>
+        <h1 className="text-2xl">Corruption Statistics</h1>
       </Box>
-      <BarGraph data={bardata}></BarGraph>
-      {<RecentComplaints data={complaintList} />}
-      
+      <BarGraph data={bardata} />
+      <RecentComplaints
+        data={complaintList}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={pageNumber}
+        setPageSize={setPageSize}
+        setPageNumber={setPageNumber}
+      />
     </Box>
-   
   );
 };
 

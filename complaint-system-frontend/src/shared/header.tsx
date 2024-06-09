@@ -176,22 +176,13 @@ const Header = ({ role }: { role: string }) => {
               </Menu.Target>
 
               <Menu.Dropdown>
-                <Menu.Item
-                  component={Link}
-                  href="/reset-password/change"
-                  className="menu-item-hover-blue"
-                >
-                  <Text className="text-primary-default py-2 font-bold ">
+              <Menu.Item component={Link} href="/reset-password/change" className="text-inherit hover:text-white hover:bg-blue-400">
+                  <Text className="">
                     Reset Password
                   </Text>
                 </Menu.Item>
-                <Menu.Item
-                  component={Link}
-                  href="/login"
-                  className="menu-item-hover-alert"
-                  onClick={handleSignOut}
-                >
-                  <Text className="text-primary-default py-2 font-bold ">
+                <Menu.Item component={Link} href="/login" className="text-inherit hover:text-white hover:bg-red-500" onClick={handleSignOut}>
+                  <Text className="">
                     Log out
                   </Text>
                 </Menu.Item>

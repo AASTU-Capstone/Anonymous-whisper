@@ -31,20 +31,26 @@ import {
 
 const AssignSubordinateTable = ({
   data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
   refetchComplaintLog,
 }: {
   data: GetComplaintLogToAssignForManagerResponse[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
   refetchComplaintLog: () => void;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
-  const { data: subordinates, refetch } = useGetSubordinatesQuery({});
-  const [AssignSubordinate] = useAssignSubordinateMutation();
-  const [selectedSubordinate, setSelectedSubordinate] = useState<string | null>(
-    null
-  );
-  const [selectedComplaint, setSelectedComplaint] = useState<string | null>(
-    null
-  );
+  const { data: subordinates, refetch } = useGetSubordinatesQuery({pageNumber:1, pageSize:10});
+  const [assignSubordinate] = useAssignSubordinateMutation();
+  const [selectedSubordinate, setSelectedSubordinate] = useState<string | null>(null);
+  const [selectedComplaint, setSelectedComplaint] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -72,10 +78,10 @@ const AssignSubordinateTable = ({
       };
 
       try {
-        await AssignSubordinate(assignedSubordinate).unwrap();
+        await assignSubordinate(assignedSubordinate).unwrap();
         refetch();
-        setSelectedComplaint("");
-        setSelectedSubordinate("");
+        setSelectedComplaint(null);
+        setSelectedSubordinate(null);
         close();
         refetchComplaintLog();
       } catch (error) {
@@ -136,7 +142,7 @@ const AssignSubordinateTable = ({
 
   return (
     <>
-      <Modal centered opened={opened} onClose={close} title="Assign Manager">
+      <Modal centered opened={opened} onClose={close} title="Assign Subordinate">
         <Flex className="flex-col my-5 gap-7">
           <Flex className="gap-2">
             <Input
@@ -156,7 +162,8 @@ const AssignSubordinateTable = ({
                   <Box
                     key={subordinate.id}
                     onClick={() => handleSubordinateClick(subordinate.id)}
-                    className="w-full py-2 border border-gray-200 px-3 rounded-md"
+                    className={`w-full py-2 border border-gray-200 px-3 rounded-md ${selectedSubordinate === subordinate.id ? "bg-gray-200" : ""
+                      }`}
                   >
                     <Text className="font-bold">{subordinate.name}</Text>
                     <Text c="dimmed">{subordinate.email}</Text>
@@ -184,10 +191,10 @@ const AssignSubordinateTable = ({
           radius="md"
           w={350}
           leftSection={<IconSearch />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-
         <Button>Search</Button>
-
         <Menu>
           <Menu.Target>
             <Button
@@ -198,7 +205,6 @@ const AssignSubordinateTable = ({
               Sort by
             </Button>
           </Menu.Target>
-
           <Menu.Dropdown>
             <Menu.Item>Items</Menu.Item>
           </Menu.Dropdown>
@@ -213,7 +219,6 @@ const AssignSubordinateTable = ({
               Saved Search
             </Button>
           </Menu.Target>
-
           <Menu.Dropdown>
             <Menu.Item>Items</Menu.Item>
           </Menu.Dropdown>
@@ -224,8 +229,15 @@ const AssignSubordinateTable = ({
         <Box className="px-2 py-5">
           <Text className="text-xl">My Complaints Log</Text>
         </Box>
-
-        <DataTable columns={columns} data={filteredData} pageSize={5} />
+        <DataTable
+        columns={columns}
+          data={data}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          setPageSize={setPageSize}
+          setPageNumber={setPageNumber}
+        />
       </Box>
     </>
   );
