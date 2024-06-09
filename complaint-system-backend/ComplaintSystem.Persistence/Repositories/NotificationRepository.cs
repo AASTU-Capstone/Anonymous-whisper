@@ -25,8 +25,18 @@ namespace ComplaintSystem.Persistence.Repositories
 
         public async Task MarkNotificationsAsRead(List<string> notificationIds)
         {
-            var query = $"UPDATE UserNotifications SET IsRead = 1 WHERE NotificationId IN ({string.Join(",", notificationIds.Select(id => $"'{id}'"))})";
-            await _complaintSystemAppDbContext.Database.ExecuteSqlRawAsync(query);
+            foreach (var notificationId in notificationIds)
+            {
+                var Nid = new Guid(notificationId);
+                var notification = await _complaintSystemAppDbContext.Notifications.FirstOrDefaultAsync(c => c.Id == Nid);
+
+                if (notification != null)
+                {
+                    notification.isRead = true;
+                }
+            }
+
+            await _complaintSystemAppDbContext.SaveChangesAsync();
         }
     }
 }

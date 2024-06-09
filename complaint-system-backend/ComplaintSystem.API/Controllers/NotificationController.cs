@@ -44,15 +44,5 @@ namespace ComplaintSystem.API.Controllers
 
             return StatusCode(response.StatusCode, response);
         }
-
-        [HttpPost]
-        [Route("CreateNotification")]
-        public async Task<ActionResult<BaseResponseClass>> CreateNotification([FromBody] CreateNotificationDto createNotificationDto)
-        {
-            var request = new CreateNotificationCommand { CreateNotificationDto = createNotificationDto };
-            var response = await _mediator.Send(request);
-            return StatusCode(response.StatusCode, response);
-        }
-
     }
 }
