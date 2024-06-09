@@ -18,6 +18,35 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     ws.onopen = () => {
       console.log("WebSocket connected successfully!");
     };
+
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        const messageWithUnread = { ...message, unread: true };
+        setMessages((prevMessages) => [...prevMessages, messageWithUnread]);
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    setSocket(ws);
+
+    const sendMessage = (message: string) => {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(message);
+      }
+    };
+  
+    const logout = () => {
+      if (socket) {
+        socket.close();
+      }
+      localStorage.removeItem("userId");
+    };
   }
   
   useEffect(() => {
