@@ -23,9 +23,9 @@ namespace ComplaintSystem.Persistence.Repositories
             return notification;
         }
 
-        public async Task MarkNotificationsAsRead(List<Guid> notificationIds)
+        public async Task MarkNotificationsAsRead(List<string> notificationIds)
         {
-            var query = $"UPDATE UserNotifications SET IsRead = 1 WHERE NotificationId IN ({string.Join(",", notificationIds)})";
+            var query = $"UPDATE UserNotifications SET IsRead = 1 WHERE NotificationId IN ({string.Join(",", notificationIds.Select(id => $"'{id}'"))})";
             await _complaintSystemAppDbContext.Database.ExecuteSqlRawAsync(query);
         }
     }

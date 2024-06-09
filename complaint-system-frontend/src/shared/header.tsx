@@ -19,13 +19,14 @@ interface Notification {
   Sender: string;
   Message: string;
   isRead: boolean;
+  RecieverId: string;
   CreatedAt: string;
 }
 
 const notify = () => {
   toast.success("Logout Successful", {
     position: "bottom-center",
-    autoClose: 3000, // Set the timeout to 2 seconds (2000 milliseconds)
+    autoClose: 3000,
     hideProgressBar: true,
     closeOnClick: true,
     pauseOnHover: true,
@@ -43,6 +44,9 @@ const notify = () => {
 const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
   const { messages, logout } = useWebSocket();
+  const [markNotifications] = useMarkNotificationsMutation();
+  const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>([]);
+
   const handleSignOut = () => {
     logoutHandler();
     logout();
@@ -78,42 +82,33 @@ const Header = ({ role }: { role: string }) => {
     firstName = username?.split(" ")[0];
   }
 
-
   // notification setup
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const {data: res, isLoading, isSuccess, refetch} = useGetUnreadNotificationsQuery({});
+  const { data: res, isLoading, isSuccess, refetch } = useGetUnreadNotificationsQuery({});
   
-  const UnreadNotification = res?.data?.map((item: Notification)=>{
-    return {
+  const UnreadNotification = res?.data?.map((item: Notification) => ({
       ...item,
-    }
-  }) || []
-
+  })) || [];
   
   useEffect(() => {
-
-    if (UnreadNotification.length > 0){
+    if (UnreadNotification.length > 0) {
       setNotifications(UnreadNotification);
     }
     if (messages.length > 0) {
-      console.log('recieved', messages)
-      const sortedMessages = messages.sort((a: Notification, b: Notification) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
+      console.log('received', messages);
+      const sortedMessages = messages.sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
       setNotifications(sortedMessages);
     }
   }, [messages]);
 
   const toggleNotifications = () => {
     setShowNotifications((prev) => !prev);
-    if (!showNotifications && notifications.some((notification) => !notification.isRead)) {
-      setNotifications((prevNotifications) =>
-        prevNotifications.map((notification) => ({
-          ...notification
-        }))
-      );
-    }
   };
 
+  const handleNotificationRead = (ids: string[]) => {
+    setUnreadNotificationIds(ids);
+  };
   
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -128,11 +123,15 @@ const Header = ({ role }: { role: string }) => {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
+      if (unreadNotificationIds.length > 0) {
+        markNotifications({ ids: unreadNotificationIds });
+        setUnreadNotificationIds([]);     
+      }
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showNotifications]);
+  }, [showNotifications, unreadNotificationIds]);
 
   return (
     <header>
@@ -157,11 +156,11 @@ const Header = ({ role }: { role: string }) => {
               <IconBell />
             </ActionIcon>
             {!showNotifications && notifications.some((notification) => !notification.isRead) && (
-              <Badge badgeContent={notifications.filter((notification) => !notification.isRead).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
-                {/* Place content here if needed */}
-              </Badge>
+            <Badge badgeContent={notifications.filter((notification) => !notification.isRead).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
+              {/* Place content here if needed */}
+            </Badge>
             )}
-            {showNotifications && <NotificationArea notifications={notifications} />}
+            {showNotifications && <NotificationArea notifications={notifications} onNotificationRead={handleNotificationRead} />}
           <Divider orientation="vertical" />
           <Flex className="items-center gap-3 justify-center">
             <Avatar />

@@ -10,6 +10,6 @@ namespace ComplaintSystem.Application.Persistence.Contracts
     public interface INotificationRepository: IGenericRepository<NotificationEntity>
     {
         public Task<List<NotificationEntity>> GetNotificationByRecieverId(Guid userId);
-        public Task MarkNotificationsAsRead(List<Guid> notificationIds);
+        public Task MarkNotificationsAsRead(List<string> notificationIds);
     }
 }

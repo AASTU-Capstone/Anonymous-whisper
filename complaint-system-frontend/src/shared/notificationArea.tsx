@@ -7,14 +7,17 @@ interface Notification {
   Message: string;
   isRead: boolean;
   CreatedAt: string;
+  RecieverId: string;
 }
 
 interface NotificationAreaProps {
   notifications: Notification[];
+  onNotificationRead: (ids: string[]) => void;
 }
 
-const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
+const NotificationArea = ({ notifications, onNotificationRead}: NotificationAreaProps ) => {
   const [displayedNotifications, setDisplayedNotifications] = useState(notifications);
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
 
   const formatDate = (dateString: any) => {
     const date = parseISO(dateString);
@@ -23,10 +26,18 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
 
   const handleNotificationClick = (index: any) => {
     const updatedNotifications = [...displayedNotifications];
-    updatedNotifications[index].isRead = true;
+    if (!updatedNotifications[index].isRead) {
+      updatedNotifications[index].isRead = true;
+      setReadNotificationIds((prev) => [...prev, updatedNotifications[index].RecieverId]);
+    }
     setDisplayedNotifications(updatedNotifications);
   };
 
+  // Notify parent component of read notifications when the notification area is closed
+  const handleNotificationAreaClose = () => {
+    onNotificationRead(readNotificationIds);
+    setReadNotificationIds([]);
+  };
 
   return (
     <Box
@@ -36,6 +47,7 @@ const NotificationArea = ({ notifications}: NotificationAreaProps ) => {
         border: "1px solid #e0e0e0",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
       }}
+      onBlur={handleNotificationAreaClose}
     >
       <Flex align="center" justify="space-between" mb="sm">
         <Text size="lg">Notifications</Text>
