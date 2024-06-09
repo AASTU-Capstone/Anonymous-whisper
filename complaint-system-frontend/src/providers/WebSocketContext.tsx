@@ -1,20 +1,21 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const WebSocketContext = createContext<{
   messages: any[];
   sendMessage: (message: string) => void;
   logout: () => void;
-  connectWebSocket: (userId: string) => void;
 } | null>(null);
 
 export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
-
-  const connectWebSocket = (userId: string) => {
+  
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
       const ws = new WebSocket(`wss://anonymous-whisper.onrender.com/notification?userId=${userId}`);
-
+  
       ws.onopen = () => {
         console.log("WebSocket connected successfully!");
       };
@@ -34,7 +35,8 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       };
 
       setSocket(ws);
-  };
+    }}, []);
+  
 
   const sendMessage = (message: string) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -50,7 +52,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   };
 
   return (
-    <WebSocketContext.Provider value={{ messages, sendMessage, logout, connectWebSocket }}>
+    <WebSocketContext.Provider value={{ messages, sendMessage, logout }}>
       {children}
     </WebSocketContext.Provider>
   );
