@@ -83,7 +83,7 @@ const ComplaintsLogBody = ({
           complaintLogId: id,
           status: "processing",
         };
-        console.log(input)
+        // console.log(input)
         await updateComplaintLogStatus(input)
         refetchComplaintLogs();
         return;
