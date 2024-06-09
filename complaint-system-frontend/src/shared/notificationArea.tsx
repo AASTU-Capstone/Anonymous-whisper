@@ -6,7 +6,7 @@ interface Notification {
   Sender: string;
   Message: string;
   isRead: boolean;
-  CreatedAt: string;
+  CreatedAt: Date;
   RecieverId: string;
 }
 
@@ -19,8 +19,12 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
   const [displayedNotifications, setDisplayedNotifications] = useState(notifications);
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
 
-  const formatDate = (dateString: any) => {
-    const date = parseISO(dateString);
+  const formatDate = (date: any) => {
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      // console.error('Invalid date');
+      return 'Invalid date';
+    }
+  
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
@@ -34,10 +38,10 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
   };
 
   // Notify parent component of read notifications when the notification area is closed
-  const handleNotificationAreaClose = () => {
-    onNotificationRead(readNotificationIds);
-    setReadNotificationIds([]);
-  };
+  // const handleNotificationAreaClose = () => {
+  //   onNotificationRead(readNotificationIds);
+  //   setReadNotificationIds([]);
+  // };
 
   return (
     <Box
@@ -47,7 +51,7 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
         border: "1px solid #e0e0e0",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
       }}
-      onBlur={handleNotificationAreaClose}
+      // onBlur={handleNotificationAreaClose}
     >
       <Flex align="center" justify="space-between" mb="sm">
         <Text size="lg">Notifications</Text>
@@ -76,14 +80,13 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
                   </Text>
                 </Box>
                 {!notification.isRead && 
-                // <Badge color="blue" variant="dot" />}
                 <Indicator
-    size={8} // Adjust the size as needed
-    style={{
-      backgroundColor: "#2196f3", // or any other color you prefer
-      marginLeft: "8px", // Adjust the spacing as needed
-    }}
-  />}
+                  size={8}
+                  style={{
+                    backgroundColor: "#2196f3",
+                    marginLeft: "8px",
+                  }}
+                />}
               </Flex>
             </Box>
           ))          

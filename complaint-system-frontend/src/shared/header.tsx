@@ -20,7 +20,7 @@ interface Notification {
   Message: string;
   isRead: boolean;
   RecieverId: string;
-  CreatedAt: string;
+  CreatedAt: Date;
 }
 
 const notify = () => {
@@ -90,11 +90,18 @@ const Header = ({ role }: { role: string }) => {
   const UnreadNotification = res?.data?.map((item: Notification) => ({
       ...item,
   })) || [];
+
+  // console.log("date", UnreadNotification[0].CreatedAt)
   
   useEffect(() => {
+    const UnreadNotification = res?.data || [];
     if (UnreadNotification.length > 0) {
       setNotifications(UnreadNotification);
     }
+    console.log(`backend notifications ${UnreadNotification}`)
+  }, [res]);
+
+  useEffect(() => {
     if (messages.length > 0) {
       console.log('received', messages);
       const sortedMessages = messages.sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
@@ -124,8 +131,8 @@ const Header = ({ role }: { role: string }) => {
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
       if (unreadNotificationIds.length > 0) {
-        markNotifications({ ids: unreadNotificationIds });
-        setUnreadNotificationIds([]);     
+        markNotifications({ IDs: unreadNotificationIds });
+        setUnreadNotificationIds([]);    
       }
     }
     return () => {
