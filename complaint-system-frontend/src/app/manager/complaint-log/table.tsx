@@ -58,7 +58,7 @@ const ComplaintsLogBody = ({
       closeOnConfirm: true,
       onConfirm: async () => {
         const input: UpdateComplaintLogStatusInput = {
-          complainLogId: id,
+          complaintLogId: id,
           status: "submitted",
         };
         await updateComplaintLogStatus(input).unwrap();
@@ -80,7 +80,7 @@ const ComplaintsLogBody = ({
       closeOnConfirm: true,
       onConfirm: async () => {
         const input: UpdateComplaintLogStatusInput = {
-          complainLogId: id,
+          complaintLogId: id,
           status: "processing",
         };
         console.log(input)
