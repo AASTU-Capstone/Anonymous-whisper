@@ -17,7 +17,6 @@ namespace ComplaintSystem.Persistence.Repositories
             var notification = await _complaintSystemAppDbContext.Notifications
                 .Where(c => c.RecieverId == userId && c.isRead == false)
                 .OrderByDescending(c => c.CreatedAt)
-                .Take(10)
                 .ToListAsync();
 
             return notification;
