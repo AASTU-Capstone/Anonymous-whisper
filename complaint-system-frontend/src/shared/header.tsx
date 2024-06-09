@@ -126,17 +126,17 @@ const Header = ({ role }: { role: string }) => {
 
   useEffect(() => {
     if (showNotifications) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mouseover', handleClickOutside);
     } else {
       if (unreadNotificationIds.length > 0) {
-        console.log("setting notification read")
+        // console.log("setting notification read")
         markNotifications({ NotificationIds: unreadNotificationIds }).unwrap();
         setUnreadNotificationIds([]);   
       }
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mouseover", handleClickOutside);
     }
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mouseover", handleClickOutside);
     };
   }, [showNotifications, unreadNotificationIds]);
 
