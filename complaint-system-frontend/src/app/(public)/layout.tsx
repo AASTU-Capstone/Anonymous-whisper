@@ -1,6 +1,6 @@
 import { Box, Flex } from "@mantine/core";
 import React from "react";
-import Sidebar from "./_components/sidebar";
+import Sidebar from "./user/_components/sidebar";
 import Header from "@/shared/header";
 
 export default function PublicLayout({

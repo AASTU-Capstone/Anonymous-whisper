@@ -88,7 +88,7 @@ export default function Login({}: Props) {
             router.push("/subordinate/dashboard");
             break;
           case "user":
-            router.push("/dashboard");
+            router.push("/user/dashboard");
             break;
           default:
             router.push("/");
@@ -201,7 +201,7 @@ export default function Login({}: Props) {
         <div className="flex items-center justify-end w-full">
           <p>
             <Link
-              href="/auth/reset-password"
+              href="/reset-password"
               className="cursor-pointer text-secondary hover:text-blue-500 transition  duration-150 ease-linear text-xs hover:underline"
             >
               Forgot password
