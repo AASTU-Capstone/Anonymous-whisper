@@ -1,13 +1,14 @@
 import { Box, Text, Divider, ScrollArea, Flex, Avatar, Indicator } from "@mantine/core";
 import { formatDistanceToNow, parseISO } from 'date-fns';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Notification {
-  Sender: string;
-  Message: string;
+  id: string;
+  sender: string;
+  message: string;
   isRead: boolean;
-  CreatedAt: string;
-  RecieverId: string;
+  recieverId: string;
+  createdAt: Date;
 }
 
 interface NotificationAreaProps {
@@ -19,18 +20,25 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
   const [displayedNotifications, setDisplayedNotifications] = useState(notifications);
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
 
-  const formatDate = (dateString: any) => {
-    const date = parseISO(dateString);
+  const formatDate = (date: any) => {
+    if (typeof date === 'string')
+      date = new Date(date);
+  
+    // Validate that date is now a Date object and check for invalid dates
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+  
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
   const handleNotificationClick = (index: any) => {
     const updatedNotifications = [...displayedNotifications];
     if (!updatedNotifications[index].isRead) {
-      updatedNotifications[index].isRead = true;
-      setReadNotificationIds((prev) => [...prev, updatedNotifications[index].RecieverId]);
-    }
-    setDisplayedNotifications(updatedNotifications);
+        updatedNotifications[index].isRead = true;
+        setReadNotificationIds((prev) => [...prev, updatedNotifications[index].id]);
+      }
+      setDisplayedNotifications(updatedNotifications);
   };
 
   // Notify parent component of read notifications when the notification area is closed
@@ -47,7 +55,7 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
         border: "1px solid #e0e0e0",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
       }}
-      onBlur={handleNotificationAreaClose}
+      onMouseLeave={handleNotificationAreaClose}
     >
       <Flex align="center" justify="space-between" mb="sm">
         <Text size="lg">Notifications</Text>
@@ -63,27 +71,26 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
                 borderRadius: "4px"
               }}>
               <Flex align="center" justify="space-between">
-                <Avatar alt={notification.Sender} size="sm" />
+                <Avatar alt={notification.sender} size="sm" />
                 <Box ml="sm" style={{ flex: 1 }}>
                   <Text size="sm">
-                    {notification.Sender}
+                    {notification.sender}
                   </Text>
-                  <Text size="xs" color="dimmed">
-                    {formatDate(notification.CreatedAt)}
+                  <Text size="xs" c="dimmed">
+                    {formatDate(notification.createdAt)}
                   </Text>
-                  <Text size="md" color="dark">
-                    {notification.Message}
+                  <Text size="md" c="dark">
+                    {notification.message}
                   </Text>
                 </Box>
                 {!notification.isRead && 
-                // <Badge color="blue" variant="dot" />}
                 <Indicator
-    size={8} // Adjust the size as needed
-    style={{
-      backgroundColor: "#2196f3", // or any other color you prefer
-      marginLeft: "8px", // Adjust the spacing as needed
-    }}
-  />}
+                  size={8}
+                  style={{
+                    backgroundColor: "#2196f3",
+                    marginLeft: "8px",
+                  }}
+                />}
               </Flex>
             </Box>
           ))          

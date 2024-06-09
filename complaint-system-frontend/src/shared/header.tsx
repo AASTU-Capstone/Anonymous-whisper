@@ -16,11 +16,12 @@ import NotificationArea from "@/shared/notificationArea";
 import { useMarkNotificationsMutation, useGetUnreadNotificationsQuery } from "@/lib/redux/features/notification";
 
 interface Notification {
-  Sender: string;
-  Message: string;
+  id: string;
+  sender: string;
+  message: string;
   isRead: boolean;
-  RecieverId: string;
-  CreatedAt: string;
+  recieverId: string;
+  createdAt: Date;
 }
 
 const notify = () => {
@@ -87,18 +88,21 @@ const Header = ({ role }: { role: string }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { data: res, isLoading, isSuccess, refetch } = useGetUnreadNotificationsQuery({});
   
-  const UnreadNotification = res?.data?.map((item: Notification) => ({
+  useEffect(() => {
+    const UnreadNotification = res?.data?.map((item: Notification) => ({
       ...item,
   })) || [];
-  
-  useEffect(() => {
     if (UnreadNotification.length > 0) {
       setNotifications(UnreadNotification);
+      // console.log("fetched", UnreadNotification);
     }
+  }, [res]);
+
+  useEffect(() => {
     if (messages.length > 0) {
-      console.log('received', messages);
+      // console.log('received', messages);
       const sortedMessages = messages.sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
-      setNotifications(sortedMessages);
+      setNotifications((prev) => [...prev, ...sortedMessages]);
     }
   }, [messages]);
 
@@ -107,7 +111,8 @@ const Header = ({ role }: { role: string }) => {
   };
 
   const handleNotificationRead = (ids: string[]) => {
-    setUnreadNotificationIds(ids);
+    // console.log("so far", unreadNotificationIds);
+    setUnreadNotificationIds((prev) => [...prev, ...ids]);
   };
   
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -115,21 +120,23 @@ const Header = ({ role }: { role: string }) => {
   const handleClickOutside = (event: MouseEvent) => {
     if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
       setShowNotifications(false);
+      // console.log("Mouse out", unreadNotificationIds)    
     }
   };
 
   useEffect(() => {
     if (showNotifications) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mouseover', handleClickOutside);
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
       if (unreadNotificationIds.length > 0) {
-        markNotifications({ ids: unreadNotificationIds });
-        setUnreadNotificationIds([]);     
+        // console.log("setting notification read")
+        markNotifications({ NotificationIds: unreadNotificationIds }).unwrap();
+        setUnreadNotificationIds([]);   
       }
+      document.removeEventListener("mouseover", handleClickOutside);
     }
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mouseover", handleClickOutside);
     };
   }, [showNotifications, unreadNotificationIds]);
 

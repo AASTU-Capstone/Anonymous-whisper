@@ -248,4 +248,6 @@ export interface CreateResourceInput{
 //////////////////// Notification //////////////////////
 ///////////////////////////////////////////////////////
 
-// export interface Get
+export interface MarkNotificationInput {
+  NotificationIds: string[];
+}
