@@ -5,7 +5,21 @@ import { useMemo } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
 
-const RecentComplaints = ({ data }: { data: Data[] }) => {
+const RecentComplaints = ({
+  data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
+}: {
+  data: Data[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const columns: Array<Column<Data>> = useMemo(
     () => [
       {
@@ -48,12 +62,18 @@ const RecentComplaints = ({ data }: { data: Data[] }) => {
   return (
     <Box className="w-full mt-7">
       <Box>
-        <Text className="text-xl px-5 py-4 bg-primary-body">
-          Recent Complaints
-        </Text>
+        <Text className="text-xl px-5 py-4 bg-primary-body">Recent Complaints</Text>
       </Box>
 
-      <DataTable columns={columns} data={data} pageSize={5} />
+      <DataTable
+        columns={columns}
+        data={data}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        totalCount={totalCount}
+        onPageChange={(page) => setPageNumber(page)}
+        onPageSizeChange={(size) => setPageSize(size)}
+      />
     </Box>
   );
 };

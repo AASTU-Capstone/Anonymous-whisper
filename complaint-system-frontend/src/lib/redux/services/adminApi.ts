@@ -32,12 +32,18 @@ const AdminApi = baseApi.injectEndpoints({
       query: () => `/Admin/GetAcceptedComplaints`,
     }),
 
-    GetManagersForAdmin: builder.query({
-      query: () => `/Admin/GetManagers`,
+    GetManagersForAdmin: builder.query<any,{pageNumber:any,pageSize:any}>({
+      query: ({pageNumber, pageSize}) => ({
+        url: `/Admin/GetManagers?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        method:"GET"
+      })
     }),
 
-    GetAllComplaintsForAdmin: builder.query({
-      query: () => `/Admin/GetAllComplaints`,
+    GetAllComplaintsForAdmin: builder.query<any,{pageNumber:any,pageSize:any}>({
+      query: ({pageNumber, pageSize}) => ({
+        url: `/Admin/GetAllComplaints?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        method:"GET"
+      })
     }),
 
     GetComplaintByIdForAdmin: builder.query<any, string>({
