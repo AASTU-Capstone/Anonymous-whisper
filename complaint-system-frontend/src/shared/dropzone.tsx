@@ -89,7 +89,7 @@ export function FilePicker({
           className="border-2 border-gray-300 cursor-pointer"
           onClick={() => removeFile(file, "audio")}
         >
-          <audio controls>
+          <audio >
             <source src={fileUrl} />
           </audio>
           <Text className="text-sm">{file.name}</Text>
