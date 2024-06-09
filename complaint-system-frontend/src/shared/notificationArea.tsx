@@ -21,6 +21,7 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
 
   const formatDate = (date: any) => {
+    const EATOffset = 3 * 60;  
     if (typeof date === 'string')
       date = new Date(date);
   
@@ -29,7 +30,7 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
       return 'Invalid date';
     }
   
-    return formatDistanceToNow(date, { addSuffix: true });
+    return formatDistanceToNow(date.getTime() + EATOffset * 60 * 1000, { addSuffix: true });
   };
 
   const handleNotificationClick = (index: any) => {
@@ -88,7 +89,7 @@ const NotificationArea = ({ notifications, onNotificationRead}: NotificationArea
                   size={8}
                   style={{
                     backgroundColor: "#2196f3",
-                    marginLeft: "8px",
+                    marginRight: "10px",
                   }}
                 />}
               </Flex>

@@ -101,8 +101,8 @@ const Header = ({ role }: { role: string }) => {
   useEffect(() => {
     if (messages.length > 0) {
       // console.log('received', messages);
-      const sortedMessages = messages.sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
-      setNotifications((prev) => [...prev, ...sortedMessages]);
+      const sortedMessages = messages.map((item: Notification) => ({...item}));
+      setNotifications((prev) => [...prev, ...sortedMessages].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
     }
   }, [messages]);
 
