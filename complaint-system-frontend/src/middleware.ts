@@ -1,90 +1,102 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
-
+import jwt from "jsonwebtoken";
+const isStaticOrInternalPath = (pathname: string) => {
+  return pathname.startsWith('/_next') || pathname.startsWith('/static') || pathname.includes('.map') || pathname.includes('/assets');
+};
+interface  DecodedToken{
+  typ: any;
+}
 export function middleware(request: NextRequest) {
+
+  if (isStaticOrInternalPath(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
   const cookieStore = cookies();
   const token = cookieStore.get("token");
+  // console.log('Middleware is running for:', request.nextUrl.pathname);
+  // const token = decodeURIComponent(
+  //   typeof window !== "undefined" ? document.cookie : ""
+  // )
+  //   .split(";")
+  //   .find((c) => c.trim().startsWith("token="))
+  //   ?.split("=")[1];
+  // const decodedToken: any = jwt.decode(token || "");
+  const decodedToken = jwt.decode(token?.value || "") as DecodedToken;
   const path = request.nextUrl.pathname;
   const referer = request.headers.get("referer");
-
-  // Protect /app/settings route
-  if (!token?.value && request.nextUrl.pathname.startsWith("/app/settings")) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+  if (decodedToken?.typ) {
+    const userType = decodedToken.typ;
+    if (!path.startsWith(`/${userType}`)) {
+      return NextResponse.redirect(new URL(`/${userType}/dashboard`, request.url));
+    }
   }
-
-  // Protect /auth/login if the user is already authenticated
-  if (token?.value && request.nextUrl.pathname.startsWith("/auth/login")) {
-    return NextResponse.redirect(new URL("/app", request.url));
-  }
-  // Protect /auth/signup if the user is already authenticated
-  if (token?.value && request.nextUrl.pathname.startsWith("/auth/signup")) {
-    return NextResponse.redirect(new URL("/app", request.url));
-  }
-
-  // Protect /auth/create-profile/ route if a user is logged in
-  if (
-    token?.value &&
-    request.nextUrl.pathname.startsWith("/auth/create-profile")
-  ) {
-    return NextResponse.redirect(new URL("/app", request.url));
-  }
-
   // Protect /auth/signup/verify-otp route
-  if (path === "/auth/signup/verify-otp") {
+  if (path === "/signup/verify-otp") {
     // allow the user if they are coming from the signup route
-    if (referer && referer.includes("/auth/signup")) {
+    if (referer && referer.includes("/signup")) {
       return NextResponse.next();
     } else {
       // deny the user if they are not coming from the signup route
-      return NextResponse.redirect(new URL("/auth/signup", request.url));
+      return NextResponse.redirect(new URL("/signup", request.url));
     }
   }
 
   // Protect /auth/success route
-  if (path === "/auth/success") {
+  if (path === "/success") {
     // allow the user if they come from the verifiy-otp route
-    if (referer && referer.includes("/auth/signup/verify-otp")) {
+    if (referer && referer.includes("/signup/verify-otp")) {
       return NextResponse.next();
     } else {
       // unauthorized , the user will be redirected to the app
-      return NextResponse.redirect(new URL("/app", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
   // Protect /auth/reset-password/change route
-  if (path === "/auth/reset-password/change") {
+  if (path === "/reset-password/change") {
     // allow the user if they come from the reset-password route
-    if (referer && referer.includes("/auth/reset-password/verify-otp")) {
+    if (decodedToken || (referer && referer.includes("/reset-password/verify-otp"))) {
       return NextResponse.next();
     } else {
       // unauthorized , the user will be redirected to the app
-      return NextResponse.redirect(new URL("/app", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
   // Protect /auth/password-updated route
-  if (path === "/auth/password-updated") {
+  if (path === "/password-updated") {
     // allow the user if they come from the reset-password route
-    if (referer && referer.includes("/auth/reset-password/change")) {
+    if (referer && referer.includes("/reset-password/change")) {
       return NextResponse.next();
     } else {
       // unauthorized , the user will be redirected to the app
-      return NextResponse.redirect(new URL("/app", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
   // Protect /auth/reset-password/verify-otp route
-  if (path === "/auth/reset-password/verify-otp") {
+  if (path === "/reset-password/verify-otp") {
     // allow the user if they come from the reset-password route
-    if (referer && referer.includes("/auth/reset-password")) {
+    if (referer && referer.includes("/reset-password")) {
       return NextResponse.next();
     } else {
       // unauthorized , the user will be redirected to the app
       return NextResponse.redirect(
-        new URL("/auth/reset-password", request.url)
+        new URL("/reset-password", request.url)
       );
     }
+  }
+  
+  if(!decodedToken ){
+    if(path.startsWith("/login") || path.startsWith("/signup") || path.startsWith("/reset-password")){
+      NextResponse.next();
+    }
+    else{
+      return NextResponse.redirect(new URL(`/login`, request.url));
+    }
+    
   }
 
   return NextResponse.next();
