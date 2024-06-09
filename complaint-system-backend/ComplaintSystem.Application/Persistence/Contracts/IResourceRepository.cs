@@ -10,4 +10,5 @@ namespace ComplaintSystem.Application.Persistence.Contracts;
 public interface IResourceRepository : IGenericRepository<Resource>
 {
     public Task<List<Resource>> GetAllResources(PaginationDto paginationDto);
+    public Task<int> GetResourcesCount();
 }

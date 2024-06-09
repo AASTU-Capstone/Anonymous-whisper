@@ -10,5 +10,5 @@ using System.Threading.Tasks;
 namespace ComplaintSystem.Application.Features.Resources.Request.Queries;
 public class GetResourcesRequest : IRequest<PaginatedResponseClass>
 {
-
+    public PaginationDto PaginationDto { get; set; }
 }

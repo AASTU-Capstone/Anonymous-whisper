@@ -16,8 +16,18 @@ public class ResourceRepository : GenericRepository<Resource>, IResourceReposito
         _context = complaintSystemAppDbContext;
     }
 
-    public Task<List<Resource>> GetAllResources(PaginationDto paginationDto)
+    public async Task<List<Resource>> GetAllResources(PaginationDto paginationDto)
     {
-        throw new NotImplementedException();
+        var resources = await _context.Resources.Skip((criteria.PageNumber - 1) * criteria.PageSize)
+                .Take(criteria.PageSize)
+                .ToListAsync();
+
+        return resources;
+    }
+
+    public async Task<int> GetResourcesCount()
+    {
+        var resourceCount = await _context.Resources.CountAsync();
+        return resourceCount;
     }
 }

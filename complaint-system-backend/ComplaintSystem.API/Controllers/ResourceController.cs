@@ -2,6 +2,7 @@
 using ComplaintSystem.Application.DTOs.ResourceDto;
 using ComplaintSystem.Application.Features.Resources.Request.Commands;
 using ComplaintSystem.Application.Features.Resources.Request.Queries;
+using ComplaintSystem.Application.DTOs.PaginationDto;
 using ComplaintSystem.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -24,9 +25,9 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpGet]
         [Route("GetAllResources")]
-        public async Task<ActionResult<PaginatedResponseClass>> GetAllResources()
+        public async Task<ActionResult<PaginatedResponseClass>> GetAllResources([FromQuery] PaginationDto pagination)
         {
-            var request = new GetResourcesRequest { };
+            var request = new GetResourcesRequest { PaginationDto = pagination};
             var response = await _mediator.Send(request);
 
             return StatusCode(response.StatusCode, response);
