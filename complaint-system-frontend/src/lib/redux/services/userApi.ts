@@ -77,9 +77,9 @@ const userApi = baseApi.injectEndpoints({
       }),
     }),
 
-    GetComplaints: builder.query({
-      query: () => ({
-        url: "/Complaint/GetAllComplaintsForUser",
+    GetComplaints: builder.query<any,{pageNumber:any,pageSize:any}>({
+      query: ({pageNumber, pageSize}) => ({
+        url: `/Complaint/GetAllComplaintsForUser?PageNumber=${pageNumber}&PageSize=${pageSize}`,
         method: "GET",
       }),
     }),

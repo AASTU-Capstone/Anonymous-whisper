@@ -22,14 +22,29 @@ import { UpdateComplaintLogStatusForSubordinate } from "@/types";
 import { useDisclosure } from "@mantine/hooks";
 import ViewComplaintLogById from "./viewmodal";
 
-
- 
-const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetchComplaintLogs: () => void; }) => {
+const RecentComplaints = ({
+  data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
+  refetchComplaintLogs,
+}: {
+  data: Data[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
+  refetchComplaintLogs: () => void;
+}) => {
   const [isViewModalOpened, { open: openViewModal, close: closeViewModal }] =
     useDisclosure(false);
-  const [id, setId] = useState("")
+  const [id, setId] = useState("");
   console.log(data);
-  const [updateComplaintLogStatus,isLoading] = useUpdateComplaintLogStatusForSubordinateMutation({})
+  const [updateComplaintLogStatus, isLoading] =
+    useUpdateComplaintLogStatusForSubordinateMutation({});
 
   const handleAccept = async (id: string) => {
     modals.openConfirmModal({
@@ -42,81 +57,82 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
       confirmProps: { color: "green" },
       closeOnConfirm: true,
       onConfirm: async () => {
-        // delete from the db
-        const complaintLogStatus : UpdateComplaintLogStatusForSubordinate = {
-          complaintLogId:id,
-          status:"progressing"
+        const complaintLogStatus: UpdateComplaintLogStatusForSubordinate = {
+          complaintLogId: id,
+          status: "progressing",
         };
-        await updateComplaintLogStatus(complaintLogStatus)
-        refetchComplaintLogs()
+        await updateComplaintLogStatus(complaintLogStatus);
+        refetchComplaintLogs();
         return;
       },
     });
   };
 
   const columns: Array<Column<Data>> = [
-      {
-        Header: "Title",
-        accessor: "title",
-        Cell: ({ value }) => (
-          <div className="text-sm font-medium text-gray-900">{value}</div>
-        ),
+    {
+      Header: "Title",
+      accessor: "title",
+      Cell: ({ value }) => (
+        <div className="text-sm font-medium text-gray-900">{value}</div>
+      ),
+    },
+    {
+      Header: "Priority",
+      accessor: "priority",
+      Cell: ({ value }) => {
+        const statusClass =
+          value.toLocaleLowerCase() === "high"
+            ? "bg-red-200 text-red-800"
+            : value === "medium"
+              ? "bg-blue-200 text-blue-800"
+              : "bg-gray-200 text-gray-800";
+        return (
+          <span
+            className={`py-1 px-5 text-center text-xs leading-5 font-semibold rounded-full ${statusClass}`}
+          >
+            {value}
+          </span>
+        );
       },
-      {
-        Header: "Priority",
-        accessor: "priority",
-        Cell: ({ value }) => {
-          const statusClass =
-            value.toLocaleLowerCase() === "high"
-              ? "bg-red-200 text-red-800"
-              : value === "medium"
-                ? "bg-blue-200 text-blue-800"
-                : "bg-gray-200 text-gray-800";
-          return (
-            <span
-              className={`py-1 px-5 text-center text-xs leading-5 font-semibold rounded-full ${statusClass}`}
-            >
-              {value}
-            </span>
-          );
-        },
-      },
-      {
-        Header: "Created Date",
-        accessor: "createdAt",
-      },
-      {
-        Header: "Action",
-        accessor:'id',
-        Cell: ({ value }) => {
-          console.log(value)
-          
-          return (
+    },
+    {
+      Header: "Created Date",
+      accessor: "createdAt",
+    },
+    {
+      Header: "Action",
+      accessor: "id",
+      Cell: ({ value }) => {
+        console.log(value);
+
+        return (
           <div className="flex space-x-4">
-            <ActionIcon variant="light"
-            onClick={()=>{
-              setId(value)
-            }}
+            <ActionIcon
+              variant="light"
+              onClick={() => {
+                setId(value);
+                openViewModal();
+              }}
               className="text-gray-500 hover:text-gray-700"
             >
               <IconEye className="w-5 h-5" />
             </ActionIcon>
             <ActionIcon variant="light">
-            <Link
-              href={`/subordinate/complaint-log/${value}`}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <IconEdit className="w-5 h-5" />
-            </Link>
+              <Link
+                href={`/subordinate/complaint-log/${value}`}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <IconEdit className="w-5 h-5" />
+              </Link>
             </ActionIcon>
             <ActionIcon variant="light" onClick={() => handleAccept(value)}>
-            
               <IconSquareCheck color="green" className="w-5 h-5" />
             </ActionIcon>
           </div>
-        )}
+        );
       },
-    ]
+    },
+  ];
 
   return (
     <>
@@ -171,8 +187,21 @@ const RecentComplaints = ({ data, refetchComplaintLogs }: { data: Data[], refetc
           <Text className="text-xl">Complaint Logs</Text>
         </Box>
 
-        <DataTable columns={columns} data={data} pageSize={5} />
-        <ViewComplaintLogById id = {id} openViewModal={openViewModal} closeViewModal= {closeViewModal} isViewModalOpened = {isViewModalOpened}/>
+        <DataTable
+          columns={columns}
+          data={data}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          setPageSize={setPageSize}
+          setPageNumber={setPageNumber}
+        />
+        <ViewComplaintLogById
+          id={id}
+          openViewModal={openViewModal}
+          closeViewModal={closeViewModal}
+          isViewModalOpened={isViewModalOpened}
+        />
       </Box>
     </>
   );

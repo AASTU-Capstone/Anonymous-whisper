@@ -1,8 +1,10 @@
 "use client";
 import { Box, Paper, SimpleGrid, Text } from "@mantine/core";
-import RecentComplaints from "./table";
+import RecentComplaintsLogBody from "./table";
 import { useGetComplaintLogStatisticsQuery,useGetCorruptionTrendStatisticsQuery } from "@/lib/redux/features/statistics";
-import { useGetAllComplaintsForAdminQuery } from "@/lib/redux/features/admin";
+import { useGetComplaintLogToUpdateForManagerQuery } from "@/lib/redux/features/manager";
+import { GetComplaintLogToUpdateForManagerResponse } from "@/types";
+import { useState, useEffect } from "react";
 import jwt from "jsonwebtoken"
 import BarGraph from "@/shared/bargraph";
 export interface Data {
@@ -10,6 +12,7 @@ export interface Data {
   title: string;
   category: string;
   status: string;
+  priority:string;
   tags: string;
   createdAt: string;
 }
@@ -17,6 +20,9 @@ export interface Data {
 
 
 const Dashboard = () => {
+  
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const token = decodeURIComponent(typeof window !== "undefined" ? document.cookie : "")
     .split(";")
     .find((c) => c.trim().startsWith("token="))
@@ -28,6 +34,28 @@ const Dashboard = () => {
     isLoading,
     isSuccess,
   } = useGetComplaintLogStatisticsQuery({subordinateId:"", managerId:managerId});
+
+  const {
+    data: complaintLogResponse,
+    isLoading: complaintLogLoading,
+    isSuccess: complaintLogSuccess,
+    refetch,
+  } = useGetComplaintLogToUpdateForManagerQuery({
+    pageNumber,
+    pageSize
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [pageNumber, pageSize, refetch]);
+
+  const complaintLogs =
+  complaintLogResponse?.data?.map((item: GetComplaintLogToUpdateForManagerResponse) => {
+      return {
+        ...item,
+      };
+    }) || [];
+  const totalCount = 5;
 
   const {data:corruptionResponse, isLoading:corruptionLoading, isSuccess:corruptionSuccess} = useGetCorruptionTrendStatisticsQuery({})
   const complaintData = res?.data;
@@ -76,6 +104,15 @@ const Dashboard = () => {
         <h1 className="text-2xl">Corruption Trend</h1>
       </Box>
       <BarGraph data={bardata}></BarGraph>
+      <RecentComplaintsLogBody
+        data={complaintLogs}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={pageNumber}
+        setPageSize={setPageSize}
+        setPageNumber={setPageNumber}
+        refetchComplaintLogs={refetch}
+      />
     </Box>
   );
 };

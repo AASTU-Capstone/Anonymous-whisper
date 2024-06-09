@@ -20,7 +20,23 @@ import {
 import { Data } from "./page";
 import { useDisclosure } from "@mantine/hooks";
 
-const AssignComplaintTable = ({ data }: { data: Data[] }) => {
+const AssignComplaintTable = ({
+  data,
+  totalCount,
+  pageSize,
+  currentPage,
+  setPageSize,
+  setPageNumber,
+  refetchComplaints,
+}: {
+  data: Data[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
+  refetchComplaints: () => void;
+}) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedManager, setSelectedManager] = useState<string | null>(null);
   const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(
@@ -47,6 +63,7 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
       };
       await assignManager(assignData);
       close();
+      refetchComplaints();
     }
   };
 
@@ -67,10 +84,10 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
             value === "Resolved"
               ? "bg-green-200 text-green-800"
               : value === "Inprogress"
-                ? "bg-blue-200 text-blue-800"
-                : value === "Rejected"
-                  ? "bg-red-200 text-red-800"
-                  : "bg-gray-200 text-gray-800";
+              ? "bg-blue-200 text-blue-800"
+              : value === "Rejected"
+              ? "bg-red-200 text-red-800"
+              : "bg-gray-200 text-gray-800";
           return (
             <span
               className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}`}
@@ -121,13 +138,13 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
           />
           <Select
             placeholder="Priority"
-            data={["High", "Medium", "Low"]}
+            data={["high", "medium", "low"]}
             value={priority}
             onChange={(value) => setPriority(value)}
           />
           <Select
             placeholder="Select Manager"
-            data={managers.map((manager) => ({
+            data={managers?.map((manager) => ({
               value: manager.id,
               label: manager.name,
             }))}
@@ -149,7 +166,15 @@ const AssignComplaintTable = ({ data }: { data: Data[] }) => {
           <Text className="text-xl">My Complaints</Text>
         </Box>
 
-        <DataTable columns={columns} data={data} pageSize={10} />
+        <DataTable
+          columns={columns}
+          data={data}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          setPageSize={setPageSize}
+          setPageNumber={setPageNumber}
+        />
       </Box>
     </>
   );

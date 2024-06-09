@@ -5,12 +5,16 @@ import {
   DeleteSubordinateInput,
 } from "@/types";
 import baseApi from "./baseApi";
+import { url } from 'inspector';
 
 const managerApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get All Subordinates
-    GetSubordinates: builder.query({
-      query: () => `/Manager/GetSubordinates`,
+    GetSubordinates: builder.query<any,{pageNumber:any,pageSize:any}>({
+      query: ({pageNumber, pageSize}) => ({
+        url:`/Manager/GetSubordinates?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        method:"GET"
+      })
     }),
 
     GetManagerProfile : builder.query({
@@ -27,13 +31,19 @@ const managerApi = baseApi.injectEndpoints({
     }),
 
     // Get Complaint Log To Assign For Manager
-    GetComplaintLogToAssignForManager: builder.query({
-      query: () => `/Manager/GetComplaintLogToAssign`,
+    GetComplaintLogToAssignForManager: builder.query<any,{pageNumber:any,pageSize:any}>({
+      query: ({pageNumber, pageSize}) => ({
+        url: `/Manager/GetComplaintLogToAssign?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        methdo:"GET"
+      })
     }),
 
     // Get Complaint Log To Update For Manager
-    GetComplaintLogToUpdateForManager: builder.query({
-      query: () => `/Manager/GetComplaintLogToUpdate`,
+    GetComplaintLogToUpdateForManager: builder.query<any,{pageNumber:any,pageSize:any}>({
+      query: ({pageNumber, pageSize}) => ({
+        url: `/Manager/GetComplaintLogToUpdate?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        method:"GET"
+      })
     }),
 
     // Assign Subordinate

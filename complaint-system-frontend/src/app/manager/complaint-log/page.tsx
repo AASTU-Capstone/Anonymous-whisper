@@ -3,15 +3,25 @@ import { Box } from "@mantine/core";
 import ComplaintsLogBody from "./table";
 import { useGetComplaintLogToUpdateForManagerQuery } from "@/lib/redux/features/manager";
 import { GetComplaintLogToUpdateForManagerResponse } from "@/types";
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 const ComplaintsLog = () => {
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
   const {
     data: res,
     isLoading,
     isSuccess,
     refetch,
-  } = useGetComplaintLogToUpdateForManagerQuery({});
+  } = useGetComplaintLogToUpdateForManagerQuery({
+    pageNumber,
+    pageSize
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [pageNumber, pageSize, refetch]);
 
   const data =
     res?.data?.map((item: GetComplaintLogToUpdateForManagerResponse) => {
@@ -19,10 +29,20 @@ const ComplaintsLog = () => {
         ...item,
       };
     }) || [];
-  console.log(data)
+
+  const totalCount = res?.totalCount || 0;
+
   return (
     <Box className="w-full bg-primary-background">
-      <ComplaintsLogBody data={data} refetchComplaintLogs={refetch} />
+      <ComplaintsLogBody
+        data={data}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        currentPage={pageNumber}
+        setPageSize={setPageSize}
+        setPageNumber={setPageNumber}
+        refetchComplaintLogs={refetch}
+      />
     </Box>
   );
 };

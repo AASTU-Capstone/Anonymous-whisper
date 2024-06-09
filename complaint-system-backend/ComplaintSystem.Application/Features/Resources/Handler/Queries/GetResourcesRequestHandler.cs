@@ -23,14 +23,17 @@ public class GetResourcesRequestHandler : IRequestHandler<GetResourcesRequest, P
     }
     public async Task<PaginatedResponseClass> Handle(GetResourcesRequest request, CancellationToken cancellationToken)
     {
-        var resources = await _resourceRepository.GetAllAsync();
+        var resources = await _resourceRepository.GetAllResources(request.PaginationDto);
+        var totalCount = await _resourceRepository.GetResourcesCount();
         var getResources = _mapper.Map<List<GetResourcesDto>>(resources);
         PaginatedResponseClass response = new PaginatedResponseClass
         {
             Data = getResources,
             StatusCode = 200,
             Success = true,
-            TotalCount = resources.Count(),
+            TotalCount = totalCount,
+            PageNumber = request.PaginationDto.PageNumber,
+            PageSize = request.PaginationDto.PageSize,
         };
 
         return response;
