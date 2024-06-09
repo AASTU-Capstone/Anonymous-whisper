@@ -1,8 +1,11 @@
 using AutoMapper;
 using ComplaintSystem.Application.DTOs.ManagerDto.Validators;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.Features.Managers.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
+using ComplaintSystem.Domain.Entities;
 using MediatR;
 
 namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
@@ -10,14 +13,26 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
     public class UpdateManagerCommandHandler : IRequestHandler<UpdateManagerCommand, BaseResponseClass>
     {
         private readonly IManagerRepository _managerRepository;
+        private readonly IAdminRepository _adminRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepository;
 
-        public UpdateManagerCommandHandler(IManagerRepository managerRepository, IMapper mapper, IUserRepository userRepository)
+        public UpdateManagerCommandHandler(
+            IManagerRepository managerRepository,
+            IMapper mapper,
+            IUserRepository userRepository,
+            IAdminRepository adminRepository,
+            INotificationService notificationService,
+            INotificationRepository notificationRepository)
         {
             _managerRepository = managerRepository;
             _mapper = mapper;
             _userRepository = userRepository;
+            _adminRepository = adminRepository;
+            _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<BaseResponseClass> Handle(UpdateManagerCommand request, CancellationToken cancellationToken)
@@ -34,8 +49,9 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
             }
             else
             {
-                var user = await _userRepository.GetByEmail(request.UpdateManagerDto.Email);
+                var user = await _userRepository.GetByEmail(request.UpdateManagerDto.Email!);
                 var manager = await _managerRepository.GetAsync(request.UpdateManagerDto.Id);
+                var admin = await _adminRepository.GetAsync(request.AdminId);
                 var Prev_user = await _userRepository.GetAsync(manager.UserEntityId);
 
                 if (Prev_user.Id != user.Id)
@@ -53,6 +69,17 @@ namespace ComplaintSystem.Application.Features.Managers.Handlers.Commands
                 response.StatusCode = 204;
                 response.Success = true;
                 response.Message = "Manager updated successfully";
+
+                var notify = new CreateNotificationDto
+                {
+                    Sender = admin.Name!,
+                    Message = $"Promoted you to {manager.Role} Manager.",
+                    RecieverId = user.Id,
+                };
+
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), Notification);
             }
 
             return response;

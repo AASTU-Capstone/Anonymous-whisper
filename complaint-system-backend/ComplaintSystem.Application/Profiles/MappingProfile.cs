@@ -8,6 +8,7 @@ using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.DTOs.ComplaintDto;
 using ComplaintSystem.Application.DTOs.CorruptionTrendDto;
 using ComplaintSystem.Application.DTOs.ResourceDto;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 
 
 namespace ComplaintSystem.Application.Profiles
@@ -55,6 +56,10 @@ namespace ComplaintSystem.Application.Profiles
             CreateMap<CreateResourceDto, Resource>().ReverseMap();
             CreateMap<GetResourceDto,  Resource>().ReverseMap();
             CreateMap<GetResourcesDto, Resource>().ReverseMap();
+
+            //Notification
+            CreateMap<CreateNotificationDto, NotificationEntity>().ReverseMap();
+            CreateMap<GetNotificationDto, NotificationEntity>().ReverseMap();
 
         }
     }

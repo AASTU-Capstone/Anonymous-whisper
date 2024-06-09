@@ -1,6 +1,9 @@
-﻿using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
+﻿using AutoMapper;
+using ComplaintSystem.Application.DTOs.ComplaintLogDto.Validators;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.Features.ComplaintLogs.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
@@ -18,28 +21,39 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
     private readonly IAdminRepository _adminRepository;
     private readonly IManagerRepository _managerRepository;
     private readonly ISubordinateRepository _subordinateRepository;
+    private readonly INotificationService _notificationService;
+    private readonly INotificationRepository _notificationRepository;
+    private readonly IMapper _mapper;
+
     public UpdateComplaintLogStatusForSubordinateCommandHandler(
         IComplaintLogRepository complaintLogRepository,
         ISubordinateRepository subordinateRepository,
         IManagerRepository managerRepository,
-        IAdminRepository adminRepository)
+        IAdminRepository adminRepository,
+        INotificationService notificationService,
+        INotificationRepository notificationRepository,
+        IMapper mapper)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
         _managerRepository = managerRepository;
         _adminRepository = adminRepository;
+        _notificationService = notificationService;
+        _notificationRepository = notificationRepository;
+        _mapper = mapper;
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogStatusForSubordinateCommand request, CancellationToken cancellationToken)
     {
-        var validator = new UpdateComplaintLogStatusDtoValidator (_complaintLogRepository,_subordinateRepository,_managerRepository,_adminRepository);
+        var validator = new UpdateComplaintLogStatusDtoValidator(_complaintLogRepository, _subordinateRepository, _managerRepository, _adminRepository);
         var validated = await validator.ValidateAsync(request.ComplaintLogStatus, cancellationToken);
         BaseResponseClass response;
-        if(validated.IsValid)
+        if (validated.IsValid)
         {
             var subordinate = await _subordinateRepository.GetSubordinateByUserId(request.ComplaintLogStatus.StatusChangerId);
-            var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplainLogId);
+            var complaintLog = await _complaintLogRepository.GetAsync(request.ComplaintLogStatus.ComplaintLogId);
+            var manager = await _managerRepository.GetAsync(complaintLog.ManagerId);
 
-            if(subordinate.Id == complaintLog.SubordinateId)
+            if (subordinate.Id == complaintLog.SubordinateId)
             {
                 complaintLog.Status = request.ComplaintLogStatus.Status;
                 await _complaintLogRepository.Update(complaintLog);
@@ -50,6 +64,19 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                     Message = "Status Updated Successfully",
                     Id = complaintLog.Id,
                 };
+
+                // send notification to the 
+                var notify = new CreateNotificationDto
+                {
+                    Sender = subordinate.Name!,
+                    Message = $"Submited a report for a complaint log '{complaintLog.Title}'.",
+                    RecieverId = manager.Id,
+                };
+
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+
+                await _notificationService.SendNotificationAsync(manager.Id.ToString(), Notification);
 
             }
             else

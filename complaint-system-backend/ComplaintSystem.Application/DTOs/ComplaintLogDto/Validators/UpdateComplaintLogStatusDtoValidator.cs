@@ -35,7 +35,7 @@ public class UpdateComplaintLogStatusDtoValidator:AbstractValidator<UpdateCompla
         _managerRepository = managerRepository;
         _adminRepository = adminRepository;
 
-        RuleFor(c => c.ComplainLogId).NotEmpty().NotNull().WithMessage("{PropertyName} can not be empty").MustAsync(async (id, token) =>
+        RuleFor(c => c.ComplaintLogId).NotEmpty().NotNull().WithMessage("{PropertyName} can not be empty").MustAsync(async (id, token) =>
         {
             var complaintLog = await _complaintLogRepository.GetAsync(id);
             return complaintLog != null && complaintLog.Report != null;

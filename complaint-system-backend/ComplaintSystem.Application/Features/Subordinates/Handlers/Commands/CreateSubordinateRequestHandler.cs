@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 using ComplaintSystem.Application.DTOs.SubordinateDto;
 using ComplaintSystem.Application.DTOs.SubordinateDto.Validators;
 using ComplaintSystem.Application.Features.Subordinates.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Responses;
 using ComplaintSystem.Domain.Entities;
 using MediatR;
@@ -18,14 +20,24 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
         private readonly ISubordinateRepository _subordinateRepository;
         private readonly IUserRepository _userRepository;
         private readonly IManagerRepository _managerRepository;
+        private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
+        private readonly INotificationRepository _notificationRepository;
 
-        public CreateSubordinateRequestHandler(ISubordinateRepository subordinateRepository, IMapper mapper, IUserRepository userRepository, IManagerRepository managerRepository)
+        public CreateSubordinateRequestHandler(
+            ISubordinateRepository subordinateRepository,
+            IMapper mapper,
+            IUserRepository userRepository,
+            IManagerRepository managerRepository,
+            INotificationService notificationService,
+            INotificationRepository notificationRepository)
         {
             _subordinateRepository = subordinateRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _managerRepository = managerRepository;
+            _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<BaseResponseClass> Handle(CreateSubordinateRequest request, CancellationToken cancellationToken)
@@ -41,10 +53,10 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 response.Success = false;
                 response.Error = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             }
-            else if(manager == null)
+            else if (manager == null)
             {
                 response.Error = ["manager does not exist"];
-                response.Success = false ;
+                response.Success = false;
                 response.StatusCode = 400;
                 response.Message = "Create Subordinate Failed";
             }
@@ -70,6 +82,19 @@ namespace ComplaintSystem.Application.Features.Subordinates.Handlers.Commands
                 response.StatusCode = 201;
                 response.Success = true;
                 response.Message = "Subordinate created successfully";
+
+
+                // notification
+                var notify = new CreateNotificationDto
+                {
+                    Sender = manager.Name!,
+                    Message = $"Promoted you to Subordinate.",
+                    RecieverId = user.Id,
+                };
+
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(user.Id.ToString(), Notification);
 
             }
 

@@ -3,6 +3,7 @@ using ComplaintSystem.Application.DTOs.ComplaintDto;
 using ComplaintSystem.Application.DTOs.ComplaintDto.Validators;
 using ComplaintSystem.Application.Features.Complaints.Requests.Commands;
 using ComplaintSystem.Application.Persistence.Contracts;
+using ComplaintSystem.Application.Persistence.Contracts.Notification;
 using ComplaintSystem.Application.Persistence.Contracts.APIs;
 using ComplaintSystem.Application.Persistence.Contracts.Cloudinary;
 using ComplaintSystem.Application.Responses;
@@ -10,6 +11,7 @@ using ComplaintSystem.Domain.Entities;
 using MediatR;
 using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
+using ComplaintSystem.Application.DTOs.NotificationDto;
 
 namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
 {
@@ -17,22 +19,31 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
     {
         private readonly IComplaintRepository _complaintRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IAdminRepository _adminRepository;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IImaggaService _imaggaService;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepository;
 
         public CreateComplaintCommandHandler(
-            IComplaintRepository complaintRepository, 
-            IMapper mapper, 
+            IComplaintRepository complaintRepository,
+            IAdminRepository adminRepository,
+            IMapper mapper,
             IUserRepository userRepository,
             ICloudinaryService cloudinaryService,
-            IImaggaService imaggaService)
+            IImaggaService imaggaService,
+            INotificationService notificationService,
+            INotificationRepository notificationRepository)
         {
             _complaintRepository = complaintRepository;
+            _adminRepository = adminRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _cloudinaryService = cloudinaryService;
             _imaggaService = imaggaService;
+            _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<BaseResponseClass> Handle(CreateComplaintCommand request, CancellationToken cancellationToken)
@@ -48,7 +59,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 response.Success = false;
                 response.Error = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             }
-            else if(user == null)
+            else if (user == null)
             {
                 response.StatusCode = 404;
                 response.Success = false;
@@ -62,7 +73,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 List<string> documents = new List<string>();
                 List<string> audios = new List<string>();
                 HashSet<string> tags = new HashSet<string>();
-                if (request.CreateComplaintDto.ImageEvidence!= null)
+                if (request.CreateComplaintDto.ImageEvidence != null)
                 {
                     foreach (var image in request.CreateComplaintDto.ImageEvidence)
                     {
@@ -73,7 +84,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                     }
                 }
 
-                if(request.CreateComplaintDto.Videos!= null)
+                if (request.CreateComplaintDto.Videos != null)
                 {
                     foreach (var video in request.CreateComplaintDto.Videos)
                     {
@@ -82,8 +93,8 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                     }
 
                 }
-                
-                if(request.CreateComplaintDto.Documents!= null)
+
+                if (request.CreateComplaintDto.Documents != null)
                 {
                     foreach (var doc in request.CreateComplaintDto.Documents)
                     {
@@ -91,8 +102,8 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                         documents.Add(currDoc.Link);
                     }
                 }
-                
-                if(request.CreateComplaintDto.SoundTrack!= null)
+
+                if (request.CreateComplaintDto.SoundTrack != null)
                 {
                     foreach (var audio in request.CreateComplaintDto.SoundTrack)
                     {
@@ -124,6 +135,20 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                 response.Success = true;
                 response.Message = "Complaint created successfully";
 
+                var admin = await _adminRepository.GetAllAsync();
+                var Admin = admin.FirstOrDefault();
+
+
+                var notify = new CreateNotificationDto
+                {
+                    Sender = "Anonymous User",
+                    Message = $"Submitted a complaint '{complaint.Title}'.",
+                    RecieverId = Admin!.Id,
+                };
+
+                var Notification = _mapper.Map<NotificationEntity>(notify);
+                await _notificationRepository.Add(Notification);
+                await _notificationService.SendNotificationAsync(Admin!.Id.ToString(), Notification);
             }
 
             return response;

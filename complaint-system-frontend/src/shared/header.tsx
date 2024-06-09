@@ -1,20 +1,32 @@
 "use client";
-import { Avatar, Box, Divider, Flex, Menu, Text } from "@mantine/core";
-import { IconBell, IconBellPlus, IconChevronDown } from "@tabler/icons-react";
+import { ActionIcon, Avatar, Box, Divider, Flex, Menu, Text } from "@mantine/core";
+import Badge from '@mui/material/Badge';
+import {IconBell, IconChevronDown} from "@tabler/icons-react";
 import { useGetAdminProfileQuery } from "@/lib/redux/features/admin";
 import { useGetManagerProfileQuery } from "@/lib/redux/features/manager";
 import { useGetSubordinateProfileQuery } from "@/lib/redux/features/subordinate";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import jwt from "jsonwebtoken";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
+import { useWebSocket } from "@/providers/WebSocketContext";
+import NotificationArea from "@/shared/notificationArea";
+import { useMarkNotificationsMutation, useGetUnreadNotificationsQuery } from "@/lib/redux/features/notification";
+
+interface Notification {
+  Sender: string;
+  Message: string;
+  isRead: boolean;
+  RecieverId: string;
+  CreatedAt: string;
+}
 
 const notify = () => {
   toast.success("Logout Successful", {
     position: "bottom-center",
-    autoClose: 3000, // Set the timeout to 2 seconds (2000 milliseconds)
+    autoClose: 3000,
     hideProgressBar: true,
     closeOnClick: true,
     pauseOnHover: true,
@@ -31,13 +43,20 @@ const notify = () => {
 
 const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
+  const { messages, logout } = useWebSocket();
+  const [markNotifications] = useMarkNotificationsMutation();
+  const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>([]);
+
   const handleSignOut = () => {
     logoutHandler();
+    logout();
     notify();
   };
 
   const notification = true;
-  const token = decodeURIComponent(typeof window !== "undefined" ? document.cookie : "")
+  const token = decodeURIComponent(
+    typeof window !== "undefined" ? document.cookie : ""
+  )
     .split(";")
     .find((c) => c.trim().startsWith("token="))
     ?.split("=")[1];
@@ -63,6 +82,57 @@ const Header = ({ role }: { role: string }) => {
     firstName = username?.split(" ")[0];
   }
 
+  // notification setup
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { data: res, isLoading, isSuccess, refetch } = useGetUnreadNotificationsQuery({});
+  
+  const UnreadNotification = res?.data?.map((item: Notification) => ({
+      ...item,
+  })) || [];
+  
+  useEffect(() => {
+    if (UnreadNotification.length > 0) {
+      setNotifications(UnreadNotification);
+    }
+    if (messages.length > 0) {
+      console.log('received', messages);
+      const sortedMessages = messages.sort((a, b) => new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime());
+      setNotifications(sortedMessages);
+    }
+  }, [messages]);
+
+  const toggleNotifications = () => {
+    setShowNotifications((prev) => !prev);
+  };
+
+  const handleNotificationRead = (ids: string[]) => {
+    setUnreadNotificationIds(ids);
+  };
+  
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+      setShowNotifications(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+      if (unreadNotificationIds.length > 0) {
+        markNotifications({ ids: unreadNotificationIds });
+        setUnreadNotificationIds([]);     
+      }
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifications, unreadNotificationIds]);
+
   return (
     <header>
       <Flex className="justify-between w-full">
@@ -72,10 +142,25 @@ const Header = ({ role }: { role: string }) => {
             Have a nice day
           </Text>
         </Box>
-        <Flex className="items-center gap-3 justify-center">
-          <Box className="relative">
-            {notification ? <IconBellPlus /> : <IconBell />}
-          </Box>
+          <Flex className="items-center gap-3 justify-center relative" ref={notificationRef}>
+            <ActionIcon
+              onClick={toggleNotifications}
+              size="lg"
+              style={{
+                color: "#757575",
+                backgroundColor: "#fff",
+                borderRadius: "50%",
+                position: "relative"
+              }}
+            >
+              <IconBell />
+            </ActionIcon>
+            {!showNotifications && notifications.some((notification) => !notification.isRead) && (
+            <Badge badgeContent={notifications.filter((notification) => !notification.isRead).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
+              {/* Place content here if needed */}
+            </Badge>
+            )}
+            {showNotifications && <NotificationArea notifications={notifications} onNotificationRead={handleNotificationRead} />}
           <Divider orientation="vertical" />
           <Flex className="items-center gap-3 justify-center">
             <Avatar />
@@ -101,7 +186,6 @@ const Header = ({ role }: { role: string }) => {
                     Log out
                   </Text>
                 </Menu.Item>
-                
               </Menu.Dropdown>
             </Menu>
           </Flex>

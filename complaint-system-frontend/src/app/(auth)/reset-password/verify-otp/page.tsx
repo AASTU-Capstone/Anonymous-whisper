@@ -52,7 +52,7 @@ const MyComponent = () => {
     if (res && "data" in res) {
       if (res.data.success) {
         console.log("verified account");
-        router.push(`/auth/reset-password/change`);
+        router.push(`/reset-password/change`);
       }
     }
   };

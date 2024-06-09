@@ -112,7 +112,7 @@ namespace ComplaintSystem.API.Controllers
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
             UpdateComplaintLogStatusDto updateComplaintLogStatusDto = new UpdateComplaintLogStatusDto
             {
-                ComplainLogId = updateComplaintLogStatusControllerDto.ComplainLogId,
+                ComplaintLogId = updateComplaintLogStatusControllerDto.ComplaintLogId,
                 StatusChangerId = userId,
                 Status = updateComplaintLogStatusControllerDto.Status,
                 Role = "manager"
@@ -127,7 +127,8 @@ namespace ComplaintSystem.API.Controllers
         [Route("DeleteSubordinate")]
         public async Task<ActionResult<BaseResponseClass>> DeleteSubordinate(DeleteSubordinateDto deleteSubordinateDto)
         {
-            var command = new DeleteSubordinateCommand { DeleteSubordinateDto = deleteSubordinateDto };
+            var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
+            var command = new DeleteSubordinateCommand { DeleteSubordinateDto = deleteSubordinateDto, UserId = userId };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }

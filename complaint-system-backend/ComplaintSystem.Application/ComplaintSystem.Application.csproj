@@ -24,6 +24,8 @@
   <ItemGroup>
     <Folder Include="Features\ChatBots\Handlers\Commands\" />
     <Folder Include="Features\ChatBots\Requests\Commands\" />
+    <Folder Include="Features\Notifications\Handler\Queries\" />
+    <Folder Include="Features\Notifications\Request\Queries\" />
   </ItemGroup>
 
 </Project>

@@ -65,7 +65,7 @@ namespace ComplaintSystem.API.Controllers
         }
         [HttpGet]
         [Route("GetRecievedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetRecievedComplaints([FromQuery] PaginationDto PaginationDto)
+        public async Task<ActionResult<PaginatedResponseClass>> GetRecievedComplaints([FromQuery] PaginationDto PaginationDto)
         {
             var request = new GetRecievedComplaintForAdminRequest { Status = "recieved", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
@@ -74,7 +74,7 @@ namespace ComplaintSystem.API.Controllers
 
         [HttpGet]
         [Route("GetAcceptedComplaints")]
-        public async Task<ActionResult<BaseResponseClass>> GetAcceptedComplaints([FromQuery] PaginationDto PaginationDto)
+        public async Task<ActionResult<PaginatedResponseClass>> GetAcceptedComplaints([FromQuery] PaginationDto PaginationDto)
         {
             var request = new GetRecievedComplaintForAdminRequest { Status = "accepted", PaginationDto = PaginationDto };
             var response = await _mediator.Send(request);
@@ -125,7 +125,8 @@ namespace ComplaintSystem.API.Controllers
         [Route("UpdateManager")]
         public async Task<ActionResult<BaseResponseClass>> UpdateManager(UpdateManagerDto updateManagerDto)
         {
-            var command = new UpdateManagerCommand { UpdateManagerDto = updateManagerDto };
+            var adminId = new Guid(_contextAccessor.HttpContext.User!.FindFirstValue("userid"));
+            var command = new UpdateManagerCommand { UpdateManagerDto = updateManagerDto, AdminId = adminId };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }
@@ -156,7 +157,7 @@ namespace ComplaintSystem.API.Controllers
             var userId = new Guid(_contextAccessor.HttpContext.User.FindFirstValue("userId"));
             UpdateComplaintLogStatusDto updateComplaintLogStatusDto = new UpdateComplaintLogStatusDto
             {
-                ComplainLogId = updateComplaintLogStatusControllerDto.ComplainLogId,
+                ComplaintLogId = updateComplaintLogStatusControllerDto.ComplaintLogId,
                 StatusChangerId = userId,
                 Status = updateComplaintLogStatusControllerDto.Status,
                 Role = "admin"
