@@ -23,6 +23,7 @@ namespace ComplaintSystem.Application.Persistence.Contracts
         #region Count Methods
         public Task<int> GetUserAcceptedComplaintsCount(Guid UserId);
         public Task<int> GetUserRejectedComplaintsCount(Guid UserId);
+        public Task<int> GetAllComplaintsForAdminCount();
         public Task<int> GetAllUserComplaintsCount(Guid UserId);
         public Task<int> GetComplaintsForAdminByStatusCount(string status);
         public Task<int> GetMatchingComplaintsCount(string Keyword, string category);

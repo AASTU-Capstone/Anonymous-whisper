@@ -24,13 +24,14 @@ public class GetAllComplaintsRequestHandler : IRequestHandler<GetAllComplaintsRe
     {
         var complaints = await _complaintRepository.GetAllComplaintsForAdmin(request.PaginationDto);
         var viewComplaints = _mapper.Map<List<ViewComplaintDto>>(complaints);
+        var totalCount = await _complaintRepository.GetAllComplaintsForAdminCount()
         PaginatedResponseClass response = new PaginatedResponseClass
         {
             Data = viewComplaints,
             StatusCode = 200,
             Success = true,
             Message = "All Complaints Fetched Successfully",
-            TotalCount = complaints.Count(),
+            TotalCount = totalCount,
             PageNumber = request.PaginationDto.PageNumber,
             PageSize = request.PaginationDto.PageSize
         };

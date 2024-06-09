@@ -81,9 +81,14 @@ namespace ComplaintSystem.Persistence.Repositories
 
 
         // Get the count of complaints with status recieved
-        public Task<int> GetComplaintsForAdminByStatusCount(string status)
+        public async Task<int> GetComplaintsForAdminByStatusCount(string status)
         {
-            return _complaintSystemAppDbContext.Complaints.CountAsync(c => c.Status.ToLower() == status.ToLower());
+            return await _complaintSystemAppDbContext.Complaints.CountAsync(c => c.Status.ToLower() == status.ToLower());
+        }
+
+        public async Task<int> GetAllComplaintsForAdminCount()
+        {
+            return await _complaintSystemAppDbContext.Complaints.CountAsync();
         }
 
         // Get the count of complaints of a user that are not rejected
