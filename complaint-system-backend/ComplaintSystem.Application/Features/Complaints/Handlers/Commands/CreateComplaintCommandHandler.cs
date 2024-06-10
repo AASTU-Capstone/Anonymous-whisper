@@ -144,7 +144,7 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
                     createdAt = DateTime.Now, 
                     sender = "Anonymous User",
                     message = $"Submitted a complaint '{complaint.Title}'.",
-                    recieverId = Admin!.Id,
+                    recieverId = Admin!.UserEntityId,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);

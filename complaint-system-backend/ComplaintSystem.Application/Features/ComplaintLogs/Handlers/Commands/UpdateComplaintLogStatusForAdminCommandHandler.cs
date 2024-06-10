@@ -103,7 +103,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                     {
                         sender = admin.Name!,
                         message = $"Rejected complaint log '{complaintlog.Title}'. Please review!",
-                        recieverId = subordinate!.Id
+                        recieverId = subordinate!.UserEntityId
                     };
 
                     var Notification = _mapper.Map<NotificationEntity>(notify);
