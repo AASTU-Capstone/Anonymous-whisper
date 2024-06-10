@@ -5,11 +5,11 @@ import { ActionIcon, Box, Button, Flex, Input, Menu, Modal, Text } from "@mantin
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import { IconAdjustmentsHorizontal, IconChevronDown, IconEye, IconSearch, IconSquareCheck, IconSquareX } from "@tabler/icons-react";
-import { use, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
 import { UpdateComplaintStatusInputForAdmin } from "@/types";
-import { useUpdateComplaintStatusForAdminMutation } from "@/lib/redux/features/admin";
+import { useUpdateComplaintStatusForAdminMutation,useSearchComplaintsQuery } from "@/lib/redux/features/admin";
 import ViewComplaintById from "./viewmodal";
 
 const Complaints = ({
@@ -33,17 +33,7 @@ const Complaints = ({
   const [useUpdateComplaintStatus] = useUpdateComplaintStatusForAdminMutation();
   const [id, setId] = useState("");
 
-  //search area
-  const [searchKeyword, setSearchKeyword] = useState("")
-  // const { data: res,isSuccess:searchSuccess, refetch } = useGetChatQuery(searchKeyword, {
-  //   skip: !searchKeyword,
-  // });
-
-  // useEffect(() => {
-  //   if (searchKeyword) {
-  //     refetch();
-  //   }
-  // }, [searchKeyword, refetch]);
+  
 
 
 
@@ -149,52 +139,6 @@ const Complaints = ({
 
   return (
     <>
-      <Flex className="gap-3 items-center">
-        <Input
-          placeholder="Search"
-          radius="md"
-          w={350}
-          leftSection={<IconSearch />}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-        />
-
-        <Button >Search</Button>
-
-        <Menu>
-          <Menu.Target>
-            <Button
-              variant="transparent"
-              className="text-primary-text"
-              rightSection={<IconChevronDown />}
-            >
-              Sort by
-            </Button>
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item>Items</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-        <Menu>
-          <Menu.Target>
-            <Button
-              variant="transparent"
-              className="text-primary-text"
-              rightSection={<IconChevronDown />}
-            >
-              Saved Search
-            </Button>
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item>Items</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-        <IconAdjustmentsHorizontal className="cursor-pointer" />
-      </Flex>
-
-
-
       <Box className="w-full bg-primary-body">
         <Box className="px-2 py-5">
           <Text className="text-xl">Complaints</Text>

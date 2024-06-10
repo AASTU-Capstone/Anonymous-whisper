@@ -43,6 +43,13 @@ const AdminApi = baseApi.injectEndpoints({
       })
     }),
 
+    SearchComplaints: builder.query<any,{keyword:string,category:string,dateOrder:string,pageNumber:any,pageSize:any}>({
+      query:({keyword, category,dateOrder,pageNumber,pageSize})=>({
+        url:`/Admin/SearchComplaints?keyword=${keyword}&category=${category}&dateOrder=${dateOrder}&PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        method:"GET"
+      })
+    }),
+
     GetComplaintByIdForAdmin: builder.query<any, string>({
       query: (complaintId: string) =>
         `/Admin/GetComplaintById?ComplaintID=${complaintId}`,
