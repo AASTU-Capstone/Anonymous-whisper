@@ -100,7 +100,7 @@ const NotificationArea = ({
                 <Box ml="sm" style={{ flex: 1 }}>
                   <Text size="sm">{notification.sender}</Text>
                   <Text size="xs" c="dimmed">
-                    {`${formatDate(notification.createdAt)} minutes ago`}
+                    {`${notification.createdAt} minutes ago`}
                   </Text>
                   <Text size="md" c="dark">
                     {notification.message}
