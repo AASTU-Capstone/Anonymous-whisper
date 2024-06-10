@@ -33,5 +33,14 @@ public class UpdateComplaintDtoValidator : AbstractValidator<UpdateComplaintDto>
                 bool valid = IsStatusType(compl.Status);
                 return valid;
             }).WithMessage("{PropertyName} must be valid");
+        
+        RuleFor(comp => comp.Feedback).Must((compl, token) =>
+        {
+            if (compl.Status.ToLower() == "rejected")
+            {
+                return !string.IsNullOrEmpty(compl.Feedback);
+            }
+            return true;
+        }).WithMessage("{PropertyName} is required when status is rejected");
     }
 }
