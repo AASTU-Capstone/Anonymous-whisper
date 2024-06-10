@@ -68,7 +68,7 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                 // send notification to the 
                 var notify = new CreateNotificationDto
                 {
-                    createdAt = DateTime.Now, 
+                    createdAt = DateTime.Now,
                     sender = subordinate.Name!,
                     message = $"Submited a report for a complaint log '{complaintLog.Title}'.",
                     recieverId = manager.UserEntityId,
@@ -77,7 +77,7 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                 var Notification = _mapper.Map<NotificationEntity>(notify);
                 await _notificationRepository.Add(Notification);
 
-                await _notificationService.SendNotificationAsync(manager.Id.ToString(), Notification);
+                await _notificationService.SendNotificationAsync(manager.UserEntityId.ToString(), Notification);
 
             }
             else

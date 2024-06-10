@@ -88,6 +88,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                 {
                     var notify = new CreateNotificationDto
                     {
+                        createdAt = DateTime.Now,
                         sender = "System",
                         message = $"Your complaint '{complaint.Title}' has been resolved!",
                         recieverId = complaint.UserEntityId,
@@ -101,6 +102,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
                 {
                     var notify = new CreateNotificationDto
                     {
+                        createdAt = DateTime.Now,
                         sender = admin.Name!,
                         message = $"Rejected complaint log '{complaintlog.Title}'. Please review!",
                         recieverId = subordinate!.UserEntityId
@@ -108,7 +110,7 @@ public class UpdateComplaintLogStatusForAdminCommandHandler : IRequestHandler<Up
 
                     var Notification = _mapper.Map<NotificationEntity>(notify);
                     await _notificationRepository.Add(Notification);
-                    await _notificationService.SendNotificationAsync(subordinate!.Id.ToString(), Notification);
+                    await _notificationService.SendNotificationAsync(subordinate!.UserEntityId.ToString(), Notification);
                 }
 
 
