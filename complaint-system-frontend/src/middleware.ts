@@ -28,10 +28,16 @@ export function middleware(request: NextRequest) {
   const referer = request.headers.get("referer");
   if (decodedToken?.typ) {
     const userType = decodedToken.typ;
-    if(path.startsWith("/reset-password")){
+    if(path.startsWith("/reset-password/change")){
       return NextResponse.next()
     }
-    if (!path.startsWith(`/${userType}`)) {
+    else if(path == "/password-updated"){
+      return NextResponse.next()
+    }
+    else if(path.startsWith("/password-updated")){
+      return NextResponse.next()
+    }
+    else if (!path.startsWith(`/${userType}`)) {
       return NextResponse.redirect(new URL(`/${userType}/dashboard`, request.url));
     }
   }
