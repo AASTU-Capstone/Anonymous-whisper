@@ -71,7 +71,7 @@ public class UpdateComplaintLogStatusForSubordinateCommandHandler : IRequestHand
                     createdAt = DateTime.Now, 
                     sender = subordinate.Name!,
                     message = $"Submited a report for a complaint log '{complaintLog.Title}'.",
-                    recieverId = manager.Id,
+                    recieverId = manager.UserEntityId,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);

@@ -88,7 +88,7 @@ public class UpdateComplaintLogStatusForManagerCommandHandler : IRequestHandler<
                     {
                         sender = manager.Name!,
                         message = $"Rejected your report for the complaint log '{complaintLog.Title}'. Please review and resubmit.",
-                        recieverId = subordinate.Id,
+                        recieverId = subordinate.UserEntityId,
                     };
 
                     var Notification = _mapper.Map<NotificationEntity>(notify);
