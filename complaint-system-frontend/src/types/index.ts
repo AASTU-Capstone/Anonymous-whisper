@@ -102,6 +102,7 @@ export interface GetComplaintsForUserResponse {
   status: string;
   createdAt: string;
   category: string;
+  feedback: string | null;
 }
 
 export interface CreateComplaintInput {

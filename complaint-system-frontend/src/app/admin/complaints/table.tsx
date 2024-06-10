@@ -201,6 +201,7 @@ const Complaints = ({
         <Group justify="end">
           <Button
             onClick={handleReject}
+            loading={isRejecting}
             disabled={isRejectDisabled}
             style={{
               backgroundColor: isRejectDisabled ? "white" : "red",
