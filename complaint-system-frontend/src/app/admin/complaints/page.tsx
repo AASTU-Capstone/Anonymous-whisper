@@ -16,19 +16,25 @@ const Page = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(5);
 
-  const { data: res, isLoading, isSuccess, refetch } = useGetRecievedComplaintsForAdminQuery({
+  const {
+    data: res,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useGetRecievedComplaintsForAdminQuery({
     pageNumber,
-    pageSize
+    pageSize,
   });
 
   useEffect(() => {
     refetch();
   }, [pageNumber, pageSize, refetch]);
 
-  const data = res?.data.map((item: any) => ({ ...item, status: "received" })) || [];
+  const data =
+    res?.data.map((item: any) => ({ ...item, status: "received" })) || [];
   const totalCount = res?.totalCount || 0;
-  console.log(pageSize)
-  console.log(totalCount)
+  console.log(pageSize);
+  console.log(totalCount);
   return (
     <Box className="w-full bg-primary-background">
       <Complaints
