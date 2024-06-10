@@ -141,10 +141,10 @@ namespace ComplaintSystem.Application.Features.Complaints.Handlers.Commands
 
                 var notify = new CreateNotificationDto
                 {
-                    createdAt = DateTime.Now, 
+                    createdAt = DateTime.Now,
                     sender = "Anonymous User",
                     message = $"Submitted a complaint '{complaint.Title}'.",
-                    recieverId = Admin!.UserEntityId,
+                    recieverId = Admin!.Id,
                 };
 
                 var Notification = _mapper.Map<NotificationEntity>(notify);
