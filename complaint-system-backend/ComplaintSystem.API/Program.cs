@@ -89,64 +89,9 @@ var app = builder.Build();
 app.UseRouting();
 app.UseWebSockets();
 
-// Top-level route registration for "/notification"
-// app.Map("/notification", async context =>
-// {
-//     if (context.WebSockets.IsWebSocketRequest)
-//     {
-//         var socket = await context.WebSockets.AcceptWebSocketAsync();
-//         var userId = context.Request.Query["userId"];
-//         NotificationService.AddSocket(userId, socket);
-
-//         var buffer = new byte[1024 * 4];
-//         WebSocketReceiveResult result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-//         while (!result.CloseStatus.HasValue)
-//         {
-//             result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-//         }
-
-//         await NotificationService.RemoveSocket(userId);
-//     }
-//     else
-//     {
-//         context.Response.StatusCode = 400;
-//     }
-// });
-
-// app.Run();
-
-// app.UseRouting();
-// app.UseWebSockets();
-
-// app.UseEndpoints(endpoints =>
-// {
-//     endpoints.Map("/notification", async context =>
-//             {
-//                 if (context.WebSockets.IsWebSocketRequest)
-//                 {
-//                     var socket = await context.WebSockets.AcceptWebSocketAsync();
-//                     var userId = context.Request.Query["userId"];
-//                     NotificationService.AddSocket(userId, socket);
-
-//                     var buffer = new byte[1024 * 4];
-//                     var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-//                     while (!result.CloseStatus.HasValue)
-//                     {
-//                         result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-//                     }
-
-//                     await NotificationService.RemoveSocket(userId);
-//                 }
-//                 else
-//                 {
-//                     context.Response.StatusCode = 400;
-//                 }
-//             });
-// });
-
 app.UseSwagger();
 app.UseSwaggerUI();
-//}
+
 app.UseCors("frontend");
 app.UseHttpsRedirection();
 app.UseAuthentication();
