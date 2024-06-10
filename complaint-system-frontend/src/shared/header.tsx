@@ -1,7 +1,15 @@
 "use client";
-import { ActionIcon, Avatar, Box, Divider, Flex, Menu, Text } from "@mantine/core";
-import Badge from '@mui/material/Badge';
-import {IconBell, IconChevronDown} from "@tabler/icons-react";
+import {
+  ActionIcon,
+  Avatar,
+  Box,
+  Divider,
+  Flex,
+  Menu,
+  Text,
+} from "@mantine/core";
+import Badge from "@mui/material/Badge";
+import { IconBell, IconChevronDown } from "@tabler/icons-react";
 import { useGetAdminProfileQuery } from "@/lib/redux/features/admin";
 import { useGetManagerProfileQuery } from "@/lib/redux/features/manager";
 import { useGetSubordinateProfileQuery } from "@/lib/redux/features/subordinate";
@@ -13,7 +21,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
 import { useWebSocket } from "@/providers/WebSocketContext";
 import NotificationArea from "@/shared/notificationArea";
-import { useMarkNotificationsMutation, useGetUnreadNotificationsQuery } from "@/lib/redux/features/notification";
+import {
+  useMarkNotificationsMutation,
+  useGetUnreadNotificationsQuery,
+} from "@/lib/redux/features/notification";
 
 interface Notification {
   id: string;
@@ -46,7 +57,9 @@ const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
   const { messages, logout } = useWebSocket();
   const [markNotifications] = useMarkNotificationsMutation();
-  const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>([]);
+  const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>(
+    []
+  );
 
   const handleSignOut = () => {
     logoutHandler();
@@ -61,7 +74,7 @@ const Header = ({ role }: { role: string }) => {
     .split(";")
     .find((c) => c.trim().startsWith("token="))
     ?.split("=")[1];
-  
+
   const decodedToken: any = jwt.decode(token || "");
   const usernameFromEmail = decodedToken?.useremail?.split("@")[0];
   const usertype = decodedToken?.typ;
@@ -87,12 +100,18 @@ const Header = ({ role }: { role: string }) => {
   // notification setup
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { data: res, isLoading, isSuccess, refetch } = useGetUnreadNotificationsQuery({});
-  
+  const {
+    data: res,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useGetUnreadNotificationsQuery({});
+
   useEffect(() => {
-    const UnreadNotification = res?.data?.map((item: Notification) => ({
-      ...item,
-  })) || [];
+    const UnreadNotification =
+      res?.data?.map((item: Notification) => ({
+        ...item,
+      })) || [];
     if (UnreadNotification.length > 0) {
       setNotifications(UnreadNotification);
     }
@@ -100,8 +119,16 @@ const Header = ({ role }: { role: string }) => {
 
   useEffect(() => {
     if (messages.length > 0) {
-      const sortedMessages = messages.map((item: Notification) => ({...item}));
-      setNotifications((prev) => [...prev, ...sortedMessages].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+      console.log("Received", messages);
+      const sortedMessages = messages.map((item: Notification) => ({
+        ...item,
+      }));
+      setNotifications((prev) =>
+        [...prev, ...sortedMessages].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+      );
     }
   }, [messages]);
 
@@ -112,22 +139,25 @@ const Header = ({ role }: { role: string }) => {
   const handleNotificationRead = (ids: string[]) => {
     setUnreadNotificationIds((prev) => [...prev, ...ids]);
   };
-  
+
   const notificationRef = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
-      setShowNotifications(false);    
+    if (
+      notificationRef.current &&
+      !notificationRef.current.contains(event.target as Node)
+    ) {
+      setShowNotifications(false);
     }
   };
 
   useEffect(() => {
     if (showNotifications) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
       if (unreadNotificationIds.length > 0) {
         markNotifications({ notificationIds: unreadNotificationIds }).unwrap();
-        setUnreadNotificationIds([]);   
+        setUnreadNotificationIds([]);
       }
       document.removeEventListener("mousedown", handleClickOutside);
     }
@@ -145,24 +175,39 @@ const Header = ({ role }: { role: string }) => {
             Have a nice day
           </Text>
         </Box>
-          <Flex className="items-center gap-3 justify-center relative" ref={notificationRef}>
-            <ActionIcon
-              onClick={toggleNotifications}
-              size="lg"
-              style={{
-                color: "#757575",
-                backgroundColor: "#fff",
-                borderRadius: "50%",
-                position: "relative"
-              }}
-            >
-              <IconBell />
-            </ActionIcon>
-            {!showNotifications && notifications.some((notification) => !notification.isRead) && (
-            <Badge badgeContent={notifications.filter((notification) => !notification.isRead).length} color="primary" style={{ position: "relative", top: -12, right: 12 }}>
-            </Badge>
+        <Flex
+          className="items-center gap-3 justify-center relative"
+          ref={notificationRef}
+        >
+          <ActionIcon
+            onClick={toggleNotifications}
+            size="lg"
+            style={{
+              color: "#757575",
+              backgroundColor: "#fff",
+              borderRadius: "50%",
+              position: "relative",
+            }}
+          >
+            <IconBell />
+          </ActionIcon>
+          {!showNotifications &&
+            notifications.some((notification) => !notification.isRead) && (
+              <Badge
+                badgeContent={
+                  notifications.filter((notification) => !notification.isRead)
+                    .length
+                }
+                color="primary"
+                style={{ position: "relative", top: -12, right: 12 }}
+              ></Badge>
             )}
-            {showNotifications && <NotificationArea notifications={notifications} onNotificationRead={handleNotificationRead} />}
+          {showNotifications && (
+            <NotificationArea
+              notifications={notifications}
+              onNotificationRead={handleNotificationRead}
+            />
+          )}
           <Divider orientation="vertical" />
           <Flex className="items-center gap-3 justify-center">
             <Avatar />
@@ -178,15 +223,20 @@ const Header = ({ role }: { role: string }) => {
               </Menu.Target>
 
               <Menu.Dropdown>
-              <Menu.Item component={Link} href="/reset-password/change" className="text-inherit hover:text-white hover:bg-blue-400">
-                  <Text className="">
-                    Reset Password
-                  </Text>
+                <Menu.Item
+                  component={Link}
+                  href="/reset-password/change"
+                  className="text-inherit hover:text-white hover:bg-blue-400"
+                >
+                  <Text className="">Reset Password</Text>
                 </Menu.Item>
-                <Menu.Item component={Link} href="/login" className="text-inherit hover:text-white hover:bg-red-500" onClick={handleSignOut}>
-                  <Text className="">
-                    Log out
-                  </Text>
+                <Menu.Item
+                  component={Link}
+                  href="/login"
+                  className="text-inherit hover:text-white hover:bg-red-500"
+                  onClick={handleSignOut}
+                >
+                  <Text className="">Log out</Text>
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>

@@ -19,21 +19,16 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
     private readonly IComplaintLogRepository _complaintLogRepository;
     private readonly ISubordinateRepository _subordinateRepository;
     private readonly IMapper _mapper;
-    private readonly INotificationService _notificationService;
-    private readonly INotificationRepository _notificationRepository;
 
     public UpdateComplaintLogDtoCommandHandler(
         IMapper mapper,
         IComplaintLogRepository complaintLogRepository,
-        ISubordinateRepository subordinateRepository,
-        INotificationService notificationService,
-        INotificationRepository notificationRepository)
+        ISubordinateRepository subordinateRepository)
     {
         _complaintLogRepository = complaintLogRepository;
         _subordinateRepository = subordinateRepository;
         _mapper = mapper;
-        _notificationService = notificationService;
-        _notificationRepository = notificationRepository;
+
     }
     public async Task<BaseResponseClass> Handle(UpdateComplaintLogDtoCommand request, CancellationToken cancellationToken)
     {
@@ -57,17 +52,17 @@ public class UpdateComplaintLogDtoCommandHandler : IRequestHandler<UpdateComplai
                     Id = request.UpdateComplaintLogDto.Id,
                 };
 
-                // notify
-                var notify = new CreateNotificationDto
-                {
-                    createdAt = DateTime.Now, 
-                    sender = subordinate.Name!,
-                    message = $"Submitted a report for complaint log '{complaintLog.Title}'.",
-                    recieverId = request.UserId,
-                };
-                var Notification = _mapper.Map<NotificationEntity>(notify);
-                await _notificationRepository.Add(Notification);
-                await _notificationService.SendNotificationAsync(request.UserId.ToString(), Notification);
+                // // notify
+                // var notify = new CreateNotificationDto
+                // {
+                //     createdAt = DateTime.Now, 
+                //     sender = subordinate.Name!,
+                //     message = $"Submitted a report for complaint log '{complaintLog.Title}'.",
+                //     recieverId = request.UserId,
+                // };
+                // var Notification = _mapper.Map<NotificationEntity>(notify);
+                // await _notificationRepository.Add(Notification);
+                // await _notificationService.SendNotificationAsync(request.UserId.ToString(), Notification);
             }
             else
             {
