@@ -7,12 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComplaintSystem.Application.Features.Complaints.Requests.Queries;
-public class SearchComplaintRequest : IRequest<PaginatedResponseClass>
+namespace ComplaintSystem.Application.Features.ComplaintLogs.Requests.Queries;
+public class SearchComplaintLogRequest : IRequest<PaginatedResponseClass>
 {
     public string Keyword { get; set; }
     public string Status { get; set; }
-    public PaginationDto PaginationDto { get; set; }
-    public string? Category { get; set; }
-    public string DateOrder { get; set; }
+    public PaginationDto Pagination { get; set; }
 }
