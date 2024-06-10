@@ -41,7 +41,7 @@ const NotificationArea = ({
       return "Invalid date";
     }
 
-    return formatDistanceToNow(date.getTime() + EATOffset * 60 * 1000, {
+    return formatDistanceToNow(date.getTime(), {
       addSuffix: true,
     });
   };
