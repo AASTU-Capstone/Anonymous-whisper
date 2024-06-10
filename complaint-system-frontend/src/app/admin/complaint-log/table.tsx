@@ -155,9 +155,6 @@ const ComplaintsLogBody = ({
 
   return (
     <>
-      <Text className="text-primary-default font-bold text-2xl mb-5">
-        Complaints Log
-      </Text>
       <Flex className="gap-3 items-center">
         <Input
           placeholder="Search"
