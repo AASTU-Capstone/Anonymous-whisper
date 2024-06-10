@@ -28,9 +28,14 @@ const Page = () => {
     }
   }, [searchKeyword, searchRefetch]);
 
-  const { data: res, isLoading, isSuccess, refetch } = useGetRecievedComplaintsForAdminQuery({
+  const {
+    data: res,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useGetRecievedComplaintsForAdminQuery({
     pageNumber,
-    pageSize
+    pageSize,
   });
 
   useEffect(() => {

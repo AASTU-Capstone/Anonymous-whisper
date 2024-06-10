@@ -1,6 +1,5 @@
 import { FileWithPath } from "@mantine/dropzone";
 
-
 /////////////////////////////////////////////////
 /////////////////AUTH///////////////////////////
 ///////////////////////////////////////////////
@@ -84,8 +83,6 @@ export interface createOTPApiResponse {
 
 /////////////////////////////////////////////
 
-
-
 ////////////////////////////////////////////////////////////////
 /////////////////////// COMPLAINTS /////////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -105,6 +102,7 @@ export interface GetComplaintsForUserResponse {
   status: string;
   createdAt: string;
   category: string;
+  feedback: string | null;
 }
 
 export interface CreateComplaintInput {
@@ -118,9 +116,6 @@ export interface CreateComplaintInput {
 }
 
 /////////////////////////////////////////////
-
-
-
 
 /////////////////////////////////////////////////////////////
 /////////////////////// MANAGER /////////////////////////////
@@ -159,14 +154,11 @@ export interface UpdateComplaintLogStatusInput {
   status: string;
 }
 
-export interface DeleteSubordinateInput{
-  id:string
+export interface DeleteSubordinateInput {
+  id: string;
 }
 
 /////////////////////////////////////////////
-
-
-
 
 ///////////////////////////////////////////////////////
 /////////////////////// ADMIN  ////////////////////////
@@ -184,15 +176,16 @@ export interface AddManagerInput {
   role: string | null;
 }
 
-export interface EditManagerInput{
-  id:string;
-  name:string;
-  email:string;
+export interface EditManagerInput {
+  id: string;
+  name: string;
+  email: string;
 }
 
 export interface UpdateComplaintStatusInputForAdmin {
   complaintId: string;
   status: string;
+  feedback: string | null;
 }
 
 export interface UpdateComplaintLogStatusInputForAdmin {
@@ -209,10 +202,6 @@ export interface ManagerResponse {
 }
 
 /////////////////////////////////////////////
-
-
-
-
 
 /////////////////////////////////////////////////////
 //////////////////// SUBORDINATE ////////////////////
@@ -237,7 +226,7 @@ export interface updateComplaintLogReport {
 //////////////////// Resource //////////////////////
 ////////////////////////////////////////////////////
 
-export interface CreateResourceInput{
+export interface CreateResourceInput {
   title: string;
   description: string;
 }

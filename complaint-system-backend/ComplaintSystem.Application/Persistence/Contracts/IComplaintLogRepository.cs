@@ -19,6 +19,7 @@ public interface IComplaintLogRepository : IGenericRepository<ComplaintLog>
     public Task<List<ComplaintLog>> GetByStatus(string Status, PaginationDto paginationDto);
     public Task<GetComplaintLogStatisticsDto> GetComplaintLogStatistics(Guid? ManagerId, Guid? SubordinateId);
     public Task<List<ComplaintLog>> GetComplaintLogsBySubordinateId(Guid SubordinateId);
+    public Task<List<ComplaintLog>> SearchComplaintLogs(string Keyword, string Status, PaginationDto paginationDto);
 
     #endregion
 
@@ -29,6 +30,7 @@ public interface IComplaintLogRepository : IGenericRepository<ComplaintLog>
     public Task<int> GetForAdminCount(Guid AdminId, string Status);
     public Task<int> GetForSubordinateCount(Guid SubordinateId, string Status);
     public Task<int> GetByStatusCount(string Status);
+    public Task<int> GetSearchCountByStatus(string Keyword, string Status);
 
     #endregion
 }

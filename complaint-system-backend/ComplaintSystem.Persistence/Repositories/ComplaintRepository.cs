@@ -43,10 +43,11 @@ namespace ComplaintSystem.Persistence.Repositories
 
             return complaints;
         }
-        public async Task<List<Complaint>> GetMatchingComplaints(string Keyword, string category, string dateOrder, PaginationDto paginationDto)
+        public async Task<List<Complaint>> GetMatchingComplaints(string Keyword, string status, string category, string dateOrder, PaginationDto paginationDto)
         {
-            var query = _complaintSystemAppDbContext.Complaints.Where(complaint => EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") || complaint.Tag.Contains(Keyword.ToLower()) ||
-            EF.Functions.ILike(complaint.Content, "%" + Keyword + "%") && EF.Functions.ILike(complaint.Category, "%" + category + "%")).Skip((paginationDto.PageNumber - 1) * paginationDto.PageSize)
+            Console.WriteLine(status);
+            var query = _complaintSystemAppDbContext.Complaints.Where(complaint => (EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") || complaint.Tag.Contains(Keyword.ToLower()) ||
+            EF.Functions.ILike(complaint.Content, "%" + Keyword + "%") )&& EF.Functions.ILike(complaint.Category, "%" + category + "%") && EF.Functions.ILike(complaint.Status, "%" + status + "%")).Skip((paginationDto.PageNumber - 1) * paginationDto.PageSize)
                 .Take(paginationDto.PageSize);
             List<Complaint> complaints;
             if(dateOrder.ToLower() == "asc")
@@ -109,11 +110,11 @@ namespace ComplaintSystem.Persistence.Repositories
         }
 
         // Get the count of complaints that match the keyword
-        public async Task<int> GetMatchingComplaintsCount(string Keyword, string category)
+        public async Task<int> GetMatchingComplaintsCount(string Keyword,string status, string category)
         {
             return await _complaintSystemAppDbContext.Complaints
-                .CountAsync(complaint => EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") || complaint.Tag.Contains(Keyword.ToLower()) ||
-            EF.Functions.ILike(complaint.Content, "%" + Keyword + "%") && EF.Functions.ILike(complaint.Category, "%" + category + "%"));
+                .CountAsync(complaint => (EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") || complaint.Tag.Contains(Keyword.ToLower()) ||
+            EF.Functions.ILike(complaint.Content, "%" + Keyword + "%")) && EF.Functions.ILike(complaint.Category, "%" + category + "%") && EF.Functions.ILike(complaint.Status, "%" + status + "%"));
         }
 
         public async Task<GetComplaintStatisticsDto> GetComplaintStatistics(Guid? UserId)
