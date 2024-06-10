@@ -15,10 +15,10 @@ import { useState } from "react";
 import CreateComplaint from "./create-complaint";
 
 const data = [
-  { link: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard },
-  { link: "/complaints", label: "Complaints", icon: IconAlignBoxLeftTop },
-  { link: "/resources", label: "Resources", icon: IconFiles },
-  {link: "/chats",label: "ChatBot", icon: SiChatbot },
+  { link: "/user/dashboard", label: "Dashboard", icon: IconLayoutDashboard },
+  { link: "/user/complaints", label: "Complaints", icon: IconAlignBoxLeftTop },
+  { link: "/user/resources", label: "Resources", icon: IconFiles },
+  {link: "/user/chats",label: "ChatBot", icon: SiChatbot },
 ];
 
 function Sidebar() {
