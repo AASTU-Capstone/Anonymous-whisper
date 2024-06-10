@@ -39,7 +39,7 @@ const Resources = ({
           return (
             <div className="flex space-x-4">
               <ActionIcon variant="light">
-                <Link href={`/resources/${value}`} className="text-gray-500 hover:text-gray-700">
+                <Link href={`/user/resources/${value}`} className="text-gray-500 hover:text-gray-700">
                   <IconEye className="w-5 h-5" />
                 </Link>
               </ActionIcon>

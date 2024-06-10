@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 const isStaticOrInternalPath = (pathname: string) => {
-  return pathname.startsWith('/_next') || pathname.startsWith('/static') || pathname.includes('.map') || pathname.includes('/assets');
+  return pathname.startsWith('/_next') || pathname.startsWith('/static') || pathname.includes('.map') || pathname.includes('/assets') ||  pathname.includes('/images');
 };
 interface  DecodedToken{
   typ: any;
@@ -28,6 +28,9 @@ export function middleware(request: NextRequest) {
   const referer = request.headers.get("referer");
   if (decodedToken?.typ) {
     const userType = decodedToken.typ;
+    if(path.startsWith("/reset-password")){
+      return NextResponse.next()
+    }
     if (!path.startsWith(`/${userType}`)) {
       return NextResponse.redirect(new URL(`/${userType}/dashboard`, request.url));
     }
