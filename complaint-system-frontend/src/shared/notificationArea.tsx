@@ -33,7 +33,7 @@ const NotificationArea = ({
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
 
   const formatDate = (date: any) => {
-    const EATOffset = 3 * 60;
+    const EATOffset = 60;
     if (typeof date === "string") date = new Date(date);
 
     // Validate that date is now a Date object and check for invalid dates
@@ -41,7 +41,7 @@ const NotificationArea = ({
       return "Invalid date";
     }
 
-    return formatDistanceToNow(date.getTime() - EATOffset * 60 * 1000, {
+    return formatDistanceToNow(date.getTime() + EATOffset * 60 * 1000, {
       addSuffix: true,
     });
   };

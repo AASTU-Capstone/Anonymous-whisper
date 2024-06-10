@@ -162,7 +162,7 @@ namespace ComplaintSystem.API.Controllers
                 Status = updateComplaintLogStatusControllerDto.Status,
                 Role = "admin"
             };
-            var command = new UpdateComplaintLogStatusForAdminCommand { ComplaintLogStatus = updateComplaintLogStatusDto };
+            var command = new UpdateComplaintLogStatusForAdminCommand { ComplaintLogStatus = updateComplaintLogStatusDto, AdminId = userId };
             var response = await _mediator.Send(command);
             return StatusCode(response.StatusCode, response);
         }
