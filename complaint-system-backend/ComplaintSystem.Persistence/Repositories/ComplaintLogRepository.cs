@@ -77,6 +77,7 @@ namespace ComplaintSystem.Persistence.Repositories
             return logs;
         }
 
+
         #endregion
 
 
@@ -152,6 +153,30 @@ namespace ComplaintSystem.Persistence.Repositories
             };
 
             return getComplaintLogStatisticsDto;
+        }
+
+        public async Task<List<ComplaintLog>> SearchComplaintLogs(string Keyword, string Status, PaginationDto paginationDto)
+        {
+            var complaintLogs = await _complaintSystemAppDbContext.ComplaintLogs.Where(complaint => EF.Functions.ILike(complaint.Status,"%"+Status+"%") && (EF.Functions.ILike(complaint.Title, "%" + Keyword + "%")  ||
+           EF.Functions.ILike(complaint.Report, "%" + Keyword + "%"))).Skip((paginationDto.PageNumber - 1) * paginationDto.PageSize)
+               .Take(paginationDto.PageSize).ToListAsync();
+            //if (dateOrder.ToLower() == "asc")
+            //{
+            //    complaints = await query.OrderBy(comp => comp.CreatedAt).ToListAsync();
+            //}
+            //else
+            //{
+            //    complaints = await query.OrderByDescending(comp => comp.CreatedAt).ToListAsync();
+            //}
+
+            return complaintLogs;
+        }
+
+        public async Task<int> GetSearchCountByStatus(string Keyword, string Status)
+        {
+            var complaintLogsCount = await _complaintSystemAppDbContext.ComplaintLogs.Where(complaint => EF.Functions.ILike(complaint.Status, "%" + Status + "%") && (EF.Functions.ILike(complaint.Title, "%" + Keyword + "%") ||
+           EF.Functions.ILike(complaint.Report, "%" + Keyword + "%"))).CountAsync();
+            return complaintLogsCount;
         }
 
         #endregion

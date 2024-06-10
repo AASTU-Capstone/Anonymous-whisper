@@ -37,5 +37,13 @@ namespace ComplaintSystem.API.Controllers
             var response = await _mediator.Send(request);
             return StatusCode(response.StatusCode, response);
         }
+        [HttpGet]
+        [Route("SearchComplaintLogs")]
+        public async Task<ActionResult<PaginatedResponseClass>> SearchComplaintLogs(string keyword, string? status, [FromQuery] PaginationDto paginationDto)
+        {
+            var request = new SearchComplaintLogRequest { Keyword = keyword, Status = status, Pagination = paginationDto };
+            var response = await _mediator.Send(request);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }
