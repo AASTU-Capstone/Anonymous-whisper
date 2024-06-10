@@ -77,8 +77,8 @@ const userApi = baseApi.injectEndpoints({
       }),
     }),
 
-    GetComplaints: builder.query<any,{pageNumber:any,pageSize:any}>({
-      query: ({pageNumber, pageSize}) => ({
+    GetComplaints: builder.query<any, { pageNumber: any; pageSize: any }>({
+      query: ({ pageNumber, pageSize }) => ({
         url: `/Complaint/GetAllComplaintsForUser?PageNumber=${pageNumber}&PageSize=${pageSize}`,
         method: "GET",
       }),
@@ -90,6 +90,10 @@ const userApi = baseApi.injectEndpoints({
         method: "POST",
         body: complaint,
       }),
+    }),
+    GetComplaintByIdForUser: builder.query<any, string>({
+      query: (complaintId: string) =>
+        `/Complaint/GetComplaintById?ComplaintID=${complaintId}`,
     }),
   }),
 });
