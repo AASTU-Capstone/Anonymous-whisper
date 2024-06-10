@@ -1,7 +1,9 @@
 "use client";
-import { Box } from "@mantine/core";
+import { ActionIcon, Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
+import { IconAdjustmentsHorizontal, IconChevronDown, IconSearch } from "@tabler/icons-react";
 import SubordinatesList from "./table";
 import { useGetSubordinatesQuery } from "@/lib/redux/features/manager";
+import { useSearchSubordinatesQuery } from "@/lib/redux/features/manager";
 import { GetSubordinatesResponse } from "@/types";
 import { useState, useEffect } from "react";
 import { useWebSocket } from "@/providers/WebSocketContext";
@@ -17,6 +19,33 @@ const Page = () => {
     isSuccess,
     refetch,
   } = useGetSubordinatesQuery({ pageNumber, pageSize });
+
+  //search area
+  const [searchKeyword, setSearchKeyword] = useState("")
+  const { data: searchResponse,isSuccess:searchSuccess, refetch:searchRefetch } = 
+  useSearchSubordinatesQuery({keyword:searchKeyword,pageNumber,pageSize}, {
+    skip: !searchKeyword,
+  });
+
+  useEffect(() => {
+    if (searchKeyword) {
+      searchRefetch();
+    }
+  }, [searchKeyword, searchRefetch]);
+
+  useEffect(() => {
+    refetch();
+  }, [pageNumber, pageSize, refetch]);
+  var totalCount = 0;
+  var data = []
+  if(searchKeyword && searchSuccess){
+    data = searchResponse?.data.map((item: any) => ({ ...item, status: "received" })) || [];
+    totalCount = searchResponse?.totalCount || 0;
+    console.log(totalCount)
+  }else{
+    data = res?.data.map((item: any) => ({ ...item, status: "received" })) || [];
+    totalCount = res?.totalCount || 0;
+  }
 
   useEffect(() => {
     refetch();
@@ -36,13 +65,55 @@ const Page = () => {
     console.log("here we go: ", messages);
   }, [messages]);
 
-  const data =
-    res?.data?.map((item: GetSubordinatesResponse) => ({
-      ...item,
-    })) || [];
-
   return (
     <Box className="w-full bg-primary-background">
+      <Text className="text-primary-default font-bold text-2xl mb-5">
+        Subordinate Dashboard
+      </Text>
+      <Flex className="gap-3 items-center">
+        <Input
+          placeholder="Search"
+          radius="md"
+          w={350}
+          leftSection={<IconSearch />}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+        />
+
+        <Button >Search</Button>
+
+        <Menu>
+          <Menu.Target>
+            <Button
+              variant="transparent"
+              className="text-primary-text"
+              rightSection={<IconChevronDown />}
+              
+            >
+              Sort by
+            </Button>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item>Items</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        <Menu>
+          <Menu.Target>
+            <Button
+              variant="transparent"
+              className="text-primary-text"
+              rightSection={<IconChevronDown />}
+            >
+              Saved Search
+            </Button>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item>Items</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        <IconAdjustmentsHorizontal className="cursor-pointer" />
+      </Flex>
       <SubordinatesList
         data={data}
         totalCount={res?.totalCount || 0}

@@ -30,6 +30,13 @@ const managerApi = baseApi.injectEndpoints({
       }),
     }),
 
+    SearchSubordinates : builder.query<any, {keyword:string, pageNumber:any, pageSize:any}>({
+      query:({keyword,pageNumber,pageSize})=>({
+        url:`/Manager/SearchSubordinates?Keyword=${keyword}&PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        method:"GET"
+      })
+    }),
+
     // Get Complaint Log To Assign For Manager
     GetComplaintLogToAssignForManager: builder.query<any,{pageNumber:any,pageSize:any}>({
       query: ({pageNumber, pageSize}) => ({

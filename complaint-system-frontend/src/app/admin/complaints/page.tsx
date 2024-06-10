@@ -1,9 +1,9 @@
 "use client";
-import { Box } from "@mantine/core";
 import Complaints from "./table";
-import { useGetRecievedComplaintsForAdminQuery } from "@/lib/redux/features/admin";
+import { useGetRecievedComplaintsForAdminQuery, useSearchComplaintsQuery } from "@/lib/redux/features/admin";
 import { useState, useEffect } from "react";
-
+import { ActionIcon, Box, Button, Flex, Input, Menu, Modal, Text } from "@mantine/core";
+import { IconAdjustmentsHorizontal, IconChevronDown, IconSearch } from "@tabler/icons-react";
 export interface Data {
   id: string;
   title: string;
@@ -15,6 +15,18 @@ export interface Data {
 const Page = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  //search area
+  const [searchKeyword, setSearchKeyword] = useState("")
+  const { data: searchResponse,isSuccess:searchSuccess, refetch:searchRefetch } = 
+  useSearchComplaintsQuery({keyword:searchKeyword,category:"",dateOrder:"asc",pageNumber,pageSize}, {
+    skip: !searchKeyword,
+  });
+
+  useEffect(() => {
+    if (searchKeyword) {
+      searchRefetch();
+    }
+  }, [searchKeyword, searchRefetch]);
 
   const {
     data: res,
@@ -29,14 +41,64 @@ const Page = () => {
   useEffect(() => {
     refetch();
   }, [pageNumber, pageSize, refetch]);
-
-  const data =
-    res?.data.map((item: any) => ({ ...item, status: "received" })) || [];
-  const totalCount = res?.totalCount || 0;
-  console.log(pageSize);
-  console.log(totalCount);
+  var totalCount = 0;
+  var data = []
+  if(searchKeyword && searchSuccess){
+    data = searchResponse?.data.map((item: any) => ({ ...item, status: "received" })) || [];
+    totalCount = searchResponse?.totalCount || 0;
+    console.log(totalCount)
+  }else{
+    data = res?.data.map((item: any) => ({ ...item, status: "received" })) || [];
+    totalCount = res?.totalCount || 0;
+  }
+  
   return (
+    
     <Box className="w-full bg-primary-background">
+      <Flex className="gap-3 items-center">
+        <Input
+          placeholder="Search"
+          radius="md"
+          w={350}
+          leftSection={<IconSearch />}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+        />
+
+        <Button >Search</Button>
+
+        <Menu>
+          <Menu.Target>
+            <Button
+              variant="transparent"
+              className="text-primary-text"
+              rightSection={<IconChevronDown />}
+              
+            >
+              Sort by
+            </Button>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item>Items</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        <Menu>
+          <Menu.Target>
+            <Button
+              variant="transparent"
+              className="text-primary-text"
+              rightSection={<IconChevronDown />}
+            >
+              Saved Search
+            </Button>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item>Items</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        <IconAdjustmentsHorizontal className="cursor-pointer" />
+      </Flex>
       <Complaints
         data={data}
         totalCount={totalCount}

@@ -6,19 +6,21 @@ import {
   Box,
   Button,
   Flex,
+  Input,
   Group,
+  Menu,
   Modal,
   Text,
   TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
-import { IconEye, IconSquareCheck, IconSquareX } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
+import { IconAdjustmentsHorizontal, IconChevronDown, IconEye, IconSearch, IconSquareCheck, IconSquareX } from "@tabler/icons-react";
+import { use, useEffect, useMemo, useState } from "react";
 import { Column } from "react-table";
 import { Data } from "./page";
 import { UpdateComplaintStatusInputForAdmin } from "@/types";
-import { useUpdateComplaintStatusForAdminMutation } from "@/lib/redux/features/admin";
+import { useUpdateComplaintStatusForAdminMutation,useSearchComplaintsQuery } from "@/lib/redux/features/admin";
 import ViewComplaintById from "./viewmodal";
 
 const Complaints = ({
@@ -58,6 +60,10 @@ const Complaints = ({
     setViewId(id);
     openViewModal();
   };
+
+  
+
+
 
   const handleAccept = (id: string) => {
     modals.openConfirmModal({

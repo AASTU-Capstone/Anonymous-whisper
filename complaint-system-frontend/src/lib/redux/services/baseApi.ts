@@ -33,8 +33,8 @@ const baseApi = createApi({
       return (action.payload as any)[reducerPath];
     }
   },
-  //what the the hell is this
-  tagTypes: ["StartupAchievement", "StartupTeamMembers"],
+  //what the the hell is thiss
+  tagTypes: [],
   endpoints: (builder) => ({}),
 });
 
