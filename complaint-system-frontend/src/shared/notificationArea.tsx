@@ -34,6 +34,7 @@ const NotificationArea = ({
 
   const formatDate = (date: any) => {
     const EATOffset = 60;
+    const millisecondsInMinute = 60 * 1000;
     if (typeof date === "string") date = new Date(date);
 
     // Validate that date is now a Date object and check for invalid dates
@@ -41,7 +42,7 @@ const NotificationArea = ({
       return "Invalid date";
     }
 
-    return formatDistanceToNow(date.getTime(), {
+    return formatDistanceToNow(Math.floor((Date.now() - date.getTime()) % millisecondsInMinute), {
       addSuffix: true,
     });
   };
@@ -99,7 +100,7 @@ const NotificationArea = ({
                 <Box ml="sm" style={{ flex: 1 }}>
                   <Text size="sm">{notification.sender}</Text>
                   <Text size="xs" c="dimmed">
-                    {formatDate(notification.createdAt)}
+                    {`${formatDate(notification.createdAt)} minutes ago`}
                   </Text>
                   <Text size="md" c="dark">
                     {notification.message}
