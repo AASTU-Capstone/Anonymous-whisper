@@ -10,6 +10,7 @@ public class GetComplaintDto
     public Guid Id { get; set; }
     public string Title { get; set; }
     public string Content { get; set; }
+    public string? Feedback { get; set; }
     public List<string>? ImageEvidences { get; set; }
     public List<string>? Videos { get; set; }
     public List<string>? SoundTracks { get; set; }

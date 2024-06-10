@@ -2,10 +2,11 @@ using ComplaintSystem.Domain.Entities.Common;
 
 namespace ComplaintSystem.Domain.Entities
 {
-    public class Complaint: BaseEntity
+    public class Complaint : BaseEntity
     {
         public string Title { get; set; }
         public string Content { get; set; }
+        public string? Feedback { get; set; }
         public List<string>? ImageEvidences { get; set; }
         public List<string>? Videos { get; set; }
         public List<string>? SoundTracks { get; set; }
