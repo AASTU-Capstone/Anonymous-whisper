@@ -59,7 +59,7 @@ const RecentComplaints = ({
       onConfirm: async () => {
         const complaintLogStatus: UpdateComplaintLogStatusForSubordinate = {
           complaintLogId: id,
-          status: "progressing",
+          status: "overviewing",
         };
         await updateComplaintLogStatus(complaintLogStatus);
         refetchComplaintLogs();
