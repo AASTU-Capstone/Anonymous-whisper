@@ -16,7 +16,7 @@ interface Notification {
   message: string;
   isRead: boolean;
   recieverId: string;
-  createdAt: Date;
+  createdAt: any;
 }
 
 interface NotificationAreaProps {
