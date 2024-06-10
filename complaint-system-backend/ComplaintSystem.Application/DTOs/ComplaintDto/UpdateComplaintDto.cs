@@ -9,4 +9,5 @@ public class UpdateComplaintDto
 {
     public Guid ComplaintId { get; set; }
     public string Status { get; set; }
+    public string? Feedback { get; set; }
 }
