@@ -12,7 +12,7 @@ public class EmailSender : IEmailSender
 {
     private const string SenderEmail = "xbebe346@gmail.com";
     private const string SenderPassword = "uqsasuybillessch";
-    private const string DisplayName = "Anonymous Whispher";
+    private const string DisplayName = "Whispher";
 
     public async Task<BaseResponseClass> SendEmail(Email email)
     {
