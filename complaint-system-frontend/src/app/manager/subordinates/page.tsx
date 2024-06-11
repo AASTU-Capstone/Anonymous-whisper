@@ -84,38 +84,6 @@ const Page = () => {
 
         <Button >Search</Button>
 
-        <Menu>
-          <Menu.Target>
-            <Button
-              variant="transparent"
-              className="text-primary-text"
-              rightSection={<IconChevronDown />}
-              
-            >
-              Sort by
-            </Button>
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item>Items</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-        <Menu>
-          <Menu.Target>
-            <Button
-              variant="transparent"
-              className="text-primary-text"
-              rightSection={<IconChevronDown />}
-            >
-              Saved Search
-            </Button>
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item>Items</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-        <IconAdjustmentsHorizontal className="cursor-pointer" />
       </Flex>
       <SubordinatesList
         data={data}
