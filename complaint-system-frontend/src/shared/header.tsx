@@ -122,6 +122,7 @@ const Header = ({ role }: { role: string }) => {
         createdAt: addThreeHours(item.createdAt),
       })) || [];
     if (UnreadNotification.length > 0) {
+      setNotifications([]);
       setNotifications(UnreadNotification);
     }
   }, [res]);
