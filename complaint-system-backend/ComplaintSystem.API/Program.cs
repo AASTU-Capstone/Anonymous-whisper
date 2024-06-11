@@ -79,7 +79,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 //Date now works with this for east african time
-// AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 
 
