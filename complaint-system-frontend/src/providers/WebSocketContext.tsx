@@ -6,14 +6,21 @@ const WebSocketContext = createContext<{
   sendMessage: (message: string) => void;
   logout: () => void;
   connectWebSocket: (userId: string) => void;
+  clear: () => void;
 } | null>(null);
 
-export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
+export const WebSocketProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
 
   const connectWebSocket = (userId: string) => {
-    const ws = new WebSocket(`wss://anonymous-whisper.onrender.com/notification?userId=${userId}`);
+    const ws = new WebSocket(
+      `wss://anonymous-whisper.onrender.com/notification?userId=${userId}`
+    );
 
     ws.onopen = () => {
       console.log("WebSocket connected successfully!");
@@ -22,8 +29,8 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
-        const messageWithUnread = { ...message, unread: true };
-        setMessages((prevMessages) => [...prevMessages, messageWithUnread]);
+        const messageWithUnread = { ...message };
+        setMessages(messageWithUnread);
       } catch (error) {
         console.error("Error parsing WebSocket message:", error);
       }
@@ -40,20 +47,26 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         socket.send(message);
       }
     };
-  
+
     const logout = () => {
       if (socket) {
         socket.close();
       }
       localStorage.removeItem("userId");
     };
-  }
-  
+
+    const clear = () => {
+      setMessages([]);
+    };
+  };
+
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
-      const ws = new WebSocket(`wss://anonymous-whisper.onrender.com/notification?userId=${userId}`);
-  
+      const ws = new WebSocket(
+        `wss://anonymous-whisper.onrender.com/notification?userId=${userId}`
+      );
+
       ws.onopen = () => {
         console.log("WebSocket connected successfully!");
       };
@@ -61,8 +74,9 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       ws.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          const messageWithUnread = { ...message, unread: true };
-          setMessages((prevMessages) => [...prevMessages, messageWithUnread]);
+          const messageWithUnread = { ...message };
+          setMessages([]);
+          setMessages(() => [messageWithUnread]);
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
         }
@@ -73,8 +87,8 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       };
 
       setSocket(ws);
-    }}, []);
-  
+    }
+  }, []);
 
   const sendMessage = (message: string) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -89,8 +103,14 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     localStorage.removeItem("userId");
   };
 
+  const clear = () => {
+    setMessages([]);
+  };
+
   return (
-    <WebSocketContext.Provider value={{ messages, sendMessage, logout, connectWebSocket }}>
+    <WebSocketContext.Provider
+      value={{ messages, sendMessage, logout, clear, connectWebSocket }}
+    >
       {children}
     </WebSocketContext.Provider>
   );

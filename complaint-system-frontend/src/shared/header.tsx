@@ -61,7 +61,7 @@ const addThreeHours = (date: any) => {
 
 const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
-  const { messages, logout } = useWebSocket();
+  const { messages, logout, clear } = useWebSocket();
   const [markNotifications] = useMarkNotificationsMutation();
   const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>(
     []
@@ -70,7 +70,7 @@ const Header = ({ role }: { role: string }) => {
   const handleSignOut = () => {
     logoutHandler();
     // setNotifications([]);
-    refetch();
+    // refetch();
     logout();
     notify();
   };
@@ -139,6 +139,7 @@ const Header = ({ role }: { role: string }) => {
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
       );
+      clear();
     }
   }, [messages]);
 
@@ -168,7 +169,7 @@ const Header = ({ role }: { role: string }) => {
       if (unreadNotificationIds.length > 0) {
         markNotifications({ notificationIds: unreadNotificationIds }).unwrap();
         setUnreadNotificationIds([]);
-        refetch();
+        // refetch();
       }
       document.removeEventListener("mousedown", handleClickOutside);
     }

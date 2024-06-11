@@ -107,11 +107,11 @@ export function middleware(request: NextRequest) {
   }
 
   if (!decodedToken) {
-    if (
-      path.startsWith("/login") ||
-      path.startsWith("/signup") ||
-      path.startsWith("/reset-password")
-    ) {
+    if (path.startsWith("/login")) {
+      NextResponse.next();
+    } else if (path.startsWith("/signup")) {
+      NextResponse.next();
+    } else if (path.startsWith("/reset-password")) {
       NextResponse.next();
     } else {
       return NextResponse.redirect(new URL(`/login`, request.url));
