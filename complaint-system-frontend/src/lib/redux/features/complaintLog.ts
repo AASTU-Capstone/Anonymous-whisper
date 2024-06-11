@@ -1,5 +1,6 @@
 import ComplaintLogApi from "@/lib/redux/services/complaintLogApi"
 
 export const {
-    useGetComplaintLogByIdQuery
+    useGetComplaintLogByIdQuery,
+    useSearchComplaintLogQuery
 } = ComplaintLogApi

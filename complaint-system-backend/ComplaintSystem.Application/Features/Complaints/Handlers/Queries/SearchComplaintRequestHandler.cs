@@ -23,7 +23,7 @@ public class SearchComplaintRequestHandler : IRequestHandler<SearchComplaintRequ
     public async Task<PaginatedResponseClass> Handle(SearchComplaintRequest request, CancellationToken cancellationToken)
     {
         var complaints = await _complaintRepository.GetMatchingComplaints(request.Keyword,request.Status, request.Category, request.DateOrder, request.PaginationDto);
-        var getComplaints = _mapper.Map<List<GetComplaintsDto>>(complaints);
+        var getComplaints = _mapper.Map<List<ViewComplaintDto>>(complaints);
 
         PaginatedResponseClass response = new PaginatedResponseClass
         {

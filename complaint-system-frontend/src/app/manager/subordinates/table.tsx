@@ -188,9 +188,12 @@ const SubordinatesList = ({
       
       <Box className="w-full mt-7">
         <Box>
-          <Text className="text-xl px-5 py-4 bg-primary-body">
+          {/* <Text className="text-xl px-5 py-4 bg-primary-body">
             Subordinates List
-          </Text>
+          </Text> */}
+          <Button rightSection={<IconPlus />} onClick={open}>
+          Add Subordinate
+        </Button> 
         </Box>
         <DataTable
           columns={columns}

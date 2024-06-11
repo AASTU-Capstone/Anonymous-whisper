@@ -65,6 +65,9 @@ const Page = () => {
     console.log("here we go: ", messages);
   }, [messages]);
 
+  // add subordinate handlers
+  
+
   return (
     <Box className="w-full bg-primary-background">
       <Text className="text-primary-default font-bold text-2xl mb-5">

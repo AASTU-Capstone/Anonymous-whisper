@@ -11,4 +11,5 @@ export const {
   useCreateComplaintMutation,
   useGetUserByIdQuery,
   useGetComplaintByIdForUserQuery,
+  useSearchComplaintsQuery
 } = userApi;

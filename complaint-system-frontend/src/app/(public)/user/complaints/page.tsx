@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useGetComplaintsQuery } from "@/lib/redux/features/user";
+import { useGetComplaintsQuery,useSearchComplaintsQuery } from "@/lib/redux/features/user";
 import MyComplaints from "./table";
-import { Box, Text } from "@mantine/core";
+import { Box, Button, Flex, Input, Text } from "@mantine/core";
+import { IconSearch } from "@tabler/icons-react";
 
 const Page: React.FC = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -13,6 +14,19 @@ const Page: React.FC = () => {
     pageSize,
   });
 
+  //search keyword
+  const [searchKeyword, setSearchKeyword] = useState("")
+  const { data: searchResponse,isSuccess:searchSuccess, refetch:searchRefetch } = 
+  useSearchComplaintsQuery({keyword:searchKeyword,category:"",dateOrder:"asc",pageNumber,pageSize}, {
+    skip: !searchKeyword,
+  });
+
+  useEffect(() => {
+    if (searchKeyword) {
+      searchRefetch();
+    }
+  }, [searchKeyword, searchRefetch]);
+
   useEffect(() => {
     refetch();
   }, [pageNumber, pageSize, refetch]);
@@ -21,11 +35,30 @@ const Page: React.FC = () => {
     
   }, [res, isSuccess]);
 
-  const data = res?.data || [];
-  const totalCount = res?.totalCount || 0;
+  var totalCount = 0;
+  var data = []
+  if(searchKeyword && searchSuccess){
+    data = searchResponse?.data.map((item: any) => ({ ...item })) || [];
+    totalCount = searchResponse?.totalCount || 0;
+    console.log(totalCount)
+  }else{
+    data = res?.data.map((item: any) => ({ ...item })) || [];
+    totalCount = res?.totalCount || 0;
+  }
 
   return (
     <Box className="w-full bg-primarykey-body">
+      <Flex className="gap-3 items-center">
+        <Input
+          placeholder="Search"
+          radius="md"
+          w={350}
+          leftSection={<IconSearch />}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+        />
+
+        <Button >Search</Button>
+      </Flex>
       <Box className="px-2 py-5">
         <Text className="text-xl font-bold">My Complaints</Text>
       </Box>
