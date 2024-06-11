@@ -3,13 +3,18 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 const isStaticOrInternalPath = (pathname: string) => {
-  return pathname.startsWith('/_next') || pathname.startsWith('/static') || pathname.includes('.map') || pathname.includes('/assets') ||  pathname.includes('/images');
+  return (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/static") ||
+    pathname.includes(".map") ||
+    pathname.includes("/assets") ||
+    pathname.includes("/images")
+  );
 };
-interface  DecodedToken{
+interface DecodedToken {
   typ: any;
 }
 export function middleware(request: NextRequest) {
-
   if (isStaticOrInternalPath(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
@@ -28,23 +33,25 @@ export function middleware(request: NextRequest) {
   const referer = request.headers.get("referer");
   if (decodedToken?.typ) {
     const userType = decodedToken.typ;
-    if(path.startsWith("/reset-password/change")){
-      return NextResponse.next()
-    }
-    else if(path == "/password-updated"){
-      return NextResponse.next()
-    }
-    else if(path.startsWith("/password-updated")){
-      return NextResponse.next()
-    }
-    else if (!path.startsWith(`/${userType}`)) {
-      return NextResponse.redirect(new URL(`/${userType}/dashboard`, request.url));
+    if (path.startsWith("/reset-password/change")) {
+      return NextResponse.next();
+    } else if (path == "/password-updated") {
+      return NextResponse.next();
+    } else if (path.startsWith("/password-updated")) {
+      return NextResponse.next();
+    } else if (!path.startsWith(`/${userType}`)) {
+      return NextResponse.redirect(
+        new URL(`/${userType}/dashboard`, request.url)
+      );
     }
   }
   // Protect /auth/signup/verify-otp route
   if (path === "/signup/verify-otp") {
     // allow the user if they are coming from the signup route
-    if (referer && referer.includes("/signup")) {
+    if (
+      referer &&
+      (referer.includes("/signup") || referer.includes("/login"))
+    ) {
       return NextResponse.next();
     } else {
       // deny the user if they are not coming from the signup route
@@ -66,7 +73,10 @@ export function middleware(request: NextRequest) {
   // Protect /auth/reset-password/change route
   if (path === "/reset-password/change") {
     // allow the user if they come from the reset-password route
-    if (decodedToken || (referer && referer.includes("/reset-password/verify-otp"))) {
+    if (
+      decodedToken ||
+      (referer && referer.includes("/reset-password/verify-otp"))
+    ) {
       return NextResponse.next();
     } else {
       // unauthorized , the user will be redirected to the app
@@ -92,20 +102,20 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     } else {
       // unauthorized , the user will be redirected to the app
-      return NextResponse.redirect(
-        new URL("/reset-password", request.url)
-      );
+      return NextResponse.redirect(new URL("/reset-password", request.url));
     }
   }
-  
-  if(!decodedToken ){
-    if(path.startsWith("/login") || path.startsWith("/signup") || path.startsWith("/reset-password")){
+
+  if (!decodedToken) {
+    if (
+      path.startsWith("/login") ||
+      path.startsWith("/signup") ||
+      path.startsWith("/reset-password")
+    ) {
       NextResponse.next();
-    }
-    else{
+    } else {
       return NextResponse.redirect(new URL(`/login`, request.url));
     }
-    
   }
 
   return NextResponse.next();

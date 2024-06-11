@@ -11,7 +11,8 @@ const MyComponent = () => {
 
   const [timer, setTimer] = useState(60);
 
-  const email: string = typeof window !== "undefined" ? sessionStorage.getItem("email") ?? "" : "";
+  const email: string =
+    typeof window !== "undefined" ? sessionStorage.getItem("email") ?? "" : "";
   const router = useRouter();
 
   useEffect(() => {
@@ -44,8 +45,8 @@ const MyComponent = () => {
     }
   };
 
-  const [verifyAccount, {isLoading}] = useVerifyAccountMutation();
-  
+  const [verifyAccount, { isLoading }] = useVerifyAccountMutation();
+
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
     const res = await verifyAccount({ email, OTPCode: values.join("") });
@@ -57,16 +58,35 @@ const MyComponent = () => {
     }
   };
 
-  const handlePaste = (index: number, event: React.ClipboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Backspace" && values[index] === "") {
+      if (index > 0) {
+        const prevInput = document.getElementById(`input-${index - 1}`);
+        if (prevInput) {
+          prevInput.focus();
+        }
+      }
+    }
+  };
+
+  const handlePaste = (
+    index: number,
+    event: React.ClipboardEvent<HTMLInputElement>
+  ) => {
     event.preventDefault();
-    const pasteValue = event.clipboardData.getData('text');
+    const pasteValue = event.clipboardData.getData("text");
     const newValues = [...values];
     newValues.splice(index, pasteValue.length);
-    newValues.splice(index, 0, ...pasteValue.split(''));
+    newValues.splice(index, 0, ...pasteValue.split(""));
     setValues(newValues);
     if (index < newValues.length - 1) {
       if (typeof window !== "undefined") {
-        const nextInput = document.getElementById(`input-${index + pasteValue.length}`);
+        const nextInput = document.getElementById(
+          `input-${index + pasteValue.length}`
+        );
         if (nextInput) {
           nextInput.focus();
         }
@@ -82,7 +102,8 @@ const MyComponent = () => {
         </h1>
 
         <p className="text-center text-xs  text-[#777777] px-4 whitespace-normal">
-          We{"'"}ve sent a verification code to {email}. Please enter the 6-digit code below to verify your account
+          We{"'"}ve sent a verification code to {email}. Please enter the
+          6-digit code below to verify your account
         </p>
 
         {/* Input Boxes */}
@@ -96,6 +117,7 @@ const MyComponent = () => {
               value={value}
               maxLength={1}
               onChange={(event) => handleChange(index, event)}
+              onKeyDown={(event) => handleKeyDown(index, event)}
               onPaste={(event) => handlePaste(index, event)}
             />
           ))}
@@ -116,13 +138,13 @@ const MyComponent = () => {
           onClick={handleSubmit}
         >
           {isLoading ? (
-              <div className="flex items-center justify-center gap-x-3 bg-transparent">
-                <div className="spinner"></div>
-                <div>Processing . . .</div>
-              </div>
-            ) : (
-              <span>Verify code</span> 
-              )}
+            <div className="flex items-center justify-center gap-x-3 bg-transparent">
+              <div className="spinner"></div>
+              <div>Processing . . .</div>
+            </div>
+          ) : (
+            <span>Verify code</span>
+          )}
         </button>
       </div>
     </div>

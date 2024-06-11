@@ -36,13 +36,32 @@ const MyComponent = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newValues = [...values];
-    newValues[index] = event.target.value;
-    setValues(newValues);
-    if (index < values.length - 1 && event.target.value) {
-      if (typeof window === "undefined") {
+    const value = event.target.value;
+
+    if (value.match(/^[0-9]$/)) {
+      newValues[index] = value;
+      setValues(newValues);
+      if (index < values.length - 1) {
         const nextInput = document.getElementById(`input-${index + 1}`);
         if (nextInput) {
           nextInput.focus();
+        }
+      }
+    } else if (value === "") {
+      newValues[index] = value;
+      setValues(newValues);
+    }
+  };
+
+  const handleKeyDown = (
+    index: number,
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Backspace" && values[index] === "") {
+      if (index > 0) {
+        const prevInput = document.getElementById(`input-${index - 1}`);
+        if (prevInput) {
+          prevInput.focus();
         }
       }
     }
@@ -65,17 +84,20 @@ const MyComponent = () => {
     event.preventDefault();
     const pasteValue = event.clipboardData.getData("text");
     const newValues = [...values];
-    newValues.splice(index, pasteValue.length);
-    newValues.splice(index, 0, ...pasteValue.split(""));
+    const pasteArray = pasteValue.split("").slice(0, values.length - index);
+
+    for (let i = 0; i < pasteArray.length; i++) {
+      newValues[index + i] = pasteArray[i];
+    }
+
     setValues(newValues);
-    if (index < newValues.length - 1) {
-      if (typeof window !== "undefined") {
-        const nextInput = document.getElementById(
-          `input-${index + pasteValue.length}`
-        );
-        if (nextInput) {
-          nextInput.focus();
-        }
+
+    if (index + pasteArray.length < values.length) {
+      const nextInput = document.getElementById(
+        `input-${index + pasteArray.length}`
+      );
+      if (nextInput) {
+        nextInput.focus();
       }
     }
   };
@@ -87,7 +109,7 @@ const MyComponent = () => {
           CHECK YOUR EMAIL
         </h1>
 
-        <p className="text-center text-xs  text-[#777777] px-4 whitespace-normal">
+        <p className="text-center text-xs text-[#777777] px-4 whitespace-normal">
           We{"'"}ve sent a verification code to {email}. Please enter the
           6-digit code below to verify your account
         </p>
@@ -104,6 +126,7 @@ const MyComponent = () => {
                 value={value}
                 maxLength={1}
                 onChange={(event) => handleChange(index, event)}
+                onKeyDown={(event) => handleKeyDown(index, event)}
                 onPaste={(event) => handlePaste(index, event)}
               />
             ))}
