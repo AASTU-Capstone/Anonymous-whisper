@@ -69,7 +69,7 @@ const Header = ({ role }: { role: string }) => {
 
   const handleSignOut = () => {
     logoutHandler();
-    setNotifications([]);
+    // setNotifications([]);
     refetch();
     logout();
     notify();
