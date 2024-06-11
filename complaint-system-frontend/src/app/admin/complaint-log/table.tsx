@@ -155,50 +155,7 @@ const ComplaintsLogBody = ({
 
   return (
     <>
-      <Flex className="gap-3 items-center">
-        <Input
-          placeholder="Search"
-          radius="md"
-          w={350}
-          leftSection={<IconSearch />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-
-        <Button>Search</Button>
-
-        <Menu>
-          <Menu.Target>
-            <Button
-              variant="transparent"
-              className="text-primary-text"
-              rightSection={<IconChevronDown />}
-            >
-              Sort by
-            </Button>
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item>Items</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-        <Menu>
-          <Menu.Target>
-            <Button
-              variant="transparent"
-              className="text-primary-text"
-              rightSection={<IconChevronDown />}
-            >
-              Saved Search
-            </Button>
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item>Items</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-        <IconAdjustmentsHorizontal className="cursor-pointer" />
-      </Flex>
+      
       <Box className="w-full mt-7">
         <Box>
           <Text className="text-xl px-5 py-4 bg-primary-body">

@@ -279,20 +279,20 @@ const ManagersList = ({
         Managers Dashboard
       </Text>
       <Flex className="gap-3 items-center">
-        <Input
+        {/* <Input
           placeholder="Search"
           radius="md"
           w={350}
           leftSection={<IconSearch />}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        /> */}
 
         <Button rightSection={<IconPlus />} onClick={open}>
           Add Manager
         </Button>
 
-        <Menu>
+        {/* <Menu>
           <Menu.Target>
             <Button
               variant="transparent"
@@ -321,8 +321,8 @@ const ManagersList = ({
           <Menu.Dropdown>
             <Menu.Item>Items</Menu.Item>
           </Menu.Dropdown>
-        </Menu>
-        <IconAdjustmentsHorizontal className="cursor-pointer" />
+        </Menu> */}
+        {/* <IconAdjustmentsHorizontal className="cursor-pointer" /> */}
       </Flex>
       <Box className="w-full mt-7">
         <Box>

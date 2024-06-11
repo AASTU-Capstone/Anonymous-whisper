@@ -95,6 +95,14 @@ const userApi = baseApi.injectEndpoints({
       query: (complaintId: string) =>
         `/Complaint/GetComplaintById?ComplaintID=${complaintId}`,
     }),
+    SearchComplaints: builder.query<any,{keyword:string,category:string,dateOrder:string,pageNumber:any,pageSize:any}>({
+      query:({keyword, category,dateOrder,pageNumber,pageSize})=>({
+        url:`/Complaint/SearchComplaints?keyword=${keyword}&category=${category}&dateOrder=${dateOrder}&PageNumber=${pageNumber}&PageSize=${pageSize}`,
+        method:"GET"
+      })
+    }),
+
+    
   }),
 });
 
