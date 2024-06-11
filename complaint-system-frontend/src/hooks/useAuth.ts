@@ -58,6 +58,7 @@ export const useAuth = () => {
       };
       dispatch(setAuth(dummy));
       router.refresh();
+      // router.push("/login");
     },
     signupHandler: async (credentials: SignupCredentials) => {
       try {
