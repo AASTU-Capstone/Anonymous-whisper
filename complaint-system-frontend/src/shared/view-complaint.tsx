@@ -1,4 +1,4 @@
-import { Box, Flex, Text, TextInput } from "@mantine/core";
+import { Box, Button, Flex, Text, TextInput } from "@mantine/core";
 import { IconFile, IconMusic } from "@tabler/icons-react";
 
 const images = [
@@ -9,7 +9,9 @@ const images = [
 ];
 
 const ViewComplaint = ({ complaint }: { complaint: any }) => {
-  console.log(complaint);
+  const handleOpenFullScreen = (document:string) => {
+    window.open(document, '_blank', 'noopener,noreferrer');
+  };
   return (
     <Flex className="flex-col gap-5">
       <Box className="w-full mx-auto p-8 rounded-lg shadow-md">
@@ -93,6 +95,8 @@ const ViewComplaint = ({ complaint }: { complaint: any }) => {
             <Flex key={index} className="flex-col">
               <embed src={index} />
               <Text className="text-center">File Title</Text>
+              <Button onClick={() => handleOpenFullScreen(index)}>Download</Button>
+              
             </Flex>
           ))}
         </Flex>
