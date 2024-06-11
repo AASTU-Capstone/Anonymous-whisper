@@ -69,6 +69,8 @@ const Header = ({ role }: { role: string }) => {
 
   const handleSignOut = () => {
     logoutHandler();
+    setNotifications([]);
+    refetch();
     logout();
     notify();
   };
@@ -165,6 +167,7 @@ const Header = ({ role }: { role: string }) => {
       if (unreadNotificationIds.length > 0) {
         markNotifications({ notificationIds: unreadNotificationIds }).unwrap();
         setUnreadNotificationIds([]);
+        refetch();
       }
       document.removeEventListener("mousedown", handleClickOutside);
     }
