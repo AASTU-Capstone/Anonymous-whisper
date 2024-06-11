@@ -46,11 +46,11 @@ const MyComplaints = ({
         accessor: "status",
         Cell: ({ value }) => {
           const statusClass =
-            value === "Resolved"
+            value === "resolved"
               ? "bg-green-200 text-green-800"
-              : value === "Inprogress"
+              : value === "pending"
                 ? "bg-blue-200 text-blue-800"
-                : value === "Rejected"
+                : value === "rejected"
                   ? "bg-red-200 text-red-800"
                   : "bg-gray-200 text-gray-800";
           return (
