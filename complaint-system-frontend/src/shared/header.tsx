@@ -133,8 +133,8 @@ const Header = ({ role }: { role: string }) => {
       const sortedMessages = messages.map((item: Notification) => ({
         ...item,
       }));
-      setNotifications((prev) =>
-        [...prev, ...sortedMessages].sort(
+      setNotifications(() =>
+        [...sortedMessages].sort(
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
