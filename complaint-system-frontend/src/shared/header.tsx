@@ -53,6 +53,12 @@ const notify = () => {
   });
 };
 
+const addThreeHours = (date: any) => {
+  const newDate = new Date(date);
+  newDate.setHours(newDate.getHours() + 3);
+  return newDate;
+};
+
 const Header = ({ role }: { role: string }) => {
   const { logoutHandler } = useAuth();
   const { messages, logout } = useWebSocket();
@@ -111,6 +117,7 @@ const Header = ({ role }: { role: string }) => {
     const UnreadNotification =
       res?.data?.map((item: Notification) => ({
         ...item,
+        createdAt: addThreeHours(item.createdAt),
       })) || [];
     if (UnreadNotification.length > 0) {
       setNotifications(UnreadNotification);
